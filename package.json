@@ -1,0 +1,53 @@
+{
+  "name": "twitter-translator",
+  "version": "0.31",
+  "description": "Adds external & internal translators to various sites.",
+  "author": "Magic <magicoflolis@tuta.io>",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/magicoflolis/twitter-translator/issues"
+  },
+  "homepage": "https://github.com/magicoflolis/twitter-translator",
+  "type": "module",
+  "scripts": {
+    "dev:Userscript": "node ./tools/userscript-dev.js",
+    "dev:Sass": "sass -w ./src/sass/twittertranslator.scss:./dist/css/twittertranslator.css ./src/sass/foreign.scss:./dist/css/foreign.css -s compressed",
+    "dev:Server": "http-server ./http-server -c5",
+    "dev:Fallback": "node ./tools/userscript-fallback.js",
+    "prod:Userscript": "node ./tools/userscript-prod.js",
+    "lint:Dev": "js-beautify -r ./http-server/twittertranslator.user.js --config .jsbeautifyrc.json",
+    "lint:Beautify": "js-beautify -r ./dist/twittertranslator.user.js --config .jsbeautifyrc.json"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@types/babel__core": "^7.1.17",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jquery": "^3.5.10",
+    "@types/sass": "^1.43.1",
+    "babel-loader": "^8.2.3",
+    "http-server": "^14.0.0"
+  },
+  "dependencies": {
+    "babel-plugin-transform-scss": "^1.1.0",
+    "fs-extra": "^10.0.0",
+    "js-beautify": "^1.14.0",
+    "node-watch": "^0.7.2",
+    "sass": "^1.45.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magicoflolis/twitter-translator.git"
+  },
+  "keywords": [
+    "userjs",
+    "greasemonkey",
+    "violentmonkey",
+    "tampermonkey",
+    "javascript",
+    "browser"
+  ],
+  "private": true
+}
