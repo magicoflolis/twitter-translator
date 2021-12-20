@@ -21,12 +21,9 @@ Legacy | - | [Install [GitHub]](https://github.com/magicoflolis/twitter-translat
 
 > Please check the [Bugs / Issues](#bugs--issues) or [contact](#contacts) me for any issues! If this update is causing you problems, revert to previous version.
 
-* This update *may* reset your config.
-* You can now customize every translator link! ( DeepL Api is written in a function )
-* Example: [https://translate.google.com](https://translate.google.com/) => [https://translate.google.co.uk](https://translate.google.co.uk/)
-* Added ✨ for recommendations.
-* Color tweaks.
-* UI tweaks.
+* Moving userscript to its own [GitHub repository](https://github.com/magicoflolis/twitter-translator)
+* Adjusted LICENSE to better fit repo.
+* Added @updateURL.
 * Bug fixes.
 
 ## **Features:**
