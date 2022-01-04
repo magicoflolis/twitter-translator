@@ -1,0 +1,53 @@
+.r-demo,
+.tet-help-container,
+#apifield,
+#tetSelector {
+  border-color: var(--border_grey);
+  &.nitter {
+    border-color: var(--border_grey);
+  };
+};
+
+.tetNitterHover {
+  background-color: var(--fg_dark);
+};
+
+.tetNitter {
+  border-color: var(--accent_border) !important;
+  box-shadow: var(--accent_border) !important;
+  #tetName {
+    color: var(--fg_dark);
+  };
+};
+
+.tetBtn.nitter {
+  color: var(--fg_color);
+  background-color: var(--fg_dark);
+};
+
+h1.tetNTextColor {
+  color: var(--grey);
+};
+
+.nitter {
+  background-color: var(--bg_color);
+  div#tetName {
+    color: var(--fg_dark);
+  };
+};
+
+input.tetNTextColor,
+select.tetNTextColor,
+div.tetNTextColor,
+svg.tetNTextColor,
+label.tetNTextColor>span {
+  color: var(--fg_color);
+};
+
+.tetNText span {
+  color: var(--fg_dark) !important;
+};
+
+.tetNBackground {
+  background-color: var(--bg_panel);
+};

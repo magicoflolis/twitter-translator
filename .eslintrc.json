@@ -1,12 +1,20 @@
 {
+  "root": true,
+  "globals": {
+    "GM": "writable",
+		"nitterCSS": "readonly",
+    "tetCSS": "readonly",
+    "twCSS": "readonly"
+  },
   "env": {
     "browser": true,
     "es2021": true,
     "greasemonkey": true,
-    "jquery": true
+    "jquery": true,
+    "node": true
   },
   "extends": [
-    "eslint:all",
+    "eslint:recommended",
     "prettier"
   ],
   "parserOptions": {
@@ -17,12 +25,7 @@
       "arrowFunctions": true,
       "modules": true
     },
-    "ecmaVersion": 12
+    "ecmaVersion": "latest"
   },
-  "plugins": [
-    "prettier"
-  ],
-  "rules": {
-    "prefer-const": "error"
-  }
+  "rules": {}
 }

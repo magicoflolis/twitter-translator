@@ -1,102 +1,39 @@
+/* eslint-env greasemonkey */
+(async () => {
 //#region Config
-(typeof (GM) === "undefined") ? (GM = {},GM.setValue = GM_setValue,GM.getValue = GM_getValue) : false;
+//https://www.apertium.org/index.eng.html#?dir=eng-epo&q=
+//https://dictionary.cambridge.org/us/translate/
 let tetInfo = {
   icon: GM_info.script.icon,
   name: GM_info.script.name,
-  version: GM_info.script.version
+  version: GM_info.script.version,
+  namespace: GM_info.script.namespace
 },
 tetAvatar = tetInfo.icon,
-enableLogs = false;
-// Automatically enables logs during development.
-(tetInfo.name === "[Dev] Twitter External Translator") ? enableLogs = true : false;
-/**
- * Logs can be forced by setting `enableLog` to `true`.
- * OR when `alert` is "error"
- * @param {() => boolean} msg
- * @param {string} alert
- */
-const log = (message, alert) => {
-  let t = performance.now(),
-  head = "[TET]";
-  if(enableLogs) {
-    console.groupCollapsed(`${head} Time: ${t}ms ${alert === "error" ? "ERROR" : ""}`);
-    console.log(message);
-    console.groupEnd();
-  };
-},
-isHTML = (str, doc = new DOMParser().parseFromString(str, "text/html")) => {
+tetHelper = tetInfo.namespace;
+const isHTML = (str, doc = new DOMParser().parseFromString(str, "text/html")) => {
   return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
 },
 /** Element | querySelector all */
 qs = (element, all) => {
   return !all ? document.querySelector(element) : document.querySelectorAll(element);
 },
-// https://stackoverflow.com/a/53269990/9872174
-waitFor = async selector => {
-  while ( qs(selector) === null) {
-    await new Promise( resolve =>  requestAnimationFrame(resolve) )
-  }
-  return qs(selector);
-},
-/** Event Listener | Callback Function | Element */
-ael = (event, callback, elm = document) => {
-  return elm.addEventListener(event, callback);
-},
-/**
- * Will inject CSS into the head of the document.
- * Each CSS starts with the following IDs: #tet-${common/foreign}
- * @param {string} css
- * @param {string} name
- */
-injectCSS = (css, name = "common") => {
-  return document.head.insertAdjacentHTML('beforeend', `<style id="tet-${name}">${css}</style>`);
-},
-// Automatically hides the SVG after 5 seconds.
-autoHide = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-  $('svg#tetSVG').hide();
-},
-/**
- * @param {Node} elm
- * @param {MutationCallback} callback
- * @param {MutationObserverInit} options
- */
-TETObserve = (elm, callback, options = {subtree:true,childList:true}) => {
-  let observer = new MutationObserver(callback);
-  callback([], observer);
-  observer.observe(elm, options);
-  return observer;
-},
-// Saves the Config to localStorage.
-TETSave = (key = "Config", value = JSON.stringify(TETConfig)) => {
-  GM.setValue(key, value);
-  localStorage.TETConfig = value;
-},
-lh = document.location.host,
-lr = document.location.href,
+defaultDesc = "Pretend I'm a foreign language.",
+lh = window.location.host,
+lr = window.location.href,
 find = {
+  hider: (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(lr)),
+  logout: (!document.cookie.includes("twid")),
   twitter: (lh === "twitter.com" || lh === "mobile.twitter.com"),
   tweetdeck: (lh === "tweetdeck.twitter.com"),
   twitlonger: (lh === "www.twitlonger.com"),
-  nitter: (/nitter/.test(lr) || lh === "twitr.gq" || lh === "birdsite.xanny.family")
-},
-TETInject = () => {
-  find.twitter ? waitFor("#react-root > div > div").then(selector => {TETObserve(selector, () => {Twitter()})}) :
-  find.tweetdeck ? waitFor("section.js-column > div").then(() => {
-    TETObserve(document.body, () => {TweetDeck()});
-    // TweetDeck()
-    waitFor(".js-modals-container").then(selector => {
-      TETObserve(selector, () => {
-        return (!$("#tet-bio").length && $('div.prf-header').length) ? TETBtnClick($('p.prf-bio').parent(),"auto",$('p.prf-bio').text(),"td-bio") : false;
-      });
-    });
-  }) :
-  find.twitlonger ? waitFor("#postcontent").then(TwitLonger()) :
-  find.nitter ? waitFor(".container").then(Nitter()) : false;
+  nitter: (/nitter|nittr|twitr|bird|hyper/.test(lr) ||
+  lh === "twitter.076.ne.jp" ||
+  lh === "twitter.censors.us"),
+  remover: (/begin_password_reset|logout|login|signin|signout/.test(lr)),
 },
 // Favicon from each website.
 // Each converted to "Data URI" as to prevent blocking.
-//https://www.apertium.org/index.eng.html#?dir=eng-epo&q=
 icons = {
   azure: 'data:image/vnd.microsoft.icon;base64,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',
   bing: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFzSURBVDhPrZDLSwJRGEfnXwiiRURkLnpQlNlUo4usQGgjkdXGhVtXPYiglUS1jTYRLtsVRRC1CMI0qEAokFQssBeRhY8ZTRwzK385w5VupKTQgbO4Z777wR2GRuMUvRpHcoYcy0d7kEJekspDs/eKvNxuKk5y6XDbb6AluXS49dxFSpJLp2ctA1qpdR0Cnc6PO3ngL7pt76CVGuvIQnX0jqaTFGrPYk55sBjsUhq0UlM7P5dbjtNQuhKocoeh9Dy45eFCqOdE0JLMNJ6KqDnnUe0JosN/X/zfqKYToCVZptIdMtfv3EB3dQ1j4LKX5J+0WnjQksxwy0F92+wjFOYb1E34QqaAt/CCBtMzaKWm34i+9K5EwFrDaLY8odZ4W/wJuoVwRGG4gyQ3GeQN9iQGNwX0rfLg5gW0j0fRaX2wk/HfjPiyFWP+LEYvPjDsykBesCVgwCZAuxiHaiquJKPFGfJl2e8FYm5BDP02YZ98/m8Y5gsM/AoQ7XCKzQAAAABJRU5ErkJggg==',
@@ -124,7 +61,7 @@ icons = {
   }
 },
 //#region Languages
-defaultLang = $("html").attr("lang"),
+defaultLang = qs("html").lang,
 languages = {
   en: {
     sel: `English (en)`,
@@ -133,6 +70,7 @@ languages = {
     tr: `Translator`,
     ds: `Display`,
     menu: `Menu`,
+    ao: `Auto`,
     th: `Theme`,
     df: `Default`,
     di: `Dim`,
@@ -146,11 +84,9 @@ languages = {
     cg: `Green`,
     t: `Text`,
     i: `Icon`,
-    ti: `Text + Icon`,
     res: `Restore to Defaults`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: `More info found on GitHub.`,
+      language: `Website Language`,
       display: `Prefer text only? How about just an icon instead?`,
       color: `A rainbow of choices.`,
       theme: `It's best to match your current theme!`,
@@ -169,8 +105,8 @@ languages = {
     lg: `语种`,
     tr: `译者`,
     ds: `显示`,
-    ti: `文本+图标`,
     menu: `菜单`,
+    ao: `自动的`,
     th: `主题`,
     df: `默认情况下`,
     di: `凹陷`,
@@ -186,8 +122,7 @@ languages = {
     i: `图标`,
     res: `恢复`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `网站语言`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -206,8 +141,8 @@ languages = {
     lg: `Език`,
     tr: `Преводач`,
     ds: `Показване на`,
-    ti: `Текст + икона`,
     menu: `Меню`,
+    ao: `Автоматичен`,
     th: `Тема`,
     df: `По подразбиране`,
     di: `Dim`,
@@ -223,8 +158,7 @@ languages = {
     i: `Икона`,
     res: `Възстановявам`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Език на сайта`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -243,8 +177,8 @@ languages = {
     lg: `Jazyk`,
     tr: `Překladatel`,
     ds: `Zobrazit`,
-    ti: `Text + ikona`,
     menu: `Nabídka`,
+    ao: `Automatické`,
     th: `Téma`,
     df: `Výchozí`,
     di: `Dim`,
@@ -260,8 +194,7 @@ languages = {
     i: `Ikona`,
     res: `Obnovit`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Jazyk stránek`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -280,8 +213,8 @@ languages = {
     lg: `Sprog`,
     tr: `Oversætter`,
     ds: `Vis`,
-    ti: `Tekst + ikon`,
     menu: `Menu`,
+    ao: `Automatisk`,
     th: `Tema`,
     df: `Standard`,
     di: `Dim`,
@@ -297,8 +230,7 @@ languages = {
     i: `Ikon`,
     res: `Genskabe`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Sprog på webstedet`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -317,8 +249,8 @@ languages = {
     lg: `Keel`,
     tr: `Tõlkija`,
     ds: `Kuva`,
-    ti: `Tekst + ikoon`,
     menu: `Menüü`,
+    ao: `Automaatne`,
     th: `Teema`,
     df: `Vaikimisi`,
     di: `Dim`,
@@ -334,8 +266,7 @@ languages = {
     i: `Ikoon`,
     res: `Taastada`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Saidi keel`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -354,8 +285,8 @@ languages = {
     lg: `Kieli`,
     tr: `Kääntäjä`,
     ds: `Näytä`,
-    ti: `Teksti + kuvake`,
     menu: `Valikko`,
+    ao: `Automaattinen`,
     th: `Teema`,
     df: `Oletus`,
     di: `Dim`,
@@ -371,8 +302,7 @@ languages = {
     i: `Kuvake`,
     res: `Palauta`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Sivuston kieli`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -391,8 +321,8 @@ languages = {
     lg: `Γλώσσα`,
     tr: `Μεταφραστής`,
     ds: `Εμφάνιση`,
-    ti: `Κείμενο + εικονίδιο`,
     menu: `Μενού`,
+    ao: `Αυτόματο`,
     th: `Θέμα`,
     df: `Προεπιλογή`,
     di: `Dim`,
@@ -408,8 +338,7 @@ languages = {
     i: `Εικονίδιο`,
     res: `Επαναφορά`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Γλώσσα ιστότοπου`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -428,8 +357,8 @@ languages = {
     lg: `Nyelv`,
     tr: `Fordító`,
     ds: `Megjelenítés`,
-    ti: `Szöveg + ikon`,
     menu: `Menü`,
+    ao: `Automatikus`,
     th: `Téma`,
     df: `Alapértelmezett`,
     di: `Dim`,
@@ -445,8 +374,7 @@ languages = {
     i: `Ikon`,
     res: `Visszaállítása`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Az oldal nyelve`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -465,8 +393,8 @@ languages = {
     lg: `Valoda`,
     tr: `Tulkotājs`,
     ds: `Displejs`,
-    ti: `Teksts + ikona`,
     menu: `Izvēlne`,
+    ao: `Automātiskais`,
     th: `Tēma`,
     df: `Noklusējuma`,
     di: `Dim`,
@@ -482,8 +410,7 @@ languages = {
     i: `Ikona`,
     res: `Atjaunot`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Vietnes valoda`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -502,8 +429,8 @@ languages = {
     lg: `Kalba`,
     tr: `Vertėjas`,
     ds: `Rodyti`,
-    ti: `Tekstas + piktograma`,
     menu: `Meniu`,
+    ao: `Automatinis`,
     th: `Tema`,
     df: `Numatytoji`,
     di: `Dim`,
@@ -519,8 +446,7 @@ languages = {
     i: `Ikona`,
     res: `Atkurti`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Svetainės kalba`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -539,8 +465,8 @@ languages = {
     lg: `Limba`,
     tr: `Traducător`,
     ds: `Afișați`,
-    ti: `Text + Icoană`,
     menu: `Meniu`,
+    ao: `Automat`,
     th: `Tema`,
     df: `Implicit`,
     di: `Dim`,
@@ -556,8 +482,7 @@ languages = {
     i: `Icoană`,
     res: `Restaurați`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Limba site-ului`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -576,8 +501,8 @@ languages = {
     lg: `Jazyk`,
     tr: `Prekladateľ`,
     ds: `Zobraziť`,
-    ti: `Text + ikona`,
     menu: `Ponuka`,
+    ao: `Automatické`,
     th: `Téma`,
     df: `Predvolené nastavenie`,
     di: `Dim`,
@@ -593,8 +518,7 @@ languages = {
     i: `Ikona`,
     res: `Obnovenie`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Jazyk stránky`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -613,8 +537,8 @@ languages = {
     lg: `Jezik`,
     tr: `Prevajalec`,
     ds: `Prikaži`,
-    ti: `Besedilo + ikona`,
     menu: `Meni`,
+    ao: `Samodejno`,
     th: `Tema`,
     df: `Privzeto`,
     di: `Dim`,
@@ -630,8 +554,7 @@ languages = {
     i: `Ikona`,
     res: `Obnovitev`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Jezik spletnega mesta`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -650,8 +573,8 @@ languages = {
     lg: `Språk`,
     tr: `Översättare`,
     ds: `Visa`,
-    ti: `Text + ikon`,
     menu: `Meny`,
+    ao: `Automatisk`,
     th: `Tema`,
     df: `Standard`,
     di: `Dim`,
@@ -667,8 +590,7 @@ languages = {
     i: `Ikon`,
     res: `Återställ`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Språk på webbplatsen`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -687,8 +609,8 @@ languages = {
     lg: `Taal`,
     tr: `Vertaler`,
     ds: `Weergave`,
-    ti: `Tekst + Pictogram`,
     menu: `Menu`,
+    ao: `Automatisch`,
     th: `Thema`,
     df: `Standaard`,
     di: `Dimmen`,
@@ -704,8 +626,7 @@ languages = {
     i: `Icoon`,
     res: `Herstel`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Taal van de site`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -724,8 +645,8 @@ languages = {
     lg: `Langue`,
     tr: `Traducteur`,
     ds: `Afficher`,
-    ti: `Texte + Icône`,
     menu: `Menu`,
+    ao: `Automatique`,
     th: `Thème`,
     df: `Défaut`,
     di: `Dim`,
@@ -741,8 +662,7 @@ languages = {
     i: `Icône`,
     res: `Restaurer`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Langue du site`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -761,8 +681,8 @@ languages = {
     lg: `Sprache`,
     tr: `Übersetzer`,
     ds: `Anzeige`,
-    ti: `Text + Symbol`,
     menu: `Menü`,
+    ao: `Automatisch`,
     th: `Thema`,
     df: `Standard`,
     di: `Dimmen`,
@@ -778,8 +698,7 @@ languages = {
     i: `Icon`,
     res: `Wiederherstellen`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Sprache der Website`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -798,8 +717,8 @@ languages = {
     lg: `Lingua`,
     tr: `Traduttore`,
     ds: `Visualizza`,
-    ti: `Testo + icona`,
     menu: `Menu`,
+    ao: `Automatico`,
     th: `Tema`,
     df: `Default`,
     di: `Dim`,
@@ -815,8 +734,7 @@ languages = {
     i: `Icona`,
     res: `Ripristinare`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Lingua del sito`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -835,8 +753,8 @@ languages = {
     lg: `言語`,
     tr: `翻訳者`,
     ds: `ディスプレイ`,
-    ti: `テキスト＋アイコン`,
     menu: `メニュー`,
+    ao: `自動`,
     th: `テーマ`,
     df: `デフォルト`,
     di: `暗い`,
@@ -852,8 +770,7 @@ languages = {
     i: `アイコン`,
     res: `リストア`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `サイトの言語`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -872,8 +789,8 @@ languages = {
     lg: `Język`,
     tr: `Tłumacz`,
     ds: `Wyświetlacz`,
-    ti: `Tekst + Ikona`,
     menu: `Menu`,
+    ao: `Automatyczny`,
     th: `Motyw`,
     df: `Domyślnie`,
     di: `Ściemniaj`,
@@ -889,8 +806,7 @@ languages = {
     i: `Ikona`,
     res: `Przywróć`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Język strony`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -909,8 +825,8 @@ languages = {
     lg: `Idioma`,
     tr: `Tradutora`,
     ds: `Mostrar`,
-    ti: `Texto + Ícone`,
     menu: `Menu`,
+    ao: `Automático`,
     th: `Tema`,
     df: `Por defeito`,
     di: `Dim`,
@@ -926,8 +842,7 @@ languages = {
     i: `Ícone`,
     res: `Restaurar`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Idioma do sítio`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -946,8 +861,8 @@ languages = {
     lg: `Язык`,
     tr: `Переводчик`,
     ds: `Показать`,
-    ti: `Текст + иконка`,
     menu: `Меню`,
+    ao: `Автоматический`,
     th: `Тема`,
     df: `По умолчанию`,
     di: `Приглушить`,
@@ -963,8 +878,7 @@ languages = {
     i: `иконка`,
     res: `Восстановить`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Язык сайта`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -983,8 +897,8 @@ languages = {
     lg: `Idioma`,
     tr: `Traductor`,
     ds: `Mostrar`,
-    ti: `Texto + Icono`,
     menu: `Menú`,
+    ao: `Automático`,
     th: `Tema`,
     df: `Por defecto`,
     di: `Atenuar`,
@@ -1000,8 +914,7 @@ languages = {
     i: `Icono`,
     res: `Restaurar`,
     desc: {
-      language: `Site Language: ${defaultLang}`,
-      translate: ` [WIP] Translate`,
+      language: `Idioma del sitio`,
       display: ` [WIP] Display`,
       color: ` [WIP] Color`,
       theme: ` [WIP] Theme`,
@@ -1016,157 +929,226 @@ languages = {
   },
 },
 //#endregion
-// Will restore the theme depending on the current site.
-defaultTheme = () => {
-  return find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.nitter ? "nitter" : find.twitlonger ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)";
-},
-defaultDesc = "Pretend I'm a foreign language.",
-deeplfn = () => {
-  return (this.api.version == "api-pro") ? 'api' : 'api-free';
-};
+deeplfn = () => (this.api.version == "api-pro") ? 'api' : 'api-free';
 let TETConfig = {},
-DefaultConfig = {
-  lang: defaultLang,
-  translator: 'deepl',
-  display: "text + icon",
-  colors: "r-urgr8i",
-  theme: defaultTheme(),
-  api: {
-    deepl: "",
-    google: "",
-    libre: "",
-    version: "api-free",
+autoTheme = find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
+cBG = "rgba(91, 112, 131, 0.4)",
+cColor = "r-p1n3y5 r-1bih22f",
+cHover = "r-1q3imqu",
+cText = "r-jwli3a",
+cTheme = "r-kemksi",
+cSub = "r-13gxpu9",
+tet = {
+  /**
+  * addEventListener
+  * @param {Options|string} event - Event type
+  * @param {Function} callback - Callback function
+  * @param {string} elm - Element
+  */
+  ael(event, callback, elm = document) {
+    return elm.addEventListener(event, callback);
   },
-  url: {
-    bing: "https://www.bing.com",
-    bingIT: "",
-    deepl: "https://www.deepl.com",
-    deeplIT: `https://${deeplfn}.deepl.com`,
-    google: "https://translate.google.com",
-    googleIT: "https://translation.googleapis.com",
-    libre: "https://libretranslate.de/translate",
-    lingva: "https://lingva.ml",
-    mymemory: "https://mymemory.translated.net",
-    mymemoryIT: "https://api.mymemory.translated.net",
-    translate: "https://www.translate.com",
-    translateIT: "",
-    yandex: "https://translate.yandex.com",
-    yandexIT: "",
+  defaultcfg: {
+    debug: /Dev/.test(tetInfo.name),
+    lang: defaultLang,
+    translator: 'deepl',
+    display: "text + icon",
+    colors: "r-urgr8i",
+    theme: "auto",
+    api: {
+      deepl: "",
+      google: "",
+      libre: "",
+      version: "api-free",
+    },
+    url: {
+      bing: "https://www.bing.com",
+      bingIT: "",
+      deepl: "https://www.deepl.com",
+      deeplIT: `https://${deeplfn}.deepl.com`,
+      google: "https://translate.google.com",
+      googleIT: "https://translation.googleapis.com",
+      libre: "https://libretranslate.de/translate",
+      lingva: "https://lingva.ml",
+      mymemory: "https://mymemory.translated.net",
+      mymemoryIT: "https://api.mymemory.translated.net",
+      translate: "https://www.translate.com",
+      translateIT: "",
+      yandex: "https://translate.yandex.com",
+      yandexIT: "",
+    },
   },
-  cBG: 'rgba(91, 112, 131, 0.4)',
-  cColor: "r-p1n3y5 r-1bih22f",
-  cHover: "r-1q3imqu",
-  cDisplay: `DeepL ${icons.fn().deepl}`, // Configured display of translator
-  cLang: languages.en.tw, // "Translate with ..."
-  cText: "r-jwli3a",
-  cTheme: "r-kemksi",
-  cSub: "r-13gxpu9"
-},
-fetchURL = async (url,content,source) => {
-  let res = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      q: `${content}`,
-      source: `${source}`,
-      target: `${TETConfig.lang}`,
-      api_key: `${TETConfig.api.libre}`
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  },
+  /** Waits until `args` return true */
+  async check(args) {
+    while (args) {
+      await new Promise( resolve =>  requestAnimationFrame(resolve) )
+    }
+    return args;
+  },
+  each(elm, context, callback) {
+    for (let i = 0; i < elm.length; i++) {
+      (!callback) ? elm.addClass(context) : (
+        tet.ael("mouseenter", callback, elm[i]),
+        tet.ael("mouseleave", callback, elm[i]) );
+    };
+  },
+  /** Error handling for userscript */
+  err(...error) {
+    console.error('[%cTET%c] %cERROR', 'color: rgb(29, 155, 240);', '', 'color: rgb(249, 24, 128);', ...error);
+    handleError();
+  },
+  async fetchURL(url,content,source) {
+    let res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        q: `${content}`,
+        source: `${source}`,
+        target: `${TETConfig.lang}`,
+        api_key: `${TETConfig.api.libre}`
+      }),
+      headers: { "Content-Type": "application/json" }
     }),
-    headers: { "Content-Type": "application/json" }
-  }),
-  r = await res.json();
-  return Promise.resolve(r);
+    r = await res.json();
+    return Promise.resolve(r);
+  },
+  getURL(url, responseType = 'json', retry = 3) {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: 'GET',
+        url,
+        responseType,
+        onerror: e => {
+          (retry === 0) ? reject(e) : (
+            this.err('Network error, retry.'),
+            setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),1000)
+          );
+        },
+        onload: ({ status, response }) => {
+          (status === 200) ? resolve(response) :
+          (retry === 0) ? reject(`${status} ${url}`) : (
+            this.log(status, url),
+            setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),500)
+          );
+        },
+      });
+    })
+  },
+  halt(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  },
+  /** Information handling for userscript */
+  info(...message) {
+    if(!TETConfig.debug) {
+      return;
+    };
+    console.info('[%cTET%c] %cINF', 'color: rgb(29, 155, 240);', '', 'color: rgb(0, 186, 124);', ...message);
+  },
+  /**
+  * Will inject CSS into the head of the document.
+  * @param {string} css - The CSS to inject
+  * @param {string} name - Each CSS starts with the following IDs: #tet-${common/foreign/etc}
+  */
+  loadCSS(css, name = "common") {
+    document.head.insertAdjacentHTML('beforeend', `<style id="tet-${name}">${css}</style>`);
+  },
+  /** Log handling for userscript */
+  log(...message) {
+    if(!TETConfig.debug) {
+      return;
+    };
+    console.log('[%cTET%c] %cDBG', 'color: rgb(29, 155, 240);', '', 'color: rgb(255, 212, 0);', ...message);
+  },
+  /**
+  * @param {Node} element
+  * @param {MutationCallback} callback
+  * @param {MutationObserverInit} options
+  */
+  observe(element, callback, options = {subtree:true,childList:true}) {
+    let observer = new MutationObserver(callback);
+    callback([], observer);
+    observer.observe(element, options);
+    return observer;
+  },
+  /**
+   * Waits until querySelector(`element`) exists
+   * @source {@link https://stackoverflow.com/a/53269990/9872174}
+   */
+  async query(element) {
+    while ( document.querySelector(element) === null) {
+      await new Promise( resolve =>  requestAnimationFrame(resolve) )
+    };
+    return document.querySelector(element);
+  },
+  /** Saves the Config to localStorage */
+  save() {
+    GM_setValue("Config", JSON.stringify(TETConfig));
+    localStorage.TETConfig = JSON.stringify(TETConfig);
+  },
 },
-get = (url, responseType = 'json', retry = 3) =>
-new Promise((resolve, reject) => {
-  try {
-    GM_xmlhttpRequest({
-      method: 'GET',
-      url,
-      responseType,
-      onerror: e => {
-        (retry === 0) ? reject(e) : (
-          log('Network error, retry.'),
-          setTimeout(() => {
-            resolve(get(url, responseType, retry - 1));
-          }, 1000)
-        );
-      },
-      onload: ({ status, response }) => {
-        (status === 200) ? resolve(response) :
-        (retry === 0) ? reject(`${status} ${url}`) : (
-          log(status, url),
-          setTimeout(() => {
-            resolve(get(url, responseType, retry - 1));
-          }, 500)
-        );
-      },
-    });
-  } catch (error) {
-    reject(error);
-  }
-}),
-tetEach = (elm, context, callback) => {
-  for (let i = 0; i < elm.length; i++) {
-    (!callback) ? elm.addClass(context) : (
-      ael("mouseenter", callback, elm[i]),
-      ael("mouseleave", callback, elm[i]) );
-  };
-},
-sidebar = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetDisplayColor css-901oao tetBtn" type="button">
+menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetDisplayColor css-901oao tetBtn" type="button">
 <svg viewBox="0 0 24 24" id="tetSVG" class="tetTextColor" width="15">
   <g>
     <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm8.472 9.442c-.242.19-.472.368-.63.486-.68-1.265-1.002-1.78-1.256-2.007-.163-.145-.37-.223-.78-.375-.367-.136-1.482-.55-1.65-.85-.087-.153.136-.602.23-.793.088-.177.164-.33.196-.497.123-.646-.33-1.146-.728-1.59-.066-.072-.153-.17-.23-.26.335-.12.862-.26 1.42-.384 1.95 1.448 3.26 3.704 3.428 6.272zm-9.788-7.83c.076.25.145.5.182.678-.255.15-.663.363-.96.52-.262.136-.522.273-.738.392-.247.137-.442.234-.6.313-.347.174-.598.3-.833.553-.068.073-.26.278-1.02 1.886l-1.79-.656c1.293-1.94 3.362-3.31 5.76-3.685zM12 20.5c-4.687 0-8.5-3.813-8.5-8.5 0-1.197.25-2.335.7-3.37.47.182 1.713.66 2.75 1.035-.107.336-.245.854-.26 1.333-.03.855.502 1.7.562 1.792.053.08.12.15.2.207.303.21.687.5.827.616.063.343.166 1.26.23 1.833.144 1.266.175 1.48.24 1.65.005.012.514 1.188 1.315 1.188.576-.003.673-.206 1.855-2.688.244-.512.45-.95.513-1.058.1-.144.597-.61.87-.83.55-.442.76-1.82.413-2.682-.335-.83-1.92-2.08-2.5-2.195-.17-.033-.43-.04-.953-.053-.497-.01-1.25-.028-1.536-.09-.098-.024-.314-.094-.605-.196.32-.668.627-1.28.71-1.4.05-.052.168-.112.408-.234.17-.086.383-.192.653-.34.208-.116.458-.247.71-.38 1.168-.612 1.484-.8 1.658-1.082.11-.177.263-.44-.04-1.544 1.042.027 2.038.24 2.955.61-.89.32-1.024.595-1.106.77-.367.784.256 1.475.667 1.93.096.107.24.268.32.38l-.017.036c-.234.472-.67 1.35-.196 2.194.406.72 1.384 1.13 2.437 1.52.134.05.25.092.33.126.16.208.496.79 1 1.735l.154.285c.078.14.33.505.842.505.167 0 .363-.04.59-.137.032-.013.083-.035.18-.094C19.72 17.405 16.22 20.5 12 20.5zm-3.812-9.45c.01-.285.102-.646.184-.907l.027.006c.397.09 1.037.11 1.83.13.32.006.59.008.615 0 .326.143 1.355 1 1.483 1.31.113.28.05.812-.034 1.01-.233.197-.845.735-1.085 1.078-.093.13-.212.373-.64 1.274-.133.276-.313.654-.488 1.013-.026-.225-.054-.472-.08-.686-.225-2.003-.273-2.22-.42-2.445-.05-.078-.202-.31-1.135-.973-.117-.213-.268-.564-.26-.813z"></path>
   </g>
-</svg><span class="css-901oao css-16my406 r-bcqeeobuttontc0 r-jwli3a">${languages.en.menu}</span></button>
-<div role="dialog" id="tetTW" class="btNav css-1dbjc4n r-1awozwy r-18u37iz r-1777fci r-ipm5af r-g6jmlv">
+</svg><span class="css-901oao">${languages.en.menu}</span></button>
+<div role="dialog" id="tetTW" class="btNav css-1dbjc4n" style="z-index: -1 !important;">
 <div class="navbackground rm"></div>
 <div class="tetAlert rm css-1dbjc4n">
   <div class="tetConfirmation tetBackground css-1dbjc4n">
-    <h1 class="tetAlertTxt tetTextColor css-4rbku5 css-901oao"><span class="tet-alert-head css-901oao css-16my406">${languages.en.quest.head}</span></h1>
-    <div class="tetAlertTxt tetTextColor css-901oao"><span class="tet-alert-span css-901oao css-16my406">${languages.en.quest.body}</span></div>
+    <h1 class="tetAlertTxt tetTextColor css-901oao"><span class="tet-alert-head css-901oao">${languages.en.quest.head}</span></h1>
+    <div class="tetAlertTxt tetTextColor css-901oao"><span class="tet-alert-span css-901oao">${languages.en.quest.body}</span></div>
     <div class="css-1dbjc4n">
-      <div class="tetAlertBtns confirm css-18t94o4 css-1dbjc4n tetBtn" style="background-color: rgb(239, 243, 244);" data-testid="confirmationSheetConfirm">
+      <div class="tetAlertBtns confirm css-1dbjc4n tetBtn" style="background-color: rgb(239, 243, 244);" data-testid="confirmationSheetConfirm">
         <div class="css-901oao" style="color: rgb(15, 20, 25);"><span><span class="tet-confirm">${languages.en.quest.yes}</span></span></div>
       </div>
-      <div class="tetAlertBtns deny tetDisplayColor css-18t94o4 css-1dbjc4n tetBtn" data-testid="confirmationSheetCancel">
+      <div class="tetAlertBtns deny tetDisplayColor css-1dbjc4n tetBtn" data-testid="confirmationSheetCancel">
         <div class="css-901oao" style="color: rgb(239, 243, 244);"><span><span class="tet-deny">${languages.en.quest.no}</span></span></div>
       </div>
     </div>
   </div>
 </div>
-<div id="tetForm" class="rm css-1dbjc4n" aria-modal="true">
-  <div class="tetBackground css-1dbjc4n r-16y2uox r-1wbh5a2">
+<div id="tetForm" class="rm css-1dbjc4n">
+  <div class="tetBackground css-1dbjc4n">
     <div class="tetTextColor css-901oao tet-header">
-      <span class="css-901oao">${tetInfo.name} Config</span>
+      <span class="tet-info-name">${tetInfo.name} Settings</span>
       <span class="tetTextColor tet-info">v${tetInfo.version}</span>
     </div>
     <div class="css-1dbjc4n tet-main">
-      <div class="demo-TW r-demo css-1dbjc4n">
+      <div class="tetBackground r-demo css-1dbjc4n">
         <div class="tet-av css-1dbjc4n">
-          <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 100%;"></div>
           <div class="tetAvatarFrame">
             <div id="tetAvatar"></div>
           </div>
         </div>
         <div class="css-1dbjc4n tet-txt">
           <div class="css-1dbjc4n txt-header">
-            <div class="css-1dbjc4n r-1awozwy r-18u37iz r-1wbh5a2 r-dnmrzs r-1ny4l3l">
-              <div class="css-1dbjc4n r-1awozwy r-18u37iz r-dnmrzs">
-                <div class="tetTextColor css-901oao css-bfa6kz r-1fmj7o5 r-1qd0xha r-a023e6 r-b88u0q r-rjixqe r-bcqeeo r-1udh08x r-3s2u2q r-qvutc0"><span class="css-901oao css-16my406"><span class="css-901oao css-16my406">${tetInfo.name}</span></span></div>
+            <div class="css-1dbjc4n txt-s0pan">
+              <div class="css-1dbjc4n txt-s1pan">
+                <div class="tetTextColor css-901oao">
+                  <span class="css-901oao">
+                    <span class="css-901oao">${tetInfo.name}</span>
+                  </span>
+                </div>
               </div>
-              <div class="tet-at css-901oao css-bfa6kz" dir="ltr"><span class="css-901oao css-16my406">@for_lollipops</span></div>
+              <div class="tet-at css-901oao"><span class="css-901oao">@for_lollipops</span></div>
             </div>
           </div>
-          <div class="tetTextColor css-901oao r-1fmj7o5 r-1qd0xha r-a023e6 r-16dba41 r-rjixqe r-bcqeeo r-bnwqim r-qvutc0"><span class="css-901oao css-16my406 tet-demotext">${defaultDesc}</span></div>
+          <div class="tetTextColor css-901oao tet-dc"><span class="css-901oao tet-demotext">${defaultDesc}</span></div>
           <div id="tetDemo" class="css-901oao"></div>
         </div>
       </div>
       <div class="css-1dbjc4n tet-options">
-        <div id="tetSelector" class="tetBackground css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">${languages.en.lg}</span></div>
-          <select id="languages" name="languages" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground css-1dbjc4n">
+          <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.lg}</span></div>
+          <select id="languages" name="languages" class="tetTextColor">
             <option class="tetBackground" value="en">${languages.en.sel}</option>
             <option class="tetBackground" value="es">${languages.es.sel}</option>
+            <option class="tetBackground" value="ja">${languages.ja.sel}</option>
+            <option class="tetBackground" value="ru">${languages.ru.sel}</option>
             <option class="tetBackground" value="zh">${languages.zh.sel}</option>
             <option class="tetBackground" value="bg">${languages.bg.sel}</option>
             <option class="tetBackground" value="cs">${languages.cs.sel}</option>
@@ -1178,22 +1160,20 @@ sidebar = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini t
             <option class="tetBackground" value="fr">${languages.fr.sel}</option>
             <option class="tetBackground" value="hu">${languages.hu.sel}</option>
             <option class="tetBackground" value="it">${languages.it.sel}</option>
-            <option class="tetBackground" value="ja">${languages.ja.sel}</option>
             <option class="tetBackground" value="lv">${languages.lv.sel}</option>
             <option class="tetBackground" value="lt">${languages.lt.sel}</option>
             <option class="tetBackground" value="nl">${languages.nl.sel}</option>
             <option class="tetBackground" value="pl">${languages.pl.sel}</option>
             <option class="tetBackground" value="pt">${languages.pt.sel}</option>
             <option class="tetBackground" value="ro">${languages.ro.sel}</option>
-            <option class="tetBackground" value="ru">${languages.ru.sel}</option>
             <option class="tetBackground" value="sk">${languages.sk.sel}</option>
             <option class="tetBackground" value="sl">${languages.sl.sel}</option>
             <option class="tetBackground" value="sv">${languages.sv.sel}</option>
           </select>
         </div>
-        <div id="tetSelector" class="tetBackground css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao  r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">${languages.en.tr}</span></div>
-          <select id="translator" name="translator" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground css-1dbjc4n">
+          <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.tr}</span></div>
+          <select id="translator" name="translator" class="tetTextColor">
             <optgroup class="tetBackground" label="External Translators ⤴">
               <option class="tetBackground" value="bing">Bing Translate</option>
               <option class="tetBackground" value="deepl">DeepL Translator ✨</option>
@@ -1215,17 +1195,17 @@ sidebar = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini t
             </optgroup>
           </select>
         </div>
-        <div id="tetSelector" class="tetBackground css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao  r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">${languages.en.ds}</span></div>
-          <select id="display" name="display" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground css-1dbjc4n">
+          <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.ds}</span></div>
+          <select id="display" name="display" class="tetTextColor">
             <option class="tetBackground" value="text + icon">Text + Icon</option>
-            <option class="tetBackground" value="text">Text Only</option>
-            <option class="tetBackground" value="icon">Icon Only</option>
+            <option class="tetBackground" value="text">${languages.en.t}</option>
+            <option class="tetBackground" value="icon">${languages.en.i}</option>
           </select>
         </div>
-        <div id="tetSelector" class="tetBackground css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao  r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">${languages.en.col}</span></div>
-          <select id="colorselect" name="colorselect" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground css-1dbjc4n">
+          <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.col}</span></div>
+          <select id="colorselect" name="colorselect" class="tetTextColor">
             <optgroup class="tetBackground" label="Twitter">
               <option class="tetBackground" value="r-urgr8i">${languages.en.cb}</option>
               <option class="tetBackground" value="r-1vkxrha">${languages.en.cy}</option>
@@ -1239,24 +1219,25 @@ sidebar = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini t
             </optgroup>
           </select>
         </div>
-        <div id="tetSelector" class="tetBackground css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao  r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">${languages.en.th}</span></div>
-          <select id="theme" name="theme" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground css-1dbjc4n">
+          <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.th}</span></div>
+          <select id="theme" name="theme" class="tetTextColor">
             <optgroup class="tetBackground" label="Twitter">
               <option class="tetBackground" value="rgb(255, 255, 255)">${languages.en.df}</option>
               <option class="tetBackground" value="rgb(21, 32, 43)">${languages.en.di}</option>
               <option class="tetBackground" value="rgb(0, 0, 0)">${languages.en.lo}</option>
             </optgroup>
             <optgroup class="tetBackground" label="Misc">
+              <option class="tetBackground" value="auto">${languages.en.ao}</option>
               <option class="tetBackground" value="tweetdeck">TweetDeck</option>
               <option class="tetBackground" value="nitter">Nitter</option>
             </optgroup>
           </select>
         </div>
         <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields deepl css-1dbjc4n r-16xksha">
-        <div id="tetSelector" class="tetBackground tetFields deepl css-1dbjc4n r-16xksha r-1kqtdi0">
-          <div id="tetName" class="css-901oao r-1qd0xha r-n6v787 r-16dba41 r-1cwl3u0 r-bcqeeo r-1pn2ns4 r-tskmnb r-633pao r-u8s1d r-qvutc0"><span class="css-901oao">Version</span></div>
-          <select id="api-version" name="api-version" class="tetTextColor r-30o5oe r-1niwhzg r-17gur6a r-1yadl64 r-1loqt21 r-1qd0xha r-a023e6 r-rjixqe r-crgep1 r-t60dpp r-1pn2ns4 r-ttdzmv">
+        <div id="tetSelector" class="tetBackground tetFields deepl css-1dbjc4n">
+          <div id="tetName" class="css-901oao"><span class="css-901oao">Version</span></div>
+          <select id="api-version" name="api-version" class="tetTextColor">
             <option class="tetBackground" value="api-free">Free</option>
             <option class="tetBackground" value="api-pro">Pro</option>
           </select>
@@ -1268,11 +1249,62 @@ sidebar = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini t
         <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields google css-1dbjc4n r-16xksha">
         <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields bing css-1dbjc4n r-16xksha">
       </div>
-      <button id="tetReset" class="tetDisplayColor css-901oao r-poiln3 r-jwli3a tetBtn" type="button">Defaults</button>
+      <button id="tetReset" class="tetDisplayColor css-901oao r-jwli3a tetBtn" type="button">Defaults</button>
     </div>
   </div>
 </div>
-</div>`;
+<div id="tethelper" class="rm css-1dbjc4n">
+  <div class="tetBackground css-1dbjc4n">
+    <div class="tetTextColor css-901oao tet-header">
+      <span class="tet-info-name css-901oao">Help</span>
+    </div>
+    <div class="css-1dbjc4n tet-main tetTextColor tet-container tethelper-container">
+      <span id="tetName" class="css-901oao tethelper-header tetlg">${languages.en.lg}</span>
+      <span id="tetName" class="css-901oao tethelper-info tetlg">${languages.en.desc.translate}</span>
+      <span id="tetName" class="css-901oao tethelper-header tettr">${languages.en.tr}</span>
+      <span id="tetName" class="css-901oao tethelper-info tettr">https://github.com/magicoflolis/twitter-translator#supported</span>
+      <span id="tetName" class="css-901oao tethelper-header tetds">${languages.en.ds}</span>
+      <span id="tetName" class="css-901oao tethelper-info tetds"></span>
+      <span id="tetName" class="css-901oao tethelper-header tetcol">${languages.en.col}</span>
+      <span id="tetName" class="css-901oao tethelper-info tetcol"></span>
+      <span id="tetName" class="css-901oao tethelper-header tetth">${languages.en.th}</span>
+      <span id="tetName" class="css-901oao tethelper-info tetth"></span>
+      <span id="tetName" class="css-901oao tethelper-header tetlink">Link</span>
+      <span id="tetName" class="css-901oao tethelper-info tetlink">Allows user to edit chosen url.</span>
+      <span id="tetName" class="css-901oao tethelper-info tetexample">Example:</span>
+      <span id="tetName" class="css-901oao tethelper-info">https://translate.google.com => https://translate.google.co.uk</span>
+      <span id="tetName" class="css-901oao tethelper-info">https://lingva.ml => https://translate.alefvanoon.xyz</span>
+    </div>
+  </div>
+</div>
+<div id="tetadvanced" class="rm css-1dbjc4n">
+  <div class="tetBackground css-1dbjc4n">
+    <div class="tetTextColor css-901oao tet-header">
+      <span class="tet-info-name css-901oao">Advanced Config</span>
+    </div>
+    <div class="css-1dbjc4n tet-main tet-container tetadvanced-container">
+      <section class="tetcheckbox">
+        <label class="tetTextColor">
+          <span>Console log</span>
+          <div class="tetswitch">
+            <input type="checkbox" name="debug" id="debug" />
+            <label for="debug"></label>
+          </div>
+        </label>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="rm tetadvanced-icon-container">
+  <svg viewBox="0 0 24 24" class="tetadvanced-icon tetTextColor"><g><path d="M12 8.21c-2.09 0-3.79 1.7-3.79 3.79s1.7 3.79 3.79 3.79 3.79-1.7 3.79-3.79-1.7-3.79-3.79-3.79zm0 6.08c-1.262 0-2.29-1.026-2.29-2.29S10.74 9.71 12 9.71s2.29 1.026 2.29 2.29-1.028 2.29-2.29 2.29z"></path><path d="M12.36 22.375h-.722c-1.183 0-2.154-.888-2.262-2.064l-.014-.147c-.025-.287-.207-.533-.472-.644-.286-.12-.582-.065-.798.115l-.116.097c-.868.725-2.253.663-3.06-.14l-.51-.51c-.836-.84-.896-2.154-.14-3.06l.098-.118c.186-.222.23-.523.122-.787-.11-.272-.358-.454-.646-.48l-.15-.014c-1.18-.107-2.067-1.08-2.067-2.262v-.722c0-1.183.888-2.154 2.064-2.262l.156-.014c.285-.025.53-.207.642-.473.11-.27.065-.573-.12-.795l-.094-.116c-.757-.908-.698-2.223.137-3.06l.512-.512c.804-.804 2.188-.865 3.06-.14l.116.098c.218.184.528.23.79.122.27-.112.452-.358.477-.643l.014-.153c.107-1.18 1.08-2.066 2.262-2.066h.722c1.183 0 2.154.888 2.262 2.064l.014.156c.025.285.206.53.472.64.277.117.58.062.794-.117l.12-.102c.867-.723 2.254-.662 3.06.14l.51.512c.836.838.896 2.153.14 3.06l-.1.118c-.188.22-.234.522-.123.788.112.27.36.45.646.478l.152.014c1.18.107 2.067 1.08 2.067 2.262v.723c0 1.183-.888 2.154-2.064 2.262l-.155.014c-.284.024-.53.205-.64.47-.113.272-.067.574.117.795l.1.12c.756.905.696 2.22-.14 3.06l-.51.51c-.807.804-2.19.864-3.06.14l-.115-.096c-.217-.183-.53-.23-.79-.122-.273.114-.455.36-.48.646l-.014.15c-.107 1.173-1.08 2.06-2.262 2.06zm-3.773-4.42c.3 0 .593.06.87.175.79.328 1.324 1.054 1.4 1.896l.014.147c.037.4.367.7.77.7h.722c.4 0 .73-.3.768-.7l.014-.148c.076-.842.61-1.567 1.392-1.892.793-.33 1.696-.182 2.333.35l.113.094c.178.148.366.18.493.18.206 0 .4-.08.546-.227l.51-.51c.284-.284.305-.73.048-1.038l-.1-.12c-.542-.65-.677-1.54-.352-2.323.326-.79 1.052-1.32 1.894-1.397l.155-.014c.397-.037.7-.367.7-.77v-.722c0-.4-.303-.73-.702-.768l-.152-.014c-.846-.078-1.57-.61-1.895-1.393-.326-.788-.19-1.678.353-2.327l.1-.118c.257-.31.236-.756-.048-1.04l-.51-.51c-.146-.147-.34-.227-.546-.227-.127 0-.315.032-.492.18l-.12.1c-.634.528-1.55.67-2.322.354-.788-.327-1.32-1.052-1.397-1.896l-.014-.155c-.035-.397-.365-.7-.767-.7h-.723c-.4 0-.73.303-.768.702l-.014.152c-.076.843-.608 1.568-1.39 1.893-.787.326-1.693.183-2.33-.35l-.118-.096c-.18-.15-.368-.18-.495-.18-.206 0-.4.08-.546.226l-.512.51c-.282.284-.303.73-.046 1.038l.1.118c.54.653.677 1.544.352 2.325-.327.788-1.052 1.32-1.895 1.397l-.156.014c-.397.037-.7.367-.7.77v.722c0 .4.303.73.702.768l.15.014c.848.078 1.573.612 1.897 1.396.325.786.19 1.675-.353 2.325l-.096.115c-.26.31-.238.756.046 1.04l.51.51c.146.147.34.227.546.227.127 0 .315-.03.492-.18l.116-.096c.406-.336.923-.524 1.453-.524z"></path></g></svg>
+</div>
+<div class="rm tet-icon-container">
+  <a class="tet-icon-info tetDisplayColor" title="Help">?</a>
+  <div class="rm tetBackground tet-help-container">
+    <a class="tet-help-info tetTextColor" href="${tetHelper}" target="_blank">Visit GitHub ⤴</a>
+  </div>
+</div></div>
+`;
 //#endregion
 //#region Site n Menu Fn
 function checkLng() {
@@ -1281,10 +1313,13 @@ function checkLng() {
     lg: this.lg,
     tr: this.tr,
     ds: this.ds,
-    ti: this.ti,
+    t: this.t,
+    i: this.i,
+    ti: `${this.t} + ${this.i}`,
     res: this.res,
     menu: this.menu,
     th: this.th,
+    ao: this.ao,
     df: this.df,
     di: this.di,
     lo: this.lo,
@@ -1295,10 +1330,7 @@ function checkLng() {
     cp: this.cp,
     co: this.co,
     cg: this.cg,
-    t: this.t,
-    i: this.i,
-    language: this.desc.language,
-    translate: this.desc.translate,
+    language: `${this.desc.language}: ${defaultLang}`,
     display: this.desc.display,
     color: this.desc.color,
     theme: this.desc.theme,
@@ -1308,110 +1340,111 @@ function checkLng() {
     no: this.quest.no
   }
 };
-function configDisplay(mode = "") {
-  let cDisplay,
-  dis = TETConfig.display,
-  tra = TETConfig.translator,
-  v = icons.fn();
-  if(dis === "text + icon") {
-    (tra == "lingvaIT" || tra == "lingva") ? (cDisplay = `Lingva Translate ${v.lingva}`) :
-    (tra == "libre") ? (cDisplay = `LibreTranslate ${v.libre}`) :
-    (tra == "bingIT") ? (cDisplay = `Azure Cognitive Services ${v.azure}`) :
-    (tra == "bing") ? (cDisplay = `Bing ${v.bing}`) :
-    (tra == "googleIT") ? (cDisplay = `Google Cloud ${v.gCloud}`) :
-    (tra == "google") ? (cDisplay = `Google ${v.google}`) :
-    (tra == "mymemory" || tra == "mymemoryIT") ? (cDisplay = `MyMemory ${v.mymemory}`) :
-    (tra == "translate" || tra == "translateIT") ? (cDisplay = `Translate.com ${v.translate}`) :
-    (tra == "yandex" || tra == "yandexIT") ? (cDisplay = `Yandex ${v.yandex}`) :
-    (cDisplay = `DeepL ${v.deepl}`);
-  } else if(dis === "icon") {
-    (tra == "lingva" || tra == "lingvaIT") ? (cDisplay = v.lingva) :
-    (tra == "libre") ? (cDisplay = v.libre) :
-    (tra == "bingIT") ? (cDisplay = v.azure) :
-    (tra == "bing") ? (cDisplay = v.bing) :
-    (tra == "googleIT") ? (cDisplay = v.gCloud) :
-    (tra == "google") ? (cDisplay = v.google) :
-    (tra == "mymemory" || tra == "mymemoryIT") ? (cDisplay = v.mymemory) :
-    (tra == "translate" || tra == "translateIT") ? (cDisplay = v.translate) :
-    (tra == "yandex" || tra == "yandexIT") ? (cDisplay = v.yandex) :
-    (cDisplay = v.deepl);
-  } else {
-    (tra == "lingva" || tra == "lingvaIT") ? (cDisplay = "Lingva Translate") :
-    (tra == "libre") ? (cDisplay = "LibreTranslate") :
-    (tra == "bingIT") ? (cDisplay = "Azure Cognitive Services") :
-    (tra == "bing") ? (cDisplay = "Bing") :
-    (tra == "googleIT") ? (cDisplay = "Google Cloud") :
-    (tra == "google") ? (cDisplay = "Google") :
-    (tra == "mymemory" || tra == "mymemoryIT") ? (cDisplay = "MyMemory") :
-    (tra == "translate" || tra == "translateIT") ? (cDisplay = "Translate.com") :
-    (tra == "yandex" || tra == "yandexIT") ? (cDisplay = "Yandex") :
-    (cDisplay = "DeepL");
-  };
-  TETConfig.cDisplay = cDisplay;
-  if(mode === "demo") {
-    $('#tetDemo').html(`${TETConfig.cLang} ${cDisplay}`)
-    $('.tet').length ? $('.tet').html(`${TETConfig.cLang} ${cDisplay}`) : false
-  }
+async function configDisplay() {
+  let dis = TETConfig.display,
+    tra = TETConfig.translator,
+    v = icons.fn();
+  return new Promise((resolve) => {
+    if(dis === "text + icon") {
+      (tra == "lingvaIT" || tra == "lingva") ? resolve(`Lingva Translate ${v.lingva}`) :
+      (tra == "libre") ? resolve(`LibreTranslate ${v.libre}`) :
+      (tra == "bingIT") ? resolve(`Azure Cognitive Services ${v.azure}`) :
+      (tra == "bing") ? resolve(`Bing ${v.bing}`) :
+      (tra == "googleIT") ? resolve(`Google Cloud ${v.gCloud}`) :
+      (tra == "google") ? resolve(`Google ${v.google}`) :
+      (tra == "mymemory" || tra == "mymemoryIT") ? resolve(`MyMemory ${v.mymemory}`) :
+      (tra == "translate" || tra == "translateIT") ? resolve(`Translate.com ${v.translate}`) :
+      (tra == "yandex" || tra == "yandexIT") ? resolve(`Yandex ${v.yandex}`) :
+      resolve(`DeepL ${v.deepl}`);
+    } else if(dis === "icon") {
+      (tra == "lingva" || tra == "lingvaIT") ? resolve(v.lingva) :
+      (tra == "libre") ? resolve(v.libre) :
+      (tra == "bingIT") ? resolve(v.azure) :
+      (tra == "bing") ? resolve(v.bing) :
+      (tra == "googleIT") ? resolve(v.gCloud) :
+      (tra == "google") ? resolve(v.google) :
+      (tra == "mymemory" || tra == "mymemoryIT") ? resolve(v.mymemory) :
+      (tra == "translate" || tra == "translateIT") ? resolve(v.translate) :
+      (tra == "yandex" || tra == "yandexIT") ? resolve(v.yandex) :
+      resolve(v.deepl);
+    } else {
+      (tra == "lingva" || tra == "lingvaIT") ? resolve("Lingva Translate") :
+      (tra == "libre") ? resolve("LibreTranslate") :
+      (tra == "bingIT") ? resolve("Azure Cognitive Services") :
+      (tra == "bing") ? resolve("Bing") :
+      (tra == "googleIT") ? resolve("Google Cloud") :
+      (tra == "google") ? resolve("Google") :
+      (tra == "mymemory" || tra == "mymemoryIT") ? resolve("MyMemory") :
+      (tra == "translate" || tra == "translateIT") ? resolve("Translate.com") :
+      (tra == "yandex" || tra == "yandexIT") ? resolve("Yandex") :
+      resolve("DeepL");
+    };
+  }).then((cDisplay) => {
+    let tw = languages[TETConfig.lang ?? "en"].fn().tw;
+    $('#tetDemo').html(`${tw} ${cDisplay}`);
+    $('.tet').length ? $('.tet').html(`${tw} ${cDisplay}`) : false;
+  })
 };
-function site(source,content,tr) {
-  let link;
+async function openlink(source,content,tr) {
+  return new Promise((resolve) => {
   if(tr == 'lingva') {
-    link = `${TETConfig.url[tr]}/${source}/${TETConfig.lang}/${content}`
+    resolve(`${TETConfig.url[tr]}/${source}/${TETConfig.lang}/${content}`)
   } else if(tr == 'yandex') {
-    link = `${TETConfig.url[tr]}/?lang=${source}-${TETConfig.lang}&text=${content}`
+    resolve(`${TETConfig.url[tr]}/?lang=${source}-${TETConfig.lang}&text=${content}`)
   } else if(tr == 'bing') {
-    link = `${TETConfig.url[tr]}/translator/?text=${content}&from=${source}&to=${TETConfig.lang}`
+    resolve(`${TETConfig.url[tr]}/translator/?text=${content}&from=${source}&to=${TETConfig.lang}`)
   } else if(tr == 'google') {
-    link = `${TETConfig.url[tr]}/?q=${content}&sl=${source}&tl=${TETConfig.lang}`
+    resolve(`${TETConfig.url[tr]}/?q=${content}&sl=${source}&tl=${TETConfig.lang}`)
   } else if(tr == 'mymemory') {
-    link = `${TETConfig.url[tr]}/${TETConfig.lang}/${source}/${TETConfig.lang}/${content}`
+    resolve(`${TETConfig.url[tr]}/${TETConfig.lang}/${source}/${TETConfig.lang}/${content}`)
   } else if(tr == 'translate') {
-    link = `${TETConfig.url[tr]}/machine-translation#${source}/${TETConfig.lang}/${content}`
+    resolve(`${TETConfig.url[tr]}/machine-translation#${source}/${TETConfig.lang}/${content}`)
   } else {
-    link = `${TETConfig.url[tr]}/translator#${source}/${TETConfig.lang}/${content}`
+    resolve(`${TETConfig.url[tr]}/translator#${source}/${TETConfig.lang}/${content}`)
   }
-  return link;
+  }).then(link => window.open(link,'_blank'))
 };
 function TETBtnClick(source,src,content,mode) {
   mode = mode ?? "append";
   src = src ?? "auto";
-  let tetBtn = $(`<div class="tet ${TETConfig.cSub} css-901oao">${TETConfig.cLang} ${TETConfig.cDisplay}</div>`),
-  inlineText = `<div class="css-901oao r-1qd0xha tetTextColor" id="tweet-text"><span class="css-901oao">`;
+  let tetBtn = $(`<div class="tet ${cSub} css-901oao"></div>`),
+  inlineText = `<div class="css-901oao tetTextColor ${cText}" id="tweet-text"><span class="css-901oao">`;
   (mode === "append") ? tetBtn.appendTo(source) :
   (mode === "prepend") ? tetBtn.prependTo(source) :
   (mode === "td") ? (source.after(tetBtn),tetBtn.attr('id', 'tet-column'),tetBtn.attr('style', 'align-items: end !important;')) :
+  (mode === "td-tweet") ? (source.before(tetBtn),tetBtn.attr('id', 'tet-tweet'),tetBtn.attr('style', 'align-items: end !important;')) :
   (mode === "td-bio") ? (tetBtn.appendTo(source),tetBtn.attr('id', 'tet-bio')) : tetBtn.prependTo(mode);
   tetBtn.on("click", (e) => {
-    e.preventDefault();
+    tet.halt(e);
     let res,
     tr = TETConfig.translator;
     if(tr == 'lingvaIT') {
-      get(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
+      tet.getURL(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
         res = r.translation;
-        $(`${inlineText}${res}</span></div>`).appendTo(source).addClass(TETConfig.cText);
+        $(`${inlineText}${res}</span></div>`).appendTo(source);
       });
     } else if(tr == 'libre') {
-      fetchURL(TETConfig.url.libre,content,src).then(r => {
+      tet.fetchURL(TETConfig.url.libre,content,src).then(r => {
         res = r.translatedText;
-        $(`${inlineText}${res}</span></div>`).appendTo(source).addClass(TETConfig.cText);
+        $(`${inlineText}${res}</span></div>`).appendTo(source);
       })
     } else if(tr == 'mymemoryIT') {
-      get(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
+      tet.getURL(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
         res = r.responseData.translatedText;
-        $(`${inlineText}${res}</span></div>`).appendTo(source).addClass(TETConfig.cText);
+        $(`${inlineText}${res}</span></div>`).appendTo(source);
       })
     } else if(tr == 'googleIT') {
-      get(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
+      tet.getURL(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
         res = r.data.translations[0].translatedText
-        $(`${inlineText}${res}</span></div>`).appendTo(source).addClass(TETConfig.cText);
+        $(`${inlineText}${res}</span></div>`).appendTo(source);
     })
     } else if(tr == 'deeplIT') {
-      get(`${TETConfig.url[tr]}/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
+      tet.getURL(`${TETConfig.url[tr]}/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
         res = r.translations[0].text;
-        $(`${inlineText}${res}</span></div>`).appendTo(source).addClass(TETConfig.cText);
+        $(`${inlineText}${res}</span></div>`).appendTo(source);
     })
     } else {
-      window.open(site(src,content,tr),'_blank');
+      openlink(src,content,tr);
     };
   });
   tetBtn.on("mouseenter", (e) => {
@@ -1419,45 +1452,88 @@ function TETBtnClick(source,src,content,mode) {
   }).on("mouseleave", (e) => {
     $(e.target).removeClass("r-hover");
   });
+  //r-rsyp9y
+  //r-1ye8kvj max-width
   configDisplay();
+};
+/** Restores the config when error occurs */
+function handleError() {
+  TETConfig = tet.defaultcfg;
+  find.tweetdeck ? TETConfig.lang = "en" : false;
+  tet.save();
 };
 //#endregion
 
 //#region Sites
-function Twitter(btContainer,content = '') {
-  let translateTweet = $("div[lang]").eq(0).siblings().eq(0).children("span"), // "Translate Tweet" button
-    translateBio = $('div[data-testid="UserDescription"]').eq(0).siblings().eq(0).children("span"), // "Translate Bio" button
-    source = translateTweet.parent().parent(),
-    loggout = document.cookie.includes("twid"),
-  tweetbtn = (user = "loggedin") => {
-    // log("Injecting tweet button");
-    (user === "logout") ? ( // [Tweet] Selector
-      btContainer = $("div[lang]").eq(0),
-      source = btContainer.parent()
-      ) : (
-        btContainer = translateTweet.parent().siblings().eq(0),
-        source = translateTweet.parent().parent());
-    btContainer.children("span").each((index,item) => {
-      let tweet = $(item).html().trim();
-      (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
-    });
-    TETBtnClick(source,btContainer.attr("lang"),content)
+const site = {
+  nitter() {
+    let trTweet = $('#m > div > div > div.tweet-content.media-body'),
+    trBio = $('div.profile-bio > p');
+    return (!$('.tet').length) ? trTweet.length ? TETBtnClick(trTweet,"auto",trTweet.text(),$(".conversation")) : trBio.length ? TETBtnClick(trBio.parent(),"auto",trBio.text()) : false : false;
   },
-  biobtn = (user = "loggedin") => {
-    // log("Injecting bio button");
-    (user === "logout") ? ( // [Bio] Selector
-      btContainer = $('div[data-testid="UserDescription"]').eq(0),
-      source = $('div[data-testid="UserDescription"]').eq(0).parent()
-      ) : (
-        btContainer = translateBio.parent().siblings().eq(0),
-        source = translateBio.parent().parent());
-    btContainer.children("span").each((index,item) => {
-      let bio = $(item).html().trim();
-      (bio && bio != '' && !isHTML(bio)) ? content+=bio : false;
-    });
-    TETBtnClick(source,"auto",content);
+  tweetdeck() {
+    let translateTweet = $('a.js-translate-call-to-action'),
+    btContainer = translateTweet.siblings().eq(2); // "Tweet"
+    if($(".js-tweet.tweet-detail").length) {
+      if(!$('#tet-column').length) {
+        // tet.log("Injecting tweet button");
+        TETBtnClick(translateTweet,$('p.js-tweet-text[lang]').attr("lang"),btContainer.text(),"td");
+      };
+      if(!$('#tet-tweet').length) {
+        let msg = Array.prototype.slice.apply(qs("p[lang]",true)),
+        findNext = msg.map(item => item.nextElementSibling),
+        findText = msg.map(item => item.textContent).filter(e=>e),
+        findLng = msg.map(item => item.lang).filter(e=>e);
+        findLng.forEach((divs,i) => {
+          if(divs !== "und" && findText[i] && $(findNext[i]).length) {
+            TETBtnClick($(findNext[i]),findLng[i],findText[i],"td-tweet");
+          };
+        });
+      };
+    };
   },
-  checker = () => {
+  twitlonger() {
+    let content = $('p#posttext').text(),
+    source = $('.actions.text-right');
+    return (!$(".tet").length && source.length) ? (TETBtnClick(source,"auto",content,"prepend")) : false;
+  },
+  twitter(btContainer,content = '') {
+    let translateTweet = $("div[lang]").eq(0).siblings().eq(0).children("span"), // "Translate Tweet" button
+      translateBio = $('div[data-testid="UserDescription"]').eq(0).siblings().eq(0).children("span"), // "Translate Bio" button
+      source = translateTweet.parent().parent(),
+      loggout = document.cookie.includes("twid"),
+    tweetbtn = (user = "loggedin") => {
+      // tet.log("Injecting tweet button");
+      (user === "logout") ? (
+        btContainer = $("div[lang]").eq(0), // [Tweet] Selector
+        source = btContainer.parent()
+        ) : (
+          btContainer = translateTweet.parent().siblings().eq(0),
+          source = translateTweet.parent().parent());
+      btContainer.children("span").each((index,item) => {
+        let tweet = $(item).html().trim();
+        (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
+      });
+      TETBtnClick(source,btContainer.attr("lang"),content)
+    },
+    biobtn = (user = "loggedin") => {
+      // tet.log("Injecting bio button");
+      (user === "logout") ? ( // [Bio] Selector
+        btContainer = $('div[data-testid="UserDescription"]').eq(0),
+        source = $('div[data-testid="UserDescription"]').eq(0).parent()
+        ) : (
+          btContainer = translateBio.parent().siblings().eq(0),
+          source = translateBio.parent().parent());
+      btContainer.children("span").each((index,item) => {
+        let bio = $(item).html().trim();
+        (bio && bio != '' && !isHTML(bio)) ? content+=bio : false;
+      });
+      TETBtnClick(source,"auto",content);
+    };
+    (find.hider) ? (
+      tet.info("Hiding menu"),
+      $('#tetMenuButton').attr('style', 'z-index: -1 !important;')
+      ) : $('#tetMenuButton').attr('style', '');
     if(!$('.tet').length) {
       return (translateBio.length) ? biobtn() :
       ($('div[data-testid="UserDescription"]').length && !loggout) ?
@@ -1465,44 +1541,37 @@ function Twitter(btContainer,content = '') {
       (!translateTweet.length && !loggout && $("div[lang]").attr("lang") !== TETConfig.lang) ?
       (tweetbtn("logout")) : false;
     };
-  };
-  (/login/.test(window.location.href) || /profile/.test(window.location.href) || /keyboard_shortcuts/.test(window.location.href) || /display/.test(window.location.href) || /video/.test(window.location.href) || /photo/.test(window.location.href) || /compose/.test(window.location.href)) ?
-  $('#tetMenuButton').attr('style', 'z-index: -1 !important;') : $('#tetMenuButton').attr('style', '');
-  return checker();
-};
-function TweetDeck() {
-  let column = "article.js-stream-item > div > div > .js-tweet-body",
-  translateTweet = $('a.js-translate-call-to-action'),
-  tweetbtn = () => {
-    // log("Injecting tweet button");
-    let btContainer = translateTweet.siblings().eq(2) // "Tweet"
-    TETBtnClick(translateTweet,$('p.js-tweet-text[lang]').attr("lang"),btContainer.text(),"td");
   },
-  checker = () => {
-    !$('#tet-column').length && translateTweet.length ?
-    tweetbtn() : false;
-  };
-  return checker();
-};
-function Nitter() {
-  let trTweet = $('#m > div > div > div.tweet-content.media-body'),
-  trBio = $('div.profile-bio > p');
-  return (!$('.tet').length) ? trTweet.length ? TETBtnClick(trTweet,"auto",trTweet.text(),$(".conversation")) : trBio.length ? TETBtnClick(trBio.parent(),"auto",trBio.text()) : false : false;
-};
-function TwitLonger() {
-  let content = $('p#posttext').text(),
-  source = $('.actions.text-right');
-  return (!$(".tet").length && source.length) ? (TETBtnClick(source,"auto",content,"prepend")) : false;
+  async inject() {
+    tet.info("Site:",lh);
+    find.twitter ? tet.query("#react-root > div > div").then((root) => {
+      if(window.location.pathname === "/" && find.logout || find.remover) {
+        tet.err("Canceling...");
+        return;
+      } else {
+        tet.observe(root, () => this.twitter())
+      }
+    }) :
+    find.tweetdeck ? tet.query("section.js-column > div").then(() => {
+      tet.observe(document.body, () => this.tweetdeck());
+      tet.query(".js-modals-container").then(selector => {
+        tet.observe(selector, () => (!$("#tet-bio").length && $('div.prf-header').length) ? TETBtnClick($('p.prf-bio').parent(),"auto",$('p.prf-bio').text(),"td-bio") : false);
+      });
+    }) :
+    find.twitlonger ? tet.query("#postcontent").then(this.twitlonger()) :
+    find.nitter ? tet.query(".container").then(this.nitter()) : false;
+  },
 };
 //#endregion
 
 //#region Menu
 function Menu() {
 try {
-  log("Menu init");
-  waitFor('body').then($("body").prepend(sidebar));
+  tet.info("Menu initialize");
+  tet.query('body').then($("body").append(menu));
   let nav = $('.navbackground'),
     menuBtn = $('button#tetMenuButton'),
+    tetSel = qs('div#tetSelector', true),
     selLG = qs('select#languages'),
     selCS = qs('select#colorselect'),
     selTH = qs('select#theme'),
@@ -1516,32 +1585,36 @@ try {
     dColor = $(".tetDisplayColor"),
     tColor = $(".tetTextColor"),
     tBG = $(".tetBackground"),
-    tDesc = $(".tet-demotext"),
-    legacyCheck = () => {
-      let th = TETConfig.theme;
-      if(tetInfo.name !== "[Dev] Twitter External Translator" ?? tetInfo.version !== "0.31") {
-        return (th === "#FFFFFF") ? th = "rgb(255, 255, 255)" :
-        (th === "#15202B") ? th = "rgb(21, 32, 43)" :
-        (th === "#000000") ? th = "rgb(0, 0, 0)" : th;
-      }
-      return th;
+    legacyCheck = (th = TETConfig.theme) => {
+      let isAuto = /auto/.test(th),
+      tv = isAuto ? autoTheme : th;
+      if(tetInfo.version === "0.32") {
+        return tv = (th === "#FFFFFF") ? "rgb(255, 255, 255)" :
+        (th === "#15202B") ? "rgb(21, 32, 43)" :
+        (th === "#000000") ? "rgb(0, 0, 0)" : th;
+      };
+      return isAuto ? tv = "auto" : tv;
+    },
+    tetFn = (e) => {
+      tet.halt(e);
+      $(e.target).toggleClass(`${cColor}`).children("div#tetName").toggleClass(`${cSub}`);
     };
-    selLG.value = TETConfig.lang ?? "en";
-    let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
-    selCS.value = TETConfig.colors ?? "r-1dgebii";
-    selTH.value = legacyCheck();
-    selTR.value = TETConfig.translator;
-    selDS.value = TETConfig.display;
-    dlAPI.value = TETConfig.api.deepl ?? "";
-    libre[0].value = TETConfig.api.libre ?? "";
-    libre[1].value = TETConfig.url.libre ?? DefaultConfig.url.libre;
-    lingva.value = TETConfig.url.lingva ?? DefaultConfig.url.lingva;
-    goAPI.value = TETConfig.api.google ?? "";
-    selAPI.value = TETConfig.api.version;
-    qs(".tet-url").value = TETConfig.url[selTR.value];
+  dlAPI.value = TETConfig.api.deepl ?? "";
+  libre[0].value = TETConfig.api.libre ?? "";
+  libre[1].value = TETConfig.url.libre ?? tet.defaultcfg.url.libre;
+  lingva.value = TETConfig.url.lingva ?? tet.defaultcfg.url.lingva;
+  goAPI.value = TETConfig.api.google ?? "";
+  selAPI.value = TETConfig.api.version;
+  selLG.value = TETConfig.lang ?? "en";
+  let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
+  selCS.value = TETConfig.colors ?? "r-1dgebii";
+  selTH.value = legacyCheck();
+  selTR.value = TETConfig.translator;
+  selDS.value = TETConfig.display;
+  qs("input#debug").checked = TETConfig.debug;
+  qs(".tet-url").value = TETConfig.url[selTR.value];
   const TETLanguageChange = (m) => {
     v = languages[m ?? TETConfig.lang ?? "en"].fn();
-    TETConfig.cLang = v.tw;
     $('button#tetMenuButton').attr('title', v.menu)
     $('button#tetMenuButton > span').text(v.menu)
     $('select#languages').siblings().children("span").text(v.lg)
@@ -1551,6 +1624,7 @@ try {
     $('option[value="rgb(255, 255, 255)"]').text(v.df)
     $('option[value="rgb(21, 32, 43)"]').text(v.di)
     $('option[value="rgb(0, 0, 0)"]').text(v.lo)
+    $('option[value="auto"]').text(v.ao)
     $('select#colorselect').siblings().children("span").text(v.col)
     $('option[value="r-urgr8i"]').text(v.cb)
     $('option[value="r-1vkxrha"]').text(v.cy)
@@ -1566,27 +1640,44 @@ try {
     $('.tet-alert-span').text(v.body)
     $('.tet-confirm').text(v.yes)
     $('.tet-deny').text(v.no)
-    configDisplay("demo");
+    $('.tethelper-header.tetlg').text(v.lg);
+    $('.tethelper-header.tettr').text(v.tr);
+    $('.tethelper-header.tetds').text(v.ds);
+    $('.tethelper-header.tetcol').text(v.col);
+    $('.tethelper-header.tetth').text(v.th);
+    $('.tethelper-info.tetlg').text(v.language);
+    $('.tethelper-info.tetds').text(v.display);
+    $('.tethelper-info.tetcol').text(v.color);
+    $('.tethelper-info.tetth').text(v.theme);
+    configDisplay();
+    tet.log("Language:", TETConfig.lang);
   },
+  demoUpdate = txt => $(".tet-demotext").text(txt),
   TETMenuUpdate = (cSel, type) => {
     if(type === "theme") {
-      return (cSel == "rgb(255, 255, 255)") ? (TETConfig.cBG = "rgba(0, 0, 0, 0.4)",TETConfig.cTheme = "r-14lw9ot",TETConfig.cText = "r-18jsvk2") :
-      (cSel == "rgb(21, 32, 43)") ? (TETConfig.cTheme = "r-yfoy6g") :
-      (cSel == "nitter") ? (TETConfig.cBG = "rgba(0, 0, 0, 0.4)",TETConfig.cTheme = "nitter",TETConfig.cText = "tetNTextColor") :
-      (cSel == "tweetdeck") ? (TETConfig.cBG = "rgba(0, 0, 0, 0.4)",TETConfig.cTheme = "r-tetTD",TETConfig.cText = "r-jwli3a") :
-      TETConfig.cTheme = "r-kemksi";
+      let isAuto = /auto/.test(cSel);
+      isAuto ? cSel = autoTheme : false;
+      cText = "r-jwli3a";
+      cBG = "rgba(91, 112, 131, 0.4)";
+      (cSel == "rgb(255, 255, 255)") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-14lw9ot",cText = "r-18jsvk2") :
+      (cSel == "rgb(21, 32, 43)") ? (cTheme = "r-yfoy6g") :
+      (cSel == "nitter") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "nitter",cText = "tetNTextColor") :
+      (cSel == "tweetdeck") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-tetTD") :
+      cTheme = "r-kemksi";
+      isAuto ? cSel = "auto" : cSel;
     }
     else if(type === "colors") {
-      return (cSel == "r-urgr8i") ? (TETConfig.cHover = "r-1q3imqu",TETConfig.cColor = "r-p1n3y5 r-1bih22f",TETConfig.cSub = "r-13gxpu9") :
-      (cSel == "nitter") ? (TETConfig.cHover = "tetNitterHover",TETConfig.cColor = "tetNitter",TETConfig.cSub = "tetNText") : (cSel == "tweetdeck") ? (TETConfig.cHover = "r-hoverTD",TETConfig.cColor = "Button--primary",TETConfig.cSub = "tet-td") :
-      (cSel == "r-1vkxrha") ? (TETConfig.cHover = "r-1kplyi6",TETConfig.cColor = "r-v6khid r-cdj8wb",TETConfig.cSub = "r-61mi1v") :
-      (cSel == "r-1dgebii") ? (TETConfig.cHover = "r-1ucxkr8",TETConfig.cColor = "r-1iofnty r-jd07pc",TETConfig.cSub = "r-daml9f") :
-      (cSel == "r-168457u") ? (TETConfig.cHover = "r-njt2r9",TETConfig.cColor = "r-hy56xe r-11mmphe",TETConfig.cSub = "r-xfsgu1") :
-      (cSel == "r-18z3xeu") ? (TETConfig.cHover = "r-1kplyi6",TETConfig.cColor = "r-1xl5njo r-b8m25f",TETConfig.cSub = "r-1qkqhnw") :
-      (cSel == "r-b5skir") ? (TETConfig.cHover = "r-zx61xx",TETConfig.cColor = "r-5ctkeg r-1cqwhho",TETConfig.cSub = "r-nw8l94") : (
-        TETConfig.cHover = "r-1q3imqu",
-        TETConfig.cColor = "r-p1n3y5 r-1bih22f",
-        TETConfig.cSub = "r-13gxpu9");
+      return (cSel == "r-urgr8i") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
+      (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
+      (cSel == "tweetdeck") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-td") :
+      (cSel == "r-1vkxrha") ? (cHover = "r-1kplyi6",cColor = "r-v6khid r-cdj8wb",cSub = "r-61mi1v") :
+      (cSel == "r-1dgebii") ? (cHover = "r-1ucxkr8",cColor = "r-1iofnty r-jd07pc",cSub = "r-daml9f") :
+      (cSel == "r-168457u") ? (cHover = "r-njt2r9",cColor = "r-hy56xe r-11mmphe",cSub = "r-xfsgu1") :
+      (cSel == "r-18z3xeu") ? (cHover = "r-1kplyi6",cColor = "r-1xl5njo r-b8m25f",cSub = "r-1qkqhnw") :
+      (cSel == "r-b5skir") ? (cHover = "r-zx61xx",cColor = "r-5ctkeg r-1cqwhho",cSub = "r-nw8l94") : (
+        cHover = "r-1q3imqu",
+        cColor = "r-p1n3y5 r-1bih22f",
+        cSub = "r-13gxpu9");
     }
     else if (type == "translator") {
       $(".tet-url").show();
@@ -1630,158 +1721,168 @@ try {
     }
   };
   //#region Nitter/TweetDeck/Twitlonger
-  (TETConfig.theme == "nitter") ? $('.r-demo').toggleClass('demo-TW').toggleClass('demo-NT') :
-  (TETConfig.theme == "tweetdeck") ? $('.r-demo').toggleClass('demo-TW').toggleClass('demo-TD') : false;
-  if(find.nitter) {
-    injectCSS(twCSS, "foreign");
+  if(!find.twitter && !find.tweetdeck && !find.twitlonger) {
+    tet.loadCSS(twCSS, "foreign");
+    tet.loadCSS(nitterCSS, "nitter");
     $('div.btNav').attr("id", "tetNT");
     tetAvatar = $(`link[rel="icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
   } else if(find.tweetdeck) {
-    injectCSS(twCSS, "foreign");
+    tet.loadCSS(twCSS, "foreign");
     $('#tetMenuButton').toggleClass("tetTD");
     tetAvatar = $(`link[rel="shortcut icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
   } else if(find.twitlonger) {
-    injectCSS(twCSS, "foreign");
+    tet.loadCSS(twCSS, "foreign");
     tetAvatar = $(`link[rel="shortcut icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
   };
   //#endregion
-  nav.attr("style",`background-color:${TETConfig.cBG}`);
-  tetEach(tBG, TETConfig.cTheme);
-  tetEach(tColor, TETConfig.cText);
-  tetEach(dColor, TETConfig.colors);
-  tetEach($('#tetDemo'), TETConfig.cSub);
-  tBG.toggleClass(TETConfig.cTheme);
-  tColor.toggleClass(TETConfig.cText);
-  TETMenuUpdate(selTH.value,"theme");
-  tBG.toggleClass(TETConfig.cTheme);
-  tColor.toggleClass(TETConfig.cText);
+  nav.attr("style",`background-color:${cBG}`);
   TETMenuUpdate(selTR.value,"translator");
-  log("Menu functions");
-  tetEach(qs('div#tetSelector', true), false, (e) => {
-    $(e.target).toggleClass(`${TETConfig.cColor} r-1kqtdi0`).children("div#tetName").toggleClass(`${TETConfig.cSub}`);
-  });
-  ael("click", (e) => {
+  tet.each(tBG, cTheme);
+  tet.each(tColor, cText);
+  tet.each(dColor, TETConfig.colors);
+  tet.each($('#tetDemo'), cSub);
+  tet.each($('.tethelper-header'), cSub);
+  tBG.toggleClass(cTheme);
+  tColor.toggleClass(cText);
+  TETMenuUpdate(selTH.value,"theme");
+  tBG.toggleClass(cTheme);
+  tColor.toggleClass(cText);
+  dColor.toggleClass(TETConfig.colors);
+  $('#tetDemo').toggleClass(cSub);
+  $('.tet').length ? $('.tet').toggleClass(cSub) : false;
+  $('.tethelper-header').toggleClass(cSub);
+  TETMenuUpdate(selCS.value,"colors");
+  $('.tethelper-header').toggleClass(cSub);
+  $('.tet').length ? $('.tet').toggleClass(cSub) : false;
+  $('#tetDemo').toggleClass(cSub);
+  dColor.toggleClass(TETConfig.colors);
+  tet.info("Menu functions");
+  tet.each(tetSel,false,tetFn);
+  tet.ael("click", (e) => {
     !$('.tetAlert.rm').length ? $('.tetAlert').toggleClass("rm") : false;
+    !$("#tethelper.rm").length ? ($(".tet-help-container").toggleClass("rm"),$("#tethelper").toggleClass("rm")) : false;
+    !$("#tetadvanced.rm").length ? $("#tetadvanced").toggleClass("rm") : false;
     $('html').toggleClass('tetFreeze');
     $('#tetForm').toggleClass("rm");
+    $('.tet-icon-container').toggleClass("rm");
+    $('.tetadvanced-icon-container').toggleClass("rm");
     $('.btNav').attr('style', 'z-index: -1 !important;');
     $('svg#tetSVG').show();
     menuBtn.attr("style", "");
     menuBtn.toggleClass("mini");
     $(e.target).removeClass("warn").toggleClass("rm");
-    (selLG.value !== "en" ?? defaultLang !== "en" ?? defaultLang !== "en-US") ? tDesc.text("Hey look, I'm a foreign language!") : tDesc.text(defaultDesc);
+    (selLG.value !== "en" ?? defaultLang !== "en" ?? defaultLang !== "en-US") ? demoUpdate("Hey look, I'm a foreign language!") : demoUpdate(defaultDesc);
     TETConfig.api.google = goAPI.value;
     TETConfig.api.deepl = dlAPI.value;
     TETConfig.api.libre = libre[0].value;
     TETConfig.url.libre = libre[1].value;
     TETConfig.url.lingva = lingva.value;
     TETConfig.url[selTR.value] = qs(".tet-url").value;
-    TETSave();
-    autoHide();
+    tet.save();
+    tet.delay(5000).then(() => $('svg#tetSVG').hide());
   }, qs('.navbackground'));
-  ael("click", () => {
-    // tDesc.text(defaultDesc);
+  tet.ael("click", () => {
     nav.toggleClass("rm");
     $('#tetForm').toggleClass("rm");
+    $('.tet-icon-container').toggleClass("rm");
+    $('.tetadvanced-icon-container').toggleClass("rm");
     $('.btNav').attr('style', 'z-index: 10000 !important');
     menuBtn.attr("style", "display: none !important;").toggleClass("mini");
     $('html').toggleClass('tetFreeze');
   }, qs("button#tetMenuButton"));
-  ael("mouseenter", () => {
-    menuBtn.toggleClass(TETConfig.cHover).toggleClass(TETConfig.colors);
+  tet.ael("mouseenter", () => {
+    menuBtn.toggleClass(cHover).toggleClass(TETConfig.colors);
     $('svg#tetSVG').hide();
     menuBtn.toggleClass("mini");
   }, qs("button#tetMenuButton"));
-  ael("mouseleave", () => {
-    menuBtn.toggleClass(TETConfig.cHover).toggleClass(TETConfig.colors);
+  tet.ael("mouseleave", () => {
+    menuBtn.toggleClass(cHover).toggleClass(TETConfig.colors);
     $('svg#tetSVG').show();
     menuBtn.toggleClass("mini");
-    autoHide();
+    tet.delay(5000).then(() => $('svg#tetSVG').hide());
   }, qs("button#tetMenuButton"));
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     let cSel = e.target.value;
-    tBG.toggleClass(TETConfig.cTheme);
-    tColor.toggleClass(TETConfig.cText);
-    TETConfig.cText = "r-jwli3a";
-    TETConfig.cBG = "rgba(91, 112, 131, 0.4)";
+    tBG.toggleClass(cTheme);
+    tColor.toggleClass(cText);
     TETMenuUpdate(cSel,"theme");
-    TETConfig.theme = cSel;
-    tBG.toggleClass(TETConfig.cTheme);
-    tColor.toggleClass(TETConfig.cText);
+    TETConfig.theme = /auto/.test(cSel) ? "auto" : cSel;
+    tBG.toggleClass(cTheme);
+    tColor.toggleClass(cText);
   }, selTH);
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     let cSel = e.target.value;
     dColor.toggleClass(TETConfig.colors);
-    $('#tetDemo').toggleClass(TETConfig.cSub);
-    $('.tet').toggleClass(TETConfig.cSub);
+    $('#tetDemo').toggleClass(cSub);
+    $('.tet').toggleClass(cSub);
+    $('.tethelper-header').toggleClass(cSub);
     TETMenuUpdate(cSel,"colors");
     TETConfig.colors = cSel;
-    $('.tet').toggleClass(TETConfig.cSub);
-    $('#tetDemo').toggleClass(TETConfig.cSub);
+    $('.tethelper-header').toggleClass(cSub);
+    $('.tet').toggleClass(cSub);
+    $('#tetDemo').toggleClass(cSub);
     dColor.toggleClass(TETConfig.colors);
   }, selCS);
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     TETConfig.lang = e.target.value;
     TETLanguageChange(e.target.value);
   }, selLG);
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     let cSel = e.target.value;
     TETConfig.translator = cSel;
     qs(".tet-url").value = TETConfig.url[cSel];
     TETMenuUpdate(cSel,"translator");
-    configDisplay("demo");
+    configDisplay();
   }, selTR);
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     TETConfig.display = e.target.value;
-    configDisplay("demo");
+    configDisplay();
   }, selDS);
-  ael("change", (e) => {
+  tet.ael("change", (e) => {
     TETConfig.api.google = goAPI.value;
     TETConfig.api.deepl = dlAPI.value;
     TETConfig.api.version = e.target.value;
   }, selAPI);
+  tet.ael("change", (e) => {
+    TETConfig.debug = e.target.value;
+  }, qs("input#debug"));
 
-  ael("click", () => {
-    tDesc.text(v.theme);
-  }, selTH);
-  ael("click", () => {
-    tDesc.text(v.color);
-  }, selCS);
-  ael("click", () => {
-    tDesc.text(v.language);
-  }, selLG);
-  ael("click", () => {
-    tDesc.text(v.translate);
-  }, selTR);
-  ael("click", () => {
-    tDesc.text(v.display);
-  }, selDS);
-
-  ael("click", () => {
+  tet.ael("click", () => {
     $('.tetAlert').toggleClass("rm");
     nav.toggleClass("warn");
   }, qs('button#tetReset'));
-  ael("click", () => {
-    TETConfig = DefaultConfig;
-    TETSave();
-    setTimeout(() => window.location.reload(), 200);
+  tet.ael("click", () => {
+    localStorage.removeItem("TETConfig");
+    TETConfig = tet.defaultcfg;
+    tet.save();
+    tet.delay(200).then(() => window.location.reload());
   }, qs('.tetAlertBtns.confirm'));
-  ael("click", () => {
+  tet.ael("click", () => {
     $('.tetAlert').toggleClass("rm");
     nav.removeClass("warn");
   }, qs('.tetAlertBtns.deny'));
-  log("Checking for language changes");
-  TETLanguageChange()
-  autoHide();
+  tet.ael("click", () => {
+    !$("#tetadvanced.rm").length ? $("#tetadvanced").toggleClass("rm") : false;
+    $(".tet-help-container").toggleClass("rm");
+    $("#tethelper").toggleClass("rm");
+  }, qs(".tet-icon-info"));
+  tet.ael("click", () => {
+    !$("#tethelper.rm").length ? ($(".tet-help-container").toggleClass("rm"),$("#tethelper").toggleClass("rm")) : false;
+    $("#tetadvanced").toggleClass("rm");
+  }, qs(".tetadvanced-icon-container"));
+  TETLanguageChange();
+  tet.delay(5000).then(() => $('svg#tetSVG').hide());
+  tet.info("Menu setup complete");
 } catch (e) {
-  // We log the error and restore the config to default.
-  log(e, "error");
-  TETConfig = DefaultConfig;
-  find.tweetdeck ? TETConfig.lang = "en" : false;
-  TETSave();
+  tet.err(e);
+  /** [Common Error] Reloads page when TETConfig.api.deepl is not found */
+  if(e instanceof TypeError) {
+    handleError();
+    tet.delay(200).then(() => window.location.reload());
+  };
 }
 };
 //#endregion
@@ -1791,34 +1892,42 @@ try {
 // Link: https://greasyfork.org/scripts/14178/code
 // Version: 25.01
 // Line: 674.
-await Promise.all([GM.getValue("Config")]).then((data) => {
-  if(lh === "tweetdeck.twitter.com" && !document.cookie.includes("twid")) {
-    log("Must be login!!! Canceling...", "error");
-    return;
-  };
+await Promise.all([GM_getValue("Config")]).then((data) => {
+  tet.loadCSS(tetCSS);
   let res = data[0];
-  (res || TETConfig === DefaultConfig) ? () => {
+  (res || TETConfig === tet.defaultcfg) ? () => {
     try {
       TETConfig = JSON.parse(res);
     } catch (e) {
-      log(e, "error");
+      tet.err(e);
       TETConfig = res;
     }
-  } : (TETConfig = DefaultConfig,log("First time init."));
+  } : (TETConfig = tet.defaultcfg,tet.info("First time initialize"));
   const localData = localStorage.TETConfig;
-  (localData && localData.length > 0) ? (TETConfig = JSON.parse(localData)) : false;
-  for (let key in DefaultConfig) {
-    (typeof (TETConfig[key])) ?? (TETConfig[key] = DefaultConfig[key]);
-  }
-  log("Config Loaded");
-  injectCSS(tetCSS);
+  (localData && localData.length > 0) ? TETConfig = JSON.parse(localData) : false;
+  for (let key in tet.defaultcfg) {
+    (typeof TETConfig[key]) ?? (TETConfig[key] = tet.defaultcfg[key]);
+  };
+  tet.info("Configuration loaded");
+  tet.log("Config:",TETConfig);
+}).then(() => {
+  if(find.tweetdeck && find.logout) {
+    tet.err("Must be login!!! Canceling...");
+    return;
+  };
   Menu();
-  log("Starting TET Injection");
-  TETInject();
-}).catch((e) => {
-  // We log the error and restore the config to default.
-  log(e, "error");
-  TETConfig = DefaultConfig;
-  TETSave();
+  tet.info("Starting content script injection");
+  site.inject();
+}).catch(e => {
+  tet.err(e);
+  /** [Common Error] Reloads page when TETConfig.api.deepl is not found */
+  if(e instanceof TypeError) {
+    handleError();
+    tet.delay(200).then(() => window.location.reload());
+  };
 })
+
+
 //#endregion
+
+})();

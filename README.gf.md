@@ -17,16 +17,11 @@ Legacy | - | [Install [GitHub]](https://github.com/magicoflolis/twitter-translat
 |:----------:|
 ![Menu Preview](https://raw.githubusercontent.com/magicoflolis/twitter-translator/master/assets/ExternalTranslator.gif)|
 
-## What's New
+## Changelog
 
-> Please check the [Bugs / Issues](#bugs--issues) or [contact](#contacts) me for any issues! If this update is causing you problems, revert to previous version.
+> [(GitHub) Full Changelog](https://github.com/magicoflolis/twitter-translator/releases)
 
-* Moving userscript to its own [GitHub repository](https://github.com/magicoflolis/twitter-translator)
-* Adjusted LICENSE to better fit repo.
-* Added @updateURL.
-* Bug fixes.
-
-## **Features:**
+## Features
 
 > The menu and CSS have been compressed to reduce file size. Comments can be found under `src/main.js` on GitHub.
 
@@ -48,22 +43,22 @@ Legacy | - | [Install [GitHub]](https://github.com/magicoflolis/twitter-translat
 * [ WIP ] Added help for each menu item.
 * [ WIP ] Reworked the menus CSS.
 
-**Supported Translators:**
+### Supported
 
- Translator | External | Internal
-:-----------:|:---------:|:---------:
-Bing Microsoft Translator| ✔️ | - |
-DeepL Translate | ✔️ | ✔️ |
-Google Translate | ✔️ | ✔️ |
-LibreTranslate | - | ✔️ |
-Lingva Translate | ✔️ | ✔️ |
-MyMemory | ✔️ | ✔️ |
-Translate.com | ✔️ | - |
-Yandex Translate | ✔️ | - |
+Translator | External | Website | Internal |
+:---------:|:-----------:|:-----------:|:---------:|
+Bing Microsoft Translator | ✅ |[link](https://www.bing.com/translator)| ❌ |
+DeepL Translate | ✅ |[link](https://www.deepl.com/translator)| ✅ |
+Google Translate | ✅ |[link](https://translate.google.com/)| ✅ |
+LibreTranslate | ❌ |[link](https://libretranslate.com/)| ✅ |
+Lingva Translate | ✅ |[link](https://lingva.ml/)| ✅ |
+MyMemory | ✅ |[link](https://mymemory.translated.net/)| ✅ |
+Translate.com | ✅ |[link](https://www.translate.com/)| ❌ |
+Yandex Translate | ✅ |[link](https://translate.yandex.com/)| ❌ |
 
-## Wiki
+## Documentation
 
-* [Userscript Documentation](https://github.com/magicoflolis/twitter-translator/wiki)
+* [(GitHub) Wiki](https://github.com/magicoflolis/twitter-translator/wiki)
 
 ## Bugs / Issues
 
@@ -79,20 +74,21 @@ Yandex Translate | ✔️ | - |
 * [ Translator ] Yandex Translate may default to Russian.
 ![YandexHelp](https://raw.githubusercontent.com/magicoflolis/twitter-translator/master/assets/ExternalTranslator4.gif)
 
+## Source Code
+
+[https://github.com/magicoflolis/twitter-translator](https://github.com/magicoflolis/twitter-translator)
+
+## Contacts
+
+* [GitHub](https://github.com/magicoflolis)
+* [Twitter](https://twitter.com/for_lollipops)
+* [Greasy Fork](https://greasyfork.org/users/166061)
+
 ## Roadmap
 
 * Fix any bugs along the way.
 * Automatically match Twitter colors.
 * Show multiple translators at once.
-
-### Source Code
-
-* [GitHub](https://github.com/magicoflolis/twitter-translator)
-
-### Contacts
-
-[GitHub](https://github.com/magicoflolis)
-
-[Twitter](https://twitter.com/for_lollipops)
-
-[Greasy Fork](https://greasyfork.org/users/166061)
+* Show multiple on TweetDeck.
+* Support for direct messages.
+* Support more translators.

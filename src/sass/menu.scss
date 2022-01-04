@@ -1,3 +1,117 @@
+.btNav,
+.txt-s0pan,
+.txt-s1pan,
+.tet-av,
+.tetAlertBtns > div {
+  align-items: center !important;
+};
+
+#tetName,
+.r-demo,
+#tetadvanced,
+#tethelper,
+.tetAlertTxt,
+.tet-header {
+  cursor: default;
+}
+
+.txt-s0pan {
+  flex-shrink: 1;
+  max-width: 100%;
+  flex-direction: inherit !important;
+  .txt-s1pan {
+    max-width: inherit !important;
+    flex-direction: inherit !important;
+    white-space: normal !important;
+    > div {
+      white-space: inherit !important;
+    }
+  }
+};
+
+.txt-s0pan,
+.tetAlertBtns,
+.r-demo,
+.tet-av,
+.r-hover,
+#apifield {
+  outline-style: none !important;
+}
+
+
+.txt-s1pan > div,
+.tet-dc,
+.tet-at,
+.tethelper-info,
+.tethelper-header,
+.tetAlertTxt,
+.tet-info,
+.tetAlertBtns>div,
+#tetSelector > select {
+  font-size: 15px !important;
+}
+
+.txt-s1pan > div,
+h1.tetAlertTxt,
+.tetAlertBtns > div,
+.tethelper-header {
+  font-weight: 700 !important;
+}
+
+.tet,
+#tetDemo,
+.tet-dc,
+.tet-at,
+.tethelper-info,
+div.tetAlertTxt,
+.tet-info,
+.tet-icon-info,
+#tweet-text,
+#tetSelector > #tetName {
+  font-weight: 400;
+}
+
+.tet,
+#tetDemo,
+.tetswitch > label,
+#tetSelector > #tetName {
+  line-height: 16px;
+}
+
+.tet-sp1an > div,
+.tet-at {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tet-dc,
+.txt-s1pan > div,
+.tet-header,
+#tetSelector > #tetName,
+#tetSelector > select  {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.tet,
+#tweet-text,
+.tetAlertTxt span,
+.tetAlertBtns > div,
+.tet-main {
+  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+div.tetAlertTxt,
+.tet-info,
+.tet-dc,
+.tet-at,
+.tethelper-info,
+.tetAlertBtns > div,
+.txt-s1pan > div,
+#tetSelector>select {
+  line-height: 20px;
+};
 
 .tetAvatarFrame,
 #tetAvatar {
@@ -16,6 +130,16 @@
   z-index: 0;
 }
 
+#tetSelector {
+  min-width: 0px;
+  overflow-wrap: break-word;
+  #tetName {
+    min-width: 0px;
+    position: absolute;
+    overflow-wrap: break-word;
+  }
+}
+
 .tet,
 .tet-info,
 #tweet-text {
@@ -27,27 +151,33 @@
   position: relative;
 }
 
+.tetAlertTxt {
+  text-align: center;
+}
+
 .tet {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   flex-wrap: wrap;
-  line-height: 16px;
   font-size: 13px;
-  font-weight: 400;
   overflow-wrap: break-word;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
   height: min-content;
   display: flex;
 }
 
 .tetAvatarFrame {
-  flex-basis: auto;
+  padding-bottom: 100%;
+  width: 100%;
+  display: block;
   z-index: 0;
   position: absolute;
   top: 0px;
   right: 0px;
   left: 0px;
   bottom: 0px;
-  overflow: hidden;
   #tetAvatar {
     background-image: url("https://abs.twimg.com/favicons/twitter.ico");
     background-size: cover;
@@ -64,7 +194,6 @@
 .tet-main {
   padding: 0px 32px 32px 32px !important;
   flex-shrink: 1;
-  -moz-box-flex: 1;
   flex-grow: 1;
   width: 100%;
   margin-left: auto;
@@ -79,26 +208,17 @@
 .tet-header {
   min-width: 0px;
   text-align: center;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   white-space: normal;
   display: grid;
   margin: 32px 0px 12px 0px !important;
-  .css-901oao {
+  .tet-info-name {
     line-height: 28px;
     font-size: 23px;
     font-weight: 800;
-  }
+  };
   .tet-info {
-    line-height: 20px;
-    font-size: 15px;
-    font-weight: 400;
     color: #6e767d;
-  }
-  span {
-    color: inherit;
-    font: inherit;
-    white-space: inherit;
-  }
+  };
 }
 .tetAlert {
   right: 0px;
@@ -111,23 +231,17 @@
   h1.tetAlertTxt {
     line-height: 24px;
     font-size: 20px;
-    font-weight: 700;
     min-width: 0px;
     span {
       font-family: inherit;
     };
   };
-  .tetAlertTxt > span,
-  .tetAlertTxt {
+  .tetAlertTxt span {
     white-space: normal;
     text-align: center;
     overflow-wrap: break-word;
-    font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   };
   div.tetAlertTxt {
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 20px;
     min-width: 0px;
     width: 100%;
   };
@@ -142,11 +256,13 @@
   .tetAlertBtns {
     margin: 2% 25% 2% 25%;
     white-space: nowrap;
-    outline-style: none;
     transition-property: background-color, box-shadow;
     transition-duration: 0.2s;
     flex-grow: 1;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
     border-color: rgba(0, 0, 0, 0);
     overflow: hidden;
     border-width: 1px;
@@ -156,30 +272,21 @@
       margin: 0px 25% 4% 25%;
     }
     > div {
-      font-size: 15px;
-      font-weight: 700;
-      font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 20px;
       overflow-wrap: break-word;
       min-width: 0px;
-      align-items: center;
       justify-content: center;
       flex-grow: 1;
       flex-direction: row;
       text-align: center;
       display: flex;
       > span {
-        font-size: 15px;
-        font-family: inherit;
-        line-height: 20px;
+        line-height: inherit !important;
         overflow-wrap: break-word;
         min-width: 0px;
         max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: inherit;
-        font: inherit;
         border: 0px solid black;
         box-sizing: border-box;
         display: inline;
@@ -197,16 +304,15 @@
   }
 };
 
-#tetForm {
-  max-width: 80vw;
-  max-height: 90vh;
-  min-width: 600px !important;
-  flex-shrink: 1;
+#tetForm,
+#tetadvanced,
+#tethelper {
   border-radius: 16px;
-  overflow: hidden;
   > div {
     border-radius: 16px;
-  }
+    flex-grow: 1;
+    flex-shrink: 1;
+  };
   .tetBackground {
     .tetTextColor {
       overflow-wrap: break-word;
@@ -214,7 +320,16 @@
         overflow-wrap: break-word;
       }
     }
-  }
+  };
+};
+
+
+#tetForm {
+  max-width: 80vw;
+  max-height: 90vh;
+  min-width: 600px !important;
+  flex-shrink: 1;
+  overflow: hidden;
   .tet-containter {
     width: 100%;
     &.tet-fg {
@@ -222,10 +337,93 @@
       margin-right: auto;
     }
   }
+};
+
+#tetadvanced,
+#tethelper {
+  max-width: 90vw;
+  max-height: 90vh;
+  min-width: 500px;
+  min-height: 100px;
+  flex-shrink: 1;
+  margin-left: 1%;
+  margin-right: 1%;
+};
+
+.tet-container {
+  overflow: auto !important;
+};
+
+.tethelper-header {
+  white-space: nowrap;
+  line-height: 23px !important;
+  min-width: 0px;
+};
+
+.tetadvanced-container {
+  section {
+    // border: 1px solid $hover;
+    // background-color: $dark;
+    &.tetcheckbox>label,
+    &.tetselect {
+      display: flex;
+      justify-content: space-between;
+      padding: .825em;
+    }
+    &.tetcheckbox>label {
+      cursor: pointer;
+    };
+  };
+  .tetswitch {
+    position: relative;
+    width: 38px;
+    -webkit-user-select: none !important;
+       -moz-user-select: none !important;
+        -ms-user-select: none !important;
+            user-select: none !important;
+    margin: 5px;
+    > input {
+      display: none;
+    }
+    > label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      height: 16px;
+      padding: 0;
+      border-radius: 20px;
+      border: 1px solid #000;
+      background-color: #464646;
+      &:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 20px;
+        margin: -2px;
+        background: #DADCE0;
+        position: absolute;
+        top: 0;
+        right: 20px;
+        border-radius: 20px;
+      }
+    }
+    > input:checked+label {
+      margin-left: 0;
+      background-color: rgba(29, 160, 242, 0.384);
+      &:before {
+        right: 0px;
+        background-color: $tetBlue;
+      }
+    }
+  };
 }
 
 .tet-head,
-#tetName > span,
+.tet-dc > span,
+.tet-demotext,
+.tetTextColor span,
+.tetConfirmation span,
+#tetName span,
 #tweet-text > span,
 #tetMenuButton > span {
   color: inherit;
@@ -244,8 +442,9 @@ button.mini>span {
 
 .tetFreeze {
   overflow: hidden !important;
-  overscroll-behavior-y: none !important
-}
+  -ms-scroll-chaining: none !important;
+      overscroll-behavior: none !important;
+};
 
 #tetMenuButton {
   z-index: 10;
@@ -264,7 +463,10 @@ button.mini>span {
     height: 1.25em;
     fill: currentcolor;
     margin-right: 12px;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
     right: 35% !important;
   };
 };
@@ -279,10 +481,11 @@ button.mini>span {
   border-radius: 15px;
   justify-content: center;
   display: flex !important;
-  font-family: inherit;
+  font-family: inherit !important;
   font-size: 20px !important;
   font-weight: bold !important;
   padding: 0px !important;
+  outline: none !important;
 };
 
 button.tetBtn {
@@ -319,11 +522,6 @@ button.tetBtn {
   padding-left: 2% !important
 }
 
-#tetReload,
-#tetReset {
-  margin: 2% 25% 0px 25%;
-}
-
 #apifield,
 #tetSelector {
   border-radius: 4px;
@@ -331,61 +529,54 @@ button.tetBtn {
   margin: 2% 6% 0px 6%;
 }
 
+#tetSelector>select {
+  text-align: left;
+  padding-top: 12px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  cursor: pointer;
+  border-radius: 0px;
+  margin: 0px;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+#tetReload,
+#tetReset {
+  margin: 2% 25% 0px 25%;
+}
+
 .r-demo {
-  outline-style: none;
   margin: 0px 32px 0px 32px !important;
   padding: 12px 0px 12px 0px !important;
   overflow: hidden;
-  -webkit-box-direction: normal;
-  -webkit-box-orient: horizontal;
-  -moz-box-direction: normal;
-  -moz-box-orient: horizontal;
   flex-direction: row !important;
   flex-shrink: 1;
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
   flex-grow: 1;
   .tet-av {
     width: 100%;
-    margin-left: 12px !important;
-    margin-right: 12px !important;
-    -webkit-box-flex: 0;
+    margin: 2px 12px 0px 12px !important;
     flex-grow: 0;
     flex-shrink: 1;
     flex-basis: 48px;
-    -webkit-box-align: center;
-    -moz-box-align: center;
-    align-items: center;
     height: 48px;
     overflow: hidden;
-    outline-style: none;
     display: block;
   }
   .tet-txt {
     flex-basis: 0px;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
     flex-grow: 1;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
     justify-content: center;
     .txt-header {
       margin-bottom: 2px;
-      -moz-box-align: start;
       align-items: start;
-      -moz-box-pack: justify;
       justify-content: space-between;
-      -moz-box-direction: normal;
-      -moz-box-orient: horizontal;
       flex-direction: row;
       max-width: 100%;
       .tet-at {
         display: flex;
         margin-left: 4px;
-        color: #6e767d;
-        font-weight: 400;
-        font-size: 15px;
-        line-height: 20px;
         overflow-wrap: break-word;
         min-width: 0px;
       }
@@ -395,21 +586,29 @@ button.tetBtn {
 
 #tetDemo {
   margin: 4px 0px 0px 0px;
-  line-height: 16px;
   font-size: 13px;
   flex-wrap: wrap;
-  font-weight: 400;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   min-width: 0px;
-  display: flex !important
+  display: flex !important;
 }
 
 .btNav {
-  justify-content: center;
-  flex-direction: row;
-  top: 0px;
+  a,
+  :link {
+    text-decoration: none !important;
+    &:hover {
+      text-decoration: none !important;
+    }
+  };
+  justify-content: center !important;
+  flex-direction: row !important;
+  top: 0px !important;
   span {
     font-family: inherit;
-  }
+  };
 }
 
 .btNav,
@@ -424,8 +623,75 @@ button.tetBtn {
   left: 0;
   &.warn {
     z-index: 10 !important;
-  }
+  };
+};
+
+.tet-icon-container,
+.tetadvanced-icon-container {
+  cursor: pointer;
+  display: inline-flex;
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  border-radius: 9999px;
+  z-index: 1;
 }
+
+.tet-icon-container {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: 35px;
+  right: 10px;
+  .tet-icon-info {
+    color: $twWhite;
+    display: inline;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    border-radius: inherit;
+    font-family: "fontello";
+    font-size: 23px;
+  }
+  .tet-help-container {
+    position: static;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: inherit;
+    line-height: 35px;
+    font-size: 16px;
+    font-weight: normal;
+    text-decoration: none;
+    margin-left: 10px;
+    a {
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
+      width: fit-content;
+      display: inline-block;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+  }
+};
+
+.tetadvanced-icon-container {
+  left: 10px;
+  width: 28px;
+  height: 28px;
+  .tetadvanced-icon {
+    height: 1.75rem;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    position: relative;
+    max-width: 100%;
+    fill: currentcolor;
+    border-radius: inherit;
+    display: inline-block;
+  };
+};
 
 .mini {
   min-height: 3% !important;
@@ -435,13 +701,11 @@ button.tetBtn {
 }
 
 .r-hover {
-  text-decoration-line: underline !important;
-  outline-style: none !important
+  -webkit-text-decoration-line: underline !important;
+          text-decoration-line: underline !important;
 }
 
 #tweet-text {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 23px !important;
-  font-weight: 400 !important;
   line-height: 28px !important;
 }

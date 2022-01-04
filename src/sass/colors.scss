@@ -1,5 +1,3 @@
-$bg_hover: #1a1a1a;
-$bg_elements: #121212;
 $accent_border: #ff6c6091;
 $fg_color: #f8f8f2;
 $tetBlue: rgb(29, 155, 240);
@@ -24,7 +22,6 @@ $twBlack: rgb(0, 0, 0);
 $twWhite: rgb(255, 255, 255);
 $twGray: #6e767d;
 $fg_dark: #FF6C60;
-$fg_darkB: #FF6C60 0px 0px 0px 1px;
 $bg_panel: #161616;
 $bg_color: #0F0F0F;
 $td_color: #8899a6;
@@ -32,34 +29,15 @@ $tdBlue: rgb(29, 161, 242);
 $td_b: #005fd1;
 $td_blue: #1da1f2;
 $td_blueB: #1da1f2 0px 0px 0px 1px;
-$bg_elements: #121212;
-// $bg_overlays: #1F1F1F;
-// $bg_hover: #1A1A1A;
 $grey: #888889;
-// $dark_grey: #404040;
-//$darker_grey: #282828;
-//$darkest_grey: #222222;
-$border_grey: #3E3E35;
-// $accent: #FF6C60;
 $accent_light: #FFACA0;
 $accent_lightB: #FFACA0 0px 0px 0px 1px;
-// $accent_dark: #8A3731;
-$accent_border: #FF6C6091;
-// $play_button: #D8574D;
-// $play_button_hover: #FF6C60;
-// $more_replies_dots: #AD433B;
-// $error_red: #420A05;
-// $verified_blue: #1DA1F2;
-// $icon_text: #F8F8F2;
-// $tab: #F8F8F2;
-// $tab_selected: #FF6C60;
-// $profile_stat: #F8F8F2;
 
 #tetMenuButton {
   > span {
     color: $twWhite !important;
   };
-}
+};
 
 #tetSelector > select {
   background-color: transparent;
@@ -67,56 +45,52 @@ $accent_border: #FF6C6091;
   &:focus {
     box-shadow: none !important;
   }
-}
-
-.r-kemksi > div#tetName,
-.r-yfoy6g > div#tetName {
-  color: #6e767d;
-}
-
-.tetNitterHover {
-  background-color: $fg_dark;
 };
 
-.tetNitter {
-  border-color: $accent_light;
-  box-shadow: $accent_lightB;
+.tet-at span {
+  color: #6e767d;
+};
+.navbackground {
+  &.d1tet {
+    background-color:rgba(91, 112, 131, 0.4);
+  };
+  &.d2tet {
+    background-color:rgba(0, 0, 0, 0.4);
+  };
+  &.d3tet {
+    background-color:rgba(91, 112, 131, 0.4);
+  };
+};
+
+.r-demo,
+.tet-help-container,
+#apifield,
+#tetSelector {
+  border-color: transparent;
+  &.r-14lw9ot {
+    border-color: rgb(83, 100, 113);
+  };
+  &.r-yfoy6g {
+    border-color: rgb(56, 68, 77);
+  };
+  &.nitter,
+  &.r-tetTD,
+  &.r-kemksi {
+    border-color: #2f3336;
+  };
+};
+
+.r-14lw9ot > div#tetName span {
+  color: rgb(83, 100, 113);
 }
+
+.r-kemksi > div#tetName span,
+.r-yfoy6g > div#tetName span {
+  color: #6e767d;
+};
 
 .tetBtn.nitter {
-  color: $twWhite;
   border: transparent;
-  background-color: $fg_dark;
-}
-
-h1.tetNTextColor {
-  color: $grey;
-};
-
-.nitter {
-  border: 1px solid $fg_dark;
-  background-color: $bg_color;
-  #tetName {
-    color: $fg_dark;
-  }
-}
-
-input.tetNTextColor,
-select.tetNTextColor,
-div.tetNTextColor {
-  color: $fg_color;
-};
-
-svg.tetNTextColor {
-  color: $grey;
-};
-
-.tetNText {
-  color: $fg_dark !important;
-};
-
-.tetNBackground {
-  background-color: $bg_panel;
 };
 
 .Button--primary {
@@ -127,7 +101,7 @@ svg.tetNTextColor {
 .r-tetTD {
   border-radius: 14px;
   background-color: #15202b;
-  #tetName {
+  #tetName span {
     color: $td_color;
   }
 };
@@ -138,13 +112,20 @@ svg.tetNTextColor {
   color: $td_blue;
   &#tetName {
     color: $td_blue !important;
-  }
+    span {
+      color: inherit !important;
+    };
+  };
   &.tet {
     color: $td_color;
-  }
+  };
 };
 .r-hoverTD {
   background-color: $td_b;
+}
+
+.tet-border-black {
+  border-color: $twBlack;
 }
 
 /* gray */
@@ -152,23 +133,7 @@ svg.tetNTextColor {
   color: rgb(110, 118, 125);
 }
 .r-1kqtdi0 {
-  border-color: rgb(47, 51, 54);
-}
-
-#apifield {
-  border-color: rgb(47, 51, 54);
-}
-
-#tetSelector {
-  &.r-1kqtdi0 {
-    border-color: rgb(47, 51, 54);
-    &#tetName {
-      color: rgb(110, 118, 125) !important;
-    }
-    &.r-tetTD {
-      border-color: $td_color;
-    }
-  }
+  border-color: #2f3336;
 }
 
 /* blue */
@@ -176,7 +141,7 @@ svg.tetNTextColor {
   background-color: $tetBlue;
 }
 .r-p1n3y5 {
-  border-color: $tetBlue;
+  border-color: $tetBlue !important;
 }
 .r-1q3imqu {
   background-color: $tetBlueH;
@@ -184,18 +149,33 @@ svg.tetNTextColor {
 .r-1bih22f {
   box-shadow: $tetBlueB;
 }
+// .tetBtn.tweetdeck {
+//   color: $tdBlue;
+//   &#tetName {
+//     color: $tdBlue !important;
+//   }
+// };
+
 .tetBtn.tweetdeck {
-  color: $tdBlue;
+  background-color: #1da1f2;
+  color: #fff;
   &#tetName {
-    color: $tdBlue !important;
-  }
-}
+    color: #1da1f2;
+    span {
+      color: inherit !important;
+    };
+  };
+};
+
 .r-13gxpu9 {
   color: $tetBlue;
   &#tetName {
     color: $tetBlue !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 /* yellow */
 .r-1vkxrha {
@@ -203,15 +183,18 @@ svg.tetNTextColor {
 }
 
 .r-v6khid {
-  border-color: $tetYellow;
+  border-color: $tetYellow !important;
 }
 
 .r-61mi1v {
   color: $tetYellow;
   &#tetName {
     color: $tetYellow !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 .r-1kplyi6 {
   background-color: $tetYellowH;
@@ -227,15 +210,18 @@ svg.tetNTextColor {
 }
 
 .r-1iofnty {
-  border-color: $tetRed;
+  border-color: $tetRed !important;
 }
 
 .r-daml9f {
   color: $tetRed;
   &#tetName {
     color: $tetRed !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 .r-1ucxkr8 {
   background-color: $tetRedH;
@@ -255,7 +241,7 @@ svg.tetNTextColor {
 }
 
 .r-hy56xe {
-  border-color: $tetPurple;
+  border-color: $tetPurple !important;
 }
 
 .r-11mmphe {
@@ -266,8 +252,11 @@ svg.tetNTextColor {
   color: $tetPurple;
   &#tetName {
     color: $tetPurple !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 /* orange */
 .r-18z3xeu {
@@ -279,7 +268,7 @@ svg.tetNTextColor {
 }
 
 .r-1xl5njo {
-  border-color: $tetOrange;
+  border-color: $tetOrange !important;
 }
 
 .r-b8m25f {
@@ -290,8 +279,11 @@ svg.tetNTextColor {
   color: $tetOrange;
   &#tetName {
     color: $tetOrange !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 /* green */
 .r-b5skir {
@@ -303,7 +295,7 @@ svg.tetNTextColor {
 }
 
 .r-5ctkeg {
-  border-color: $tetGreen;
+  border-color: $tetGreen !important;
 }
 
 .r-1cqwhho {
@@ -314,52 +306,67 @@ svg.tetNTextColor {
   color: $tetGreen;
   &#tetName {
     color: $tetGreen !important;
-  }
-}
+    span {
+      color: inherit !important;
+    };
+  };
+};
 
 .r-yfoy6g {
   background-color: rgb(21, 32, 43);
-}
+};
 
 .r-14lw9ot {
   background-color: $twWhite;
-}
+};
 
 .r-kemksi {
   background-color: $twBlack;
-}
+};
+
 .r-18jsvk2 {
   color: rgb(15, 20, 25);
-}
-
+};
 .r-demo {
   border-style: solid !important;
   border-radius: 16px !important;
   border-width: 1px !important;
-}
-
-.demo-TW {
-  border-color: rgb(47, 51, 54) !important;
-}
-
-.demo-TD {
-  border: 1px solid $td_color !important;
-}
-
-.demo-NT {
-  border: 1px solid $accent_border !important;
-}
-
-/* #15202b */
-/* border: 1px solid #000; */
-/* 1px solid #ccd6dd; */
-
-// html.dark {
-//   .r-tetTD {
-//     background-color: #15202b !important;
-//     border-radius: 14px;
-//   }
-// }
+};
 .r-jwli3a {
   color: $twWhite;
-}
+};
+
+.tetNitterHover {
+  background-color: $fg_dark;
+};
+.tetNitter {
+  border-color: $accent_light !important;
+  box-shadow: $accent_lightB !important;
+};
+.tetBtn.nitter {
+  color: $twWhite;
+  background-color: $fg_dark;
+};
+h1.tetNTextColor {
+  color: $grey;
+};
+.nitter {
+  border-color: $fg_dark;
+  background-color: $bg_color;
+  div#tetName span {
+    color: $fg_dark;
+  };
+};
+input.tetNTextColor,
+select.tetNTextColor,
+div.tetNTextColor,
+svg.tetNTextColor,
+label.tetNTextColor>span {
+  color: $fg_color;
+};
+.tetNText span {
+  color: $fg_dark !important;
+};
+.tetNBackground {
+  background-color: $bg_panel;
+};
