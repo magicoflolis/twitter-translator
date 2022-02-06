@@ -1,8 +1,6 @@
 /* eslint-env greasemonkey */
 (async () => {
 //#region Config
-//https://www.apertium.org/index.eng.html#?dir=eng-epo&q=
-//https://dictionary.cambridge.org/us/translate/
 let tetInfo = {
   icon: GM_info.script.icon,
   name: GM_info.script.name,
@@ -927,9 +925,8 @@ languages = {
     },
     fn: checkLng
   },
-},
+};
 //#endregion
-deeplfn = () => (this.api.version == "api-pro") ? 'api' : 'api-free';
 let TETConfig = {},
 autoTheme = find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
 cBG = "rgba(91, 112, 131, 0.4)",
@@ -938,6 +935,7 @@ cHover = "r-1q3imqu",
 cText = "r-jwli3a",
 cTheme = "r-kemksi",
 cSub = "r-13gxpu9",
+// deeplfn = "",
 tet = {
   /**
   * addEventListener
@@ -965,7 +963,7 @@ tet = {
       bing: "https://www.bing.com",
       bingIT: "",
       deepl: "https://www.deepl.com",
-      deeplIT: `https://${deeplfn}.deepl.com`,
+      deeplIT: "Preview URL Disabled",
       google: "https://translate.google.com",
       googleIT: "https://translation.googleapis.com",
       libre: "https://libretranslate.de/translate",
@@ -1439,7 +1437,7 @@ function TETBtnClick(source,src,content,mode) {
         $(`${inlineText}${res}</span></div>`).appendTo(source);
     })
     } else if(tr == 'deeplIT') {
-      tet.getURL(`${TETConfig.url[tr]}/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
+      tet.getURL(`https://${TETConfig.api.version == "api-pro" ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
         res = r.translations[0].text;
         $(`${inlineText}${res}</span></div>`).appendTo(source);
     })
