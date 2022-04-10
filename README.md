@@ -25,23 +25,20 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 
 > The menu and CSS have been compressed to reduce file size. Comments can be found under `src/main.js` on GitHub.
 
-* [ Script ] Support for External & Internal Translators!
-* [ Menu ] Config Menu!
-* [ Menu ] Multiple language support!
-* [ Menu ] Support for matching Twitter colors
-* [ Menu ] Support for matching Twitter theme
-* [ Site ] Support for [TwitLonger](https://www.twitlonger.com)
-* [ Site ] Support for [TweetDeck](https://tweetdeck.twitter.com)
-* [ Site ] Support for every [Nitter](https://github.com/zedeus/nitter/wiki/Instances#official-instances)
-* [ Script ] Now works while logged out!
-* [ Script ] Added "Restore to Defaults" button.
-* [ Site ] Added mobile.twitter.com
-* [ Menu ] Will automatically default to current sites theme.
-* [ Menu ] Will automatically select the current language of the site.
-* Each [ WIP ] is functional.
-* [ WIP ] Every theme can be applied to any site!
+* Support for External & Internal Translators!
+* Multi language Config menu!
+* Multi language Translator support!
+* Colors and themes can be customized.
+* Automatically match websites Theme
+* Automatically match websites Language
+* Supports mobile [Twitter](https://mobile.twitter.com/)
+* Supports [TwitLonger](https://www.twitlonger.com)
+* Supports [TweetDeck](https://tweetdeck.twitter.com)
+* Supports every [Nitter](https://github.com/zedeus/nitter/wiki/Instances#official-instances)
+* Support for multiple Bios / Tweets on websites!
+* [ Misc ] Works while logged out!
+* [ Misc ] "Restore to Defaults" button.
 * [ WIP ] Added help for each menu item.
-* [ WIP ] Reworked the menus CSS.
 
 ### Supported
 
@@ -63,14 +60,12 @@ Yandex Translate | ✅ |[link](https://translate.yandex.com/)| ❌ |
 ## Bugs / Issues
 
 * [ User Script ] *May* conflict with [Magic Userscript+ : Show Site All UserJS](https://greasyfork.org/scripts/421603).
-* [ Script ] *Sometimes* "Translate tweet" won't appear on Twitter. (Clicking a picture and opening the right sidebar to view the Tweet & Replies)
 * [ Translator ] MyMemory API doesn't work in Bios.
 * [ Menu ] Cannot be moved or disabled. ( WIP )
 
 **Footnotes:**
 
 * [ Translator ] Twitters built-in translation uses Google Translate, TweetDeck uses Bing Microsoft Translator.
-* [ TweetDeck ] Only appears in one column.
 * [ Translator ] Yandex Translate may default to Russian.
 ![YandexHelp](https://raw.githubusercontent.com/magicoflolis/twitter-translator/master/assets/ExternalTranslator4.gif)
 
@@ -89,6 +84,5 @@ Yandex Translate | ✅ |[link](https://translate.yandex.com/)| ❌ |
 * Fix any bugs along the way.
 * Automatically match Twitter colors.
 * Show multiple translators at once.
-* Show multiple on TweetDeck.
 * Support for direct messages.
 * Support more translators.

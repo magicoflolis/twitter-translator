@@ -1,7 +1,8 @@
 /* eslint-env greasemonkey */
 (async () => {
 //#region Config
-let tetInfo = {
+let defaultDelay = "none",
+tetInfo = {
   icon: GM_info.script.icon,
   name: GM_info.script.name,
   version: GM_info.script.version,
@@ -20,7 +21,6 @@ defaultDesc = "Pretend I'm a foreign language.",
 lh = window.location.host,
 lr = window.location.href,
 find = {
-  hider: (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(lr)),
   logout: (!document.cookie.includes("twid")),
   twitter: (lh === "twitter.com" || lh === "mobile.twitter.com"),
   tweetdeck: (lh === "tweetdeck.twitter.com"),
@@ -928,7 +928,6 @@ languages = {
 };
 //#endregion
 let TETConfig = {},
-autoTheme = find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
 cBG = "rgba(91, 112, 131, 0.4)",
 cColor = "r-p1n3y5 r-1bih22f",
 cHover = "r-1q3imqu",
@@ -953,6 +952,7 @@ tet = {
     display: "text + icon",
     colors: "r-urgr8i",
     theme: "auto",
+    delay: defaultDelay,
     api: {
       deepl: "",
       google: "",
@@ -1290,6 +1290,22 @@ menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetD
           </div>
         </label>
       </section>
+      <div id="tetSelector" class="tetBackground css-1dbjc4n">
+        <div id="tetName" class="css-901oao"><span class="css-901oao">Delay Injection</span></div>
+        <select id="delayInject" name="delayInject" class="tetTextColor">
+          <option class="tetBackground" value="none">0ms (${languages.en.df})</option>
+          <option class="tetBackground" value="500">500ms</option>
+          <option class="tetBackground" value="1000">1000ms</option>
+          <option class="tetBackground" value="1500">1500ms</option>
+          <option class="tetBackground" value="2000">2000ms</option>
+          <option class="tetBackground" value="2500">2500ms</option>
+          <option class="tetBackground" value="3000">3000ms</option>
+          <option class="tetBackground" value="3500">3500ms</option>
+          <option class="tetBackground" value="4000">4000ms</option>
+          <option class="tetBackground" value="4000">4500ms</option>
+          <option class="tetBackground" value="5000">5000ms</option>
+        </select>
+      </div>
     </div>
   </div>
 </div>
@@ -1302,7 +1318,8 @@ menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetD
     <a class="tet-help-info tetTextColor" href="${tetHelper}" target="_blank">Visit GitHub ⤴</a>
   </div>
 </div></div>
-`;
+`,
+autoTheme = find.twitter ? tet.query("body").then(e => e.style.backgroundColor) : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter";
 //#endregion
 //#region Site n Menu Fn
 function checkLng() {
@@ -1403,15 +1420,16 @@ async function openlink(source,content,tr) {
   }).then(link => window.open(link,'_blank'))
 };
 function TETBtnClick(source,src,content,mode) {
+  let tdStyle = 'align-items: end !important;font-size: inherit !important;font-weight: inherit !important;line-height: inherit !important;';
   mode = mode ?? "append";
   src = src ?? "auto";
   let tetBtn = $(`<div class="tet ${cSub} css-901oao"></div>`),
   inlineText = `<div class="css-901oao tetTextColor ${cText}" id="tweet-text"><span class="css-901oao">`;
   (mode === "append") ? tetBtn.appendTo(source) :
   (mode === "prepend") ? tetBtn.prependTo(source) :
-  (mode === "td") ? (source.after(tetBtn),tetBtn.attr('id', 'tet-column'),tetBtn.attr('style', 'align-items: end !important;')) :
-  (mode === "td-tweet") ? (source.before(tetBtn),tetBtn.attr('id', 'tet-tweet'),tetBtn.attr('style', 'align-items: end !important;')) :
-  (mode === "td-bio") ? (tetBtn.appendTo(source),tetBtn.attr('id', 'tet-bio')) : tetBtn.prependTo(mode);
+  (mode === "nitter") ? (source.parent().parent().after(tetBtn),tetBtn.attr("style",'margin-left: 58px; padding: 1%;')) :
+  (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.attr("style",tdStyle)) :
+  (mode === "tdBio") ? (source.after(tetBtn),tetBtn.attr("style",`${tdStyle} padding-bottom: 4px !important;`)) : tetBtn.prependTo(mode);
   tetBtn.on("click", (e) => {
     tet.halt(e);
     let res,
@@ -1465,80 +1483,71 @@ function handleError() {
 //#region Sites
 const site = {
   nitter() {
-    let trTweet = $('#m > div > div > div.tweet-content.media-body'),
-    trBio = $('div.profile-bio > p');
-    return (!$('.tet').length) ? trTweet.length ? TETBtnClick(trTweet,"auto",trTweet.text(),$(".conversation")) : trBio.length ? TETBtnClick(trBio.parent(),"auto",trBio.text()) : false : false;
+    let twt = $("div.tweet-content.media-body"),
+    bio = $('div.profile-bio > p'),
+    twtFN = () => {
+      if(twt.length && !twt.siblings(".tet").length) {
+        for (let i = 0; i < twt.length; i++) {
+          let e = twt.eq(i);
+          if(!e.siblings(".tet").length) {
+            TETBtnClick(e,"auto",e.text(),"nitter")
+          };
+        }
+      }
+      (bio.length && !bio.parent().parent().siblings(".tet").length) ? TETBtnClick(bio.parent().parent(),"auto",bio.text()) : false;
+    };
+    (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
   tweetdeck() {
-    let translateTweet = $('a.js-translate-call-to-action'),
-    btContainer = translateTweet.siblings().eq(2); // "Tweet"
-    if($(".js-tweet.tweet-detail").length) {
-      if(!$('#tet-column').length) {
-        // tet.log("Injecting tweet button");
-        TETBtnClick(translateTweet,$('p.js-tweet-text[lang]').attr("lang"),btContainer.text(),"td");
-      };
-      if(!$('#tet-tweet').length) {
-        let msg = Array.prototype.slice.apply(qs("p[lang]",true)),
-        findNext = msg.map(item => item.nextElementSibling),
-        findText = msg.map(item => item.textContent).filter(e=>e),
-        findLng = msg.map(item => item.lang).filter(e=>e);
-        findLng.forEach((divs,i) => {
-          if(divs !== "und" && findText[i] && $(findNext[i]).length) {
-            TETBtnClick($(findNext[i]),findLng[i],findText[i],"td-tweet");
-          };
-        });
+    let twt = $("a.js-translate-call-to-action"), // "Translate Tweet" button
+    bio = $("p.prf-bio"), // Bio container
+    twtFN = () => {
+      (bio.length && !bio.siblings(".tet").length) ? TETBtnClick(bio,"auto",bio.text(),"tdBio") : false;
+      if(twt.length && !twt.siblings(".tet").length) {
+        for(let i = 0; i < twt.length; i++) {
+          let e = twt.eq(i);
+          (e.siblings("p[lang]").length && !e.siblings(".tet").length) ? TETBtnClick(e,e.siblings("p[lang]").attr("lang"),e.siblings("p[lang]").text(),"tdTweet") : false;
+        };
       };
     };
+    (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
   twitlonger() {
     let content = $('p#posttext').text(),
-    source = $('.actions.text-right');
-    return (!$(".tet").length && source.length) ? (TETBtnClick(source,"auto",content,"prepend")) : false;
+    source = $('.actions.text-right'),
+    twtFN = () => {
+      (source.length && !source.siblings(".tet").length) ? (TETBtnClick(source,"auto",content,"prepend")) : false;
+    };
+    (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
-  twitter(btContainer,content = '') {
-    let translateTweet = $("div[lang]").eq(0).siblings().eq(0).children("span"), // "Translate Tweet" button
-      translateBio = $('div[data-testid="UserDescription"]').eq(0).siblings().eq(0).children("span"), // "Translate Bio" button
-      source = translateTweet.parent().parent(),
-      loggout = document.cookie.includes("twid"),
-    tweetbtn = (user = "loggedin") => {
-      // tet.log("Injecting tweet button");
-      (user === "logout") ? (
-        btContainer = $("div[lang]").eq(0), // [Tweet] Selector
-        source = btContainer.parent()
-        ) : (
-          btContainer = translateTweet.parent().siblings().eq(0),
-          source = translateTweet.parent().parent());
-      btContainer.children("span").each((index,item) => {
-        let tweet = $(item).html().trim();
-        (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
-      });
-      TETBtnClick(source,btContainer.attr("lang"),content)
-    },
-    biobtn = (user = "loggedin") => {
-      // tet.log("Injecting bio button");
-      (user === "logout") ? ( // [Bio] Selector
-        btContainer = $('div[data-testid="UserDescription"]').eq(0),
-        source = $('div[data-testid="UserDescription"]').eq(0).parent()
-        ) : (
-          btContainer = translateBio.parent().siblings().eq(0),
-          source = translateBio.parent().parent());
-      btContainer.children("span").each((index,item) => {
-        let bio = $(item).html().trim();
-        (bio && bio != '' && !isHTML(bio)) ? content+=bio : false;
-      });
-      TETBtnClick(source,"auto",content);
+  twitter(content = '') {
+    let elm = $("div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0"), // "Translate Tweet/Bio" button
+    twtFN = () => {
+      for (let i = 0; i < elm.length; i++) {
+        let e = elm.eq(i),
+        translateTweet = e.siblings("div[lang]"), // Tweet container
+        translateBio = e.siblings("div[data-testid]"); // Bio container
+        if(!e.siblings(".tet").length) {
+          // tet.log("Injecting TET button");
+          if(translateBio.length) {
+            translateBio.children("span").each((index,item) => {
+              let bio = $(item).html().trim();
+              (bio && bio != '' && !isHTML(bio)) ? content+=bio : false;
+            });
+            TETBtnClick(e.parent(),"auto",content)
+          }
+          if(translateTweet.length) {
+            translateTweet.children("span").each((index,item) => {
+              let tweet = $(item).html().trim();
+              (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
+            });
+            TETBtnClick(e.parent(),e.siblings("div[lang]").attr("lang"),content)
+          }
+        };
+      };
     };
-    (find.hider) ? (
-      tet.info("Hiding menu"),
-      $('#tetMenuButton').attr('style', 'z-index: -1 !important;')
-      ) : $('#tetMenuButton').attr('style', '');
-    if(!$('.tet').length) {
-      return (translateBio.length) ? biobtn() :
-      ($('div[data-testid="UserDescription"]').length && !loggout) ?
-      (biobtn("logout")) : (translateTweet.length) ? tweetbtn() :
-      (!translateTweet.length && !loggout && $("div[lang]").attr("lang") !== TETConfig.lang) ?
-      (tweetbtn("logout")) : false;
-    };
+    (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
+    (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(document.location.pathname)) ? (tet.info("Hiding menu"), $('#tetMenuButton').attr('style', 'z-index: -1 !important;')) : $('#tetMenuButton').attr('style', '');
   },
   async inject() {
     tet.info("Site:",lh);
@@ -1552,9 +1561,6 @@ const site = {
     }) :
     find.tweetdeck ? tet.query("section.js-column > div").then(() => {
       tet.observe(document.body, () => this.tweetdeck());
-      tet.query(".js-modals-container").then(selector => {
-        tet.observe(selector, () => (!$("#tet-bio").length && $('div.prf-header').length) ? TETBtnClick($('p.prf-bio').parent(),"auto",$('p.prf-bio').text(),"td-bio") : false);
-      });
     }) :
     find.twitlonger ? tet.query("#postcontent").then(this.twitlonger()) :
     find.nitter ? tet.query(".container").then(this.nitter()) : false;
@@ -1575,6 +1581,7 @@ try {
     selTH = qs('select#theme'),
     selTR = qs('select#translator'),
     selDS = qs('select#display'),
+    selDI = qs('select#delayInject'),
     libre = qs('input.libre',true),
     lingva = qs('input.lingva'),
     dlAPI = qs('input.deepl'),
@@ -1583,14 +1590,9 @@ try {
     dColor = $(".tetDisplayColor"),
     tColor = $(".tetTextColor"),
     tBG = $(".tetBackground"),
-    legacyCheck = (th = TETConfig.theme) => {
+    autoCheck = (th = TETConfig.theme) => {
       let isAuto = /auto/.test(th),
       tv = isAuto ? autoTheme : th;
-      if(tetInfo.version === "0.32") {
-        return tv = (th === "#FFFFFF") ? "rgb(255, 255, 255)" :
-        (th === "#15202B") ? "rgb(21, 32, 43)" :
-        (th === "#000000") ? "rgb(0, 0, 0)" : th;
-      };
       return isAuto ? tv = "auto" : tv;
     },
     tetFn = (e) => {
@@ -1606,9 +1608,10 @@ try {
   selLG.value = TETConfig.lang ?? "en";
   let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
   selCS.value = TETConfig.colors ?? "r-1dgebii";
-  selTH.value = legacyCheck();
+  selTH.value = autoCheck();
   selTR.value = TETConfig.translator;
   selDS.value = TETConfig.display;
+  selDI.value = TETConfig.delay;
   qs("input#debug").checked = TETConfig.debug;
   qs(".tet-url").value = TETConfig.url[selTR.value];
   const TETLanguageChange = (m) => {
@@ -1638,15 +1641,16 @@ try {
     $('.tet-alert-span').text(v.body)
     $('.tet-confirm').text(v.yes)
     $('.tet-deny').text(v.no)
-    $('.tethelper-header.tetlg').text(v.lg);
-    $('.tethelper-header.tettr').text(v.tr);
-    $('.tethelper-header.tetds').text(v.ds);
-    $('.tethelper-header.tetcol').text(v.col);
-    $('.tethelper-header.tetth').text(v.th);
-    $('.tethelper-info.tetlg').text(v.language);
-    $('.tethelper-info.tetds').text(v.display);
-    $('.tethelper-info.tetcol').text(v.color);
-    $('.tethelper-info.tetth').text(v.theme);
+    $('.tethelper-header.tetlg').text(v.lg)
+    $('.tethelper-header.tettr').text(v.tr)
+    $('.tethelper-header.tetds').text(v.ds)
+    $('.tethelper-header.tetcol').text(v.col)
+    $('.tethelper-header.tetth').text(v.th)
+    $('.tethelper-info.tetlg').text(v.language)
+    $('.tethelper-info.tetds').text(v.display)
+    $('.tethelper-info.tetcol').text(v.color)
+    $('.tethelper-info.tetth').text(v.theme)
+    $('#delayInject > option[value="none"]').text(`0ms (${v.df})`)
     configDisplay();
     tet.log("Language:", TETConfig.lang);
   },
@@ -1844,6 +1848,9 @@ try {
     TETConfig.api.deepl = dlAPI.value;
     TETConfig.api.version = e.target.value;
   }, selAPI);
+  tet.ael("change", (e) => {
+    TETConfig.delay = e.target.value;
+  }, selDI);
   tet.ael("change", (e) => {
     TETConfig.debug = e.target.value;
   }, qs("input#debug"));

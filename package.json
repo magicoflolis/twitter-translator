@@ -3,7 +3,7 @@
   "productName": "Twitter External Translator",
   "description": "Adds external & internal translators to various sites.",
   "author": "Magic <magicoflolis@tuta.io>",
-  "version": "0.33",
+  "version": "0.34",
   "license": "GPL-3.0-only",
   "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
   "bugs": {
@@ -19,25 +19,25 @@
     "lint:Beautify": "js-beautify -r ./dist/twittertranslator.user.js --config .jsbeautifyrc.json"
   },
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/core": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "@swc/cli": "^0.1.55",
-    "@swc/core": "^1.2.123",
-    "@types/babel__core": "^7.1.17",
-    "@types/jquery": "^3.5.11",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.165",
+    "@types/babel__core": "^7.1.19",
+    "@types/jquery": "^3.5.14",
     "@types/sass": "^1.43.1",
-    "autoprefixer": "^10.4.0",
-    "eslint": "^8.5.0",
-    "eslint-config-prettier": "^8.3.0",
-    "http-server": "^14.0.0",
-    "js-beautify": "^1.14.0",
-    "node-watch": "^0.7.2"
+    "autoprefixer": "^10.4.4",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "http-server": "^14.1.0",
+    "js-beautify": "^1.14.3",
+    "node-watch": "^0.7.3"
   },
   "dependencies": {
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.0",
     "jquery": "^3.6.0",
-    "sass": "^1.45.1"
+    "sass": "^1.50.0"
   },
   "repository": {
     "type": "git",
