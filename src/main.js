@@ -10,11 +10,10 @@ tetInfo = {
 },
 tetAvatar = tetInfo.icon,
 tetHelper = tetInfo.namespace;
-const isHTML = (str, doc = new DOMParser().parseFromString(str, "text/html")) => {
-  return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
-},
+//return new DOMParser().parseFromString(stringElement, 'text/html').body.firstElementChild
+const isHTML = (text) => Array.from(new DOMParser().parseFromString(text,"text/html").body.childNodes).some(node => node.nodeType === 1),
 /** Element | querySelector all */
-qs = (element, all) => {
+qs = (element,all) => {
   return !all ? document.querySelector(element) : document.querySelectorAll(element);
 },
 defaultDesc = "Pretend I'm a foreign language.",
@@ -938,11 +937,11 @@ cSub = "r-13gxpu9",
 tet = {
   /**
   * addEventListener
+  * @param {string} elm - Element
   * @param {Options|string} event - Event type
   * @param {Function} callback - Callback function
-  * @param {string} elm - Element
   */
-  ael(event, callback, elm = document) {
+  ael(elm = document,event,callback) {
     return elm.addEventListener(event, callback);
   },
   defaultcfg: {
@@ -989,8 +988,8 @@ tet = {
   each(elm, context, callback) {
     for (let i = 0; i < elm.length; i++) {
       (!callback) ? elm.addClass(context) : (
-        tet.ael("mouseenter", callback, elm[i]),
-        tet.ael("mouseleave", callback, elm[i]) );
+        tet.ael(elm[i],"mouseenter", callback),
+        tet.ael(elm[i],"mouseleave", callback) );
     };
   },
   /** Error handling for userscript */
@@ -1059,6 +1058,12 @@ tet = {
       return;
     };
     console.log('[%cTET%c] %cDBG', 'color: rgb(29, 155, 240);', '', 'color: rgb(255, 212, 0);', ...message);
+  },
+  mouseEvents(elms,enter,leave = enter) {
+    elms.forEach((item, i) => {
+      tet.ael(elms[i],"mouseenter",enter);
+      tet.ael(elms[i],"mouseleave",leave);
+    });
   },
   /**
   * @param {Node} element
@@ -1281,15 +1286,6 @@ menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetD
       <span class="tet-info-name css-901oao">Advanced Config</span>
     </div>
     <div class="css-1dbjc4n tet-main tet-container tetadvanced-container">
-      <section class="tetcheckbox">
-        <label class="tetTextColor">
-          <span>Console log</span>
-          <div class="tetswitch">
-            <input type="checkbox" name="debug" id="debug" />
-            <label for="debug"></label>
-          </div>
-        </label>
-      </section>
       <div id="tetSelector" class="tetBackground css-1dbjc4n">
         <div id="tetName" class="css-901oao"><span class="css-901oao">Delay Injection</span></div>
         <select id="delayInject" name="delayInject" class="tetTextColor">
@@ -1306,6 +1302,15 @@ menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetD
           <option class="tetBackground" value="5000">5000ms</option>
         </select>
       </div>
+      <section class="tetcheckbox">
+        <label class="tetTextColor">
+          <span>Console log</span>
+          <div class="tetswitch">
+            <input type="checkbox" name="debug" id="debug" />
+            <label for="debug"></label>
+          </div>
+        </label>
+      </section>
     </div>
   </div>
 </div>
@@ -1319,7 +1324,7 @@ menu = `<button title="${languages.en.menu}" id="tetMenuButton" class="mini tetD
   </div>
 </div></div>
 `,
-autoTheme = find.twitter ? tet.query("body").then(e => e.style.backgroundColor) : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter";
+autoTheme = find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter";
 //#endregion
 //#region Site n Menu Fn
 function checkLng() {
@@ -1430,6 +1435,11 @@ function TETBtnClick(source,src,content,mode) {
   (mode === "nitter") ? (source.parent().parent().after(tetBtn),tetBtn.attr("style",'margin-left: 58px; padding: 1%;')) :
   (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.attr("style",tdStyle)) :
   (mode === "tdBio") ? (source.after(tetBtn),tetBtn.attr("style",`${tdStyle} padding-bottom: 4px !important;`)) : tetBtn.prependTo(mode);
+  tet.mouseEvents(qs('.tet',true),(e)=>{
+    $(e.target).addClass("r-hover");
+  },(e)=>{
+    $(e.target).removeClass("r-hover");
+  });
   tetBtn.on("click", (e) => {
     tet.halt(e);
     let res,
@@ -1463,11 +1473,6 @@ function TETBtnClick(source,src,content,mode) {
       openlink(src,content,tr);
     };
   });
-  tetBtn.on("mouseenter", (e) => {
-    $(e.target).addClass("r-hover");
-  }).on("mouseleave", (e) => {
-    $(e.target).removeClass("r-hover");
-  });
   //r-rsyp9y
   //r-1ye8kvj max-width
   configDisplay();
@@ -1499,16 +1504,17 @@ const site = {
     (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
   tweetdeck() {
-    let twt = $("a.js-translate-call-to-action"), // "Translate Tweet" button
+    let root="a.js-translate-call-to-action",
     bio = $("p.prf-bio"), // Bio container
     twtFN = () => {
+      tet.query(root).then(() => {return});
+      $(root).each((index,item) => {
+        let e = $(item);
+        if(!e.siblings(".tet").length) {
+          TETBtnClick(e,e.siblings("p[lang]").attr("lang"),e.siblings("p[lang]").text(),"tdTweet")
+        }
+      });
       (bio.length && !bio.siblings(".tet").length) ? TETBtnClick(bio,"auto",bio.text(),"tdBio") : false;
-      if(twt.length && !twt.siblings(".tet").length) {
-        for(let i = 0; i < twt.length; i++) {
-          let e = twt.eq(i);
-          (e.siblings("p[lang]").length && !e.siblings(".tet").length) ? TETBtnClick(e,e.siblings("p[lang]").attr("lang"),e.siblings("p[lang]").text(),"tdTweet") : false;
-        };
-      };
     };
     (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
@@ -1520,31 +1526,38 @@ const site = {
     };
     (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
   },
-  twitter(content = '') {
-    let elm = $("div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0"), // "Translate Tweet/Bio" button
+  twitter() {
+    let root="div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0",
+    eroot = qs(root,true),
+    elm = $(root), // "Translate Tweet/Bio"
     twtFN = () => {
-      for (let i = 0; i < elm.length; i++) {
+      tet.query(root).then(() => {return});
+      eroot.forEach((item, i) => {
         let e = elm.eq(i),
+        content = '',
+        elmFN= (sel) => {
+          for (let i = 0; i < sel.length; i++) {
+            let tweet = sel.children("span").html().trim();
+            return (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
+          };
+        },
         translateTweet = e.siblings("div[lang]"), // Tweet container
         translateBio = e.siblings("div[data-testid]"); // Bio container
         if(!e.siblings(".tet").length) {
           // tet.log("Injecting TET button");
           if(translateBio.length) {
-            translateBio.children("span").each((index,item) => {
-              let bio = $(item).html().trim();
-              (bio && bio != '' && !isHTML(bio)) ? content+=bio : false;
-            });
+            //e.siblings("div[lang]")
+            elmFN(translateBio)
+            // translateBio.children("span").each(elmFN);
             TETBtnClick(e.parent(),"auto",content)
           }
           if(translateTweet.length) {
-            translateTweet.children("span").each((index,item) => {
-              let tweet = $(item).html().trim();
-              (tweet && tweet != '' && !isHTML(tweet)) ? content+=tweet : false;
-            });
-            TETBtnClick(e.parent(),e.siblings("div[lang]").attr("lang"),content)
+            elmFN(translateTweet)
+            // translateTweet.children("span").each(elmFN);
+            TETBtnClick(e.parent(),translateTweet.attr("lang"),content)
           }
         };
-      };
+      });
     };
     (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
     (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(document.location.pathname)) ? (tet.info("Hiding menu"), $('#tetMenuButton').attr('style', 'z-index: -1 !important;')) : $('#tetMenuButton').attr('style', '');
@@ -1575,7 +1588,7 @@ try {
   tet.query('body').then($("body").append(menu));
   let nav = $('.navbackground'),
     menuBtn = $('button#tetMenuButton'),
-    tetSel = qs('div#tetSelector', true),
+    tetSel = qs('div#tetSelector',true),
     selLG = qs('select#languages'),
     selCS = qs('select#colorselect'),
     selTH = qs('select#theme'),
@@ -1590,11 +1603,17 @@ try {
     dColor = $(".tetDisplayColor"),
     tColor = $(".tetTextColor"),
     tBG = $(".tetBackground"),
+    autoColor = find.twitter ? tet.query('a.r-sdzlij[href="/compose/tweet"]').then(e => e.classList[3]) : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
     autoCheck = (th = TETConfig.theme) => {
       let isAuto = /auto/.test(th),
       tv = isAuto ? autoTheme : th;
       return isAuto ? tv = "auto" : tv;
     },
+    // aCheck = () => {
+    //   let isAuto = /auto/.test(TETConfig.colors),
+    //   tv = isAuto ? autoColor : TETConfig.colors;
+    //   return isAuto ? tv = "auto" : tv;
+    // },
     tetFn = (e) => {
       tet.halt(e);
       $(e.target).toggleClass(`${cColor}`).children("div#tetName").toggleClass(`${cSub}`);
@@ -1608,6 +1627,7 @@ try {
   selLG.value = TETConfig.lang ?? "en";
   let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
   selCS.value = TETConfig.colors ?? "r-1dgebii";
+  // selCS.value = aCheck();
   selTH.value = autoCheck();
   selTR.value = TETConfig.translator;
   selDS.value = TETConfig.display;
@@ -1655,7 +1675,7 @@ try {
     tet.log("Language:", TETConfig.lang);
   },
   demoUpdate = txt => $(".tet-demotext").text(txt),
-  TETMenuUpdate = (cSel, type) => {
+  TETMenuUpdate = (cSel,type) => {
     if(type === "theme") {
       let isAuto = /auto/.test(cSel);
       isAuto ? cSel = autoTheme : false;
@@ -1669,7 +1689,9 @@ try {
       isAuto ? cSel = "auto" : cSel;
     }
     else if(type === "colors") {
-      return (cSel == "r-urgr8i") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
+      let isAuto = /auto/.test(cSel);
+      isAuto ? cSel = autoColor : false;
+      (cSel == "r-urgr8i") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
       (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
       (cSel == "tweetdeck") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-td") :
       (cSel == "r-1vkxrha") ? (cHover = "r-1kplyi6",cColor = "r-v6khid r-cdj8wb",cSub = "r-61mi1v") :
@@ -1680,6 +1702,7 @@ try {
         cHover = "r-1q3imqu",
         cColor = "r-p1n3y5 r-1bih22f",
         cSub = "r-13gxpu9");
+      isAuto ? cSel = "auto" : cSel;
     }
     else if (type == "translator") {
       $(".tet-url").show();
@@ -1723,30 +1746,33 @@ try {
     }
   };
   //#region Nitter/TweetDeck/Twitlonger
-  if(!find.twitter && !find.tweetdeck && !find.twitlonger) {
+  if(!find.twitter) {
     tet.loadCSS(twCSS, "foreign");
+  }
+  if(find.nitter) {
     tet.loadCSS(nitterCSS, "nitter");
     $('div.btNav').attr("id", "tetNT");
     tetAvatar = $(`link[rel="icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
-  } else if(find.tweetdeck) {
-    tet.loadCSS(twCSS, "foreign");
+  }
+  if(find.tweetdeck) {
     $('#tetMenuButton').toggleClass("tetTD");
     tetAvatar = $(`link[rel="shortcut icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
-  } else if(find.twitlonger) {
-    tet.loadCSS(twCSS, "foreign");
+  }
+  if(find.twitlonger) {
     tetAvatar = $(`link[rel="shortcut icon"]`).attr("href");
     $('#tetAvatar').attr('style', `background-image: url(${tetAvatar}) !important;`);
   };
   //#endregion
   nav.attr("style",`background-color:${cBG}`);
   TETMenuUpdate(selTR.value,"translator");
-  tet.each(tBG, cTheme);
-  tet.each(tColor, cText);
-  tet.each(dColor, TETConfig.colors);
-  tet.each($('#tetDemo'), cSub);
-  tet.each($('.tethelper-header'), cSub);
+  // TETMenuUpdate(selTH.value,"theme");
+  tet.each(tBG,cTheme);
+  tet.each(tColor,cText);
+  tet.each(dColor,TETConfig.colors);
+  tet.each($('#tetDemo'),cSub);
+  tet.each($('.tethelper-header'),cSub);
   tBG.toggleClass(cTheme);
   tColor.toggleClass(cText);
   TETMenuUpdate(selTH.value,"theme");
@@ -1762,8 +1788,8 @@ try {
   $('#tetDemo').toggleClass(cSub);
   dColor.toggleClass(TETConfig.colors);
   tet.info("Menu functions");
-  tet.each(tetSel,false,tetFn);
-  tet.ael("click", (e) => {
+  tet.mouseEvents(tetSel,tetFn);
+  tet.ael(qs('.navbackground'),"click",(e) => {
     !$('.tetAlert.rm').length ? $('.tetAlert').toggleClass("rm") : false;
     !$("#tethelper.rm").length ? ($(".tet-help-container").toggleClass("rm"),$("#tethelper").toggleClass("rm")) : false;
     !$("#tetadvanced.rm").length ? $("#tetadvanced").toggleClass("rm") : false;
@@ -1785,8 +1811,8 @@ try {
     TETConfig.url[selTR.value] = qs(".tet-url").value;
     tet.save();
     tet.delay(5000).then(() => $('svg#tetSVG').hide());
-  }, qs('.navbackground'));
-  tet.ael("click", () => {
+  });
+  tet.ael(qs("button#tetMenuButton"),"click", () => {
     nav.toggleClass("rm");
     $('#tetForm').toggleClass("rm");
     $('.tet-icon-container').toggleClass("rm");
@@ -1794,19 +1820,20 @@ try {
     $('.btNav').attr('style', 'z-index: 10000 !important');
     menuBtn.attr("style", "display: none !important;").toggleClass("mini");
     $('html').toggleClass('tetFreeze');
-  }, qs("button#tetMenuButton"));
-  tet.ael("mouseenter", () => {
+  });
+  tet.mouseEvents(tetSel,tetFn);
+  tet.ael(qs("button#tetMenuButton"),"mouseenter", () => {
     menuBtn.toggleClass(cHover).toggleClass(TETConfig.colors);
     $('svg#tetSVG').hide();
     menuBtn.toggleClass("mini");
-  }, qs("button#tetMenuButton"));
-  tet.ael("mouseleave", () => {
+  });
+  tet.ael(qs("button#tetMenuButton"),"mouseleave", () => {
     menuBtn.toggleClass(cHover).toggleClass(TETConfig.colors);
     $('svg#tetSVG').show();
     menuBtn.toggleClass("mini");
     tet.delay(5000).then(() => $('svg#tetSVG').hide());
-  }, qs("button#tetMenuButton"));
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selTH,"change", (e) => {
     let cSel = e.target.value;
     tBG.toggleClass(cTheme);
     tColor.toggleClass(cText);
@@ -1814,70 +1841,70 @@ try {
     TETConfig.theme = /auto/.test(cSel) ? "auto" : cSel;
     tBG.toggleClass(cTheme);
     tColor.toggleClass(cText);
-  }, selTH);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selCS,"change", (e) => {
     let cSel = e.target.value;
     dColor.toggleClass(TETConfig.colors);
     $('#tetDemo').toggleClass(cSub);
     $('.tet').toggleClass(cSub);
     $('.tethelper-header').toggleClass(cSub);
     TETMenuUpdate(cSel,"colors");
-    TETConfig.colors = cSel;
+    TETConfig.colors = /auto/.test(cSel) ? "auto" : cSel;
     $('.tethelper-header').toggleClass(cSub);
     $('.tet').toggleClass(cSub);
     $('#tetDemo').toggleClass(cSub);
     dColor.toggleClass(TETConfig.colors);
-  }, selCS);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selLG,"change", (e) => {
     TETConfig.lang = e.target.value;
     TETLanguageChange(e.target.value);
-  }, selLG);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selTR,"change", (e) => {
     let cSel = e.target.value;
     TETConfig.translator = cSel;
     qs(".tet-url").value = TETConfig.url[cSel];
     TETMenuUpdate(cSel,"translator");
     configDisplay();
-  }, selTR);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selDS,"change", (e) => {
     TETConfig.display = e.target.value;
     configDisplay();
-  }, selDS);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selAPI,"change", (e) => {
     TETConfig.api.google = goAPI.value;
     TETConfig.api.deepl = dlAPI.value;
     TETConfig.api.version = e.target.value;
-  }, selAPI);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(selDI,"change", (e) => {
     TETConfig.delay = e.target.value;
-  }, selDI);
-  tet.ael("change", (e) => {
+  });
+  tet.ael(qs("input#debug"),"change", (e) => {
     TETConfig.debug = e.target.value;
-  }, qs("input#debug"));
+  });
 
-  tet.ael("click", () => {
+  tet.ael(qs('button#tetReset'),"click", () => {
     $('.tetAlert').toggleClass("rm");
     nav.toggleClass("warn");
-  }, qs('button#tetReset'));
-  tet.ael("click", () => {
+  });
+  tet.ael(qs('.tetAlertBtns.confirm'),"click", () => {
     localStorage.removeItem("TETConfig");
     TETConfig = tet.defaultcfg;
     tet.save();
     tet.delay(200).then(() => window.location.reload());
-  }, qs('.tetAlertBtns.confirm'));
-  tet.ael("click", () => {
+  });
+  tet.ael(qs('.tetAlertBtns.deny'),"click", () => {
     $('.tetAlert').toggleClass("rm");
     nav.removeClass("warn");
-  }, qs('.tetAlertBtns.deny'));
-  tet.ael("click", () => {
+  });
+  tet.ael(qs(".tet-icon-info"),"click", () => {
     !$("#tetadvanced.rm").length ? $("#tetadvanced").toggleClass("rm") : false;
     $(".tet-help-container").toggleClass("rm");
     $("#tethelper").toggleClass("rm");
-  }, qs(".tet-icon-info"));
-  tet.ael("click", () => {
+  });
+  tet.ael(qs(".tetadvanced-icon-container"),"click", () => {
     !$("#tethelper.rm").length ? ($(".tet-help-container").toggleClass("rm"),$("#tethelper").toggleClass("rm")) : false;
     $("#tetadvanced").toggleClass("rm");
-  }, qs(".tetadvanced-icon-container"));
+  });
   TETLanguageChange();
   tet.delay(5000).then(() => $('svg#tetSVG').hide());
   tet.info("Menu setup complete");

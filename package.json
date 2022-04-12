@@ -3,7 +3,7 @@
   "productName": "Twitter External Translator",
   "description": "Adds external & internal translators to various sites.",
   "author": "Magic <magicoflolis@tuta.io>",
-  "version": "0.34",
+  "version": "0.35",
   "license": "GPL-3.0-only",
   "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
   "bugs": {
