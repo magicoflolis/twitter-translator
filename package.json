@@ -11,33 +11,33 @@
   },
   "type": "module",
   "scripts": {
-    "dev:Userscript": "node -r dotenv/config ./tools/userscript.js",
+    "dev:Userscript": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./http-server/.env",
     "dev:Sass": "sass -w --no-source-map ./src/sass/twittertranslator.scss:./dist/css/twittertranslator.css ./src/sass/useSiteColors.scss:./dist/css/useSiteColors.css ./src/sass/foreign.scss:./dist/css/foreign.css -s compressed",
     "dev:Server": "http-server ./http-server -c5",
-    "build:Userscript": "node -r dotenv/config ./tools/userscript.js",
+    "build:Userscript": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/.env",
     "lint:Dev": "js-beautify -r ./http-server/twittertranslator.user.js --config .jsbeautifyrc.json",
     "lint:Beautify": "js-beautify -r ./dist/twittertranslator.user.js --config .jsbeautifyrc.json"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.165",
+    "@swc/core": "^1.2.183",
     "@types/babel__core": "^7.1.19",
     "@types/jquery": "^3.5.14",
     "@types/sass": "^1.43.1",
-    "autoprefixer": "^10.4.4",
-    "eslint": "^8.13.0",
+    "autoprefixer": "^10.4.7",
+    "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "http-server": "^14.1.0",
     "js-beautify": "^1.14.3",
     "node-watch": "^0.7.3"
   },
   "dependencies": {
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.0.1",
     "jquery": "^3.6.0",
-    "sass": "^1.50.0"
+    "sass": "^1.51.0"
   },
   "repository": {
     "type": "git",

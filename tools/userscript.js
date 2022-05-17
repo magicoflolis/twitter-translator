@@ -6,8 +6,19 @@ import { transformFileSync } from "@swc/core";
 import { readFileSync, writeFile } from "fs";
 import watch from 'node-watch';
 
+// @grant        GM.deleteValue
+// @grant        GM_deleteValue
+// @grant        GM.getValue
+// @grant        GM_getValue
+// @grant        GM.info
+// @grant        GM_info
+// @grant        GM.setValue
+// @grant        GM_setValue
+// @grant        GM.xmlHttpRequest
+// @grant        GM_xmlhttpRequest
+
 const log = (...message) => {
-  return console.log(`[LOG] ${[...message]} ${performance.now()}ms`);
+  console.log('[%cNodeJS%c] %cDBG', 'color: rgb(0, 186, 124);', '', 'color: rgb(255, 212, 0);', `${[...message]} ${performance.now()}ms`)
 },
 delay = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -74,6 +85,7 @@ jshead_common = `// @author       ${jsonData.author}
 // @exclude      https://twitter.com/teams/*
 // @exclude      https://twitter.com/*/authorize?*
 // @exclude      https://twitter.com/*/begin_password_reset
+// @exclude      https://twitter.com/account/*
 // @exclude      https://mobile.twitter.com/i/flow/login
 // @exclude      https://mobile.twitter.com/i/flow/signup
 // @exclude      https://nitter.com
@@ -82,7 +94,6 @@ jshead_common = `// @author       ${jsonData.author}
 // @grant        GM_deleteValue
 // @grant        GM_info
 // @grant        GM_xmlhttpRequest
-// @require      https://code.jquery.com/jquery-3.6.0.slim.min.js?_=${time}
 // ==/UserScript==`,
 jshead_prod = `// ==UserScript==
 // @name         ${jsonData.productName}

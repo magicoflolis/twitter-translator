@@ -17,6 +17,7 @@
     "eslint:recommended",
     "prettier"
   ],
+	"eslintIgnore": ["header.js","userscript.js"],
   "parserOptions": {
     "sourceType": "module",
     "allowImportExportEverywhere": false,

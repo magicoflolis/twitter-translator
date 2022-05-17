@@ -19,7 +19,7 @@ $tetGreen: rgb(0, 186, 124);
 $tetGreenH: rgb(21, 172, 89);
 $tetGreenB: rgb(23, 191, 99) 0px 0px 0px 1px;
 $twBlack: rgb(0, 0, 0);
-$twWhite: rgb(255, 255, 255);
+$twWhite: #fff;
 $twGray: #6e767d;
 $fg_dark: #FF6C60;
 $bg_panel: #161616;
@@ -33,10 +33,9 @@ $grey: #888889;
 $accent_light: #FFACA0;
 $accent_lightB: #FFACA0 0px 0px 0px 1px;
 
-#tetMenuButton {
-  > span {
-    color: $twWhite !important;
-  };
+#tetReset,
+#tetMenuButton > span {
+  color: $twWhite !important;
 };
 
 #tetSelector > select {
@@ -109,25 +108,17 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
   color: #fff !important;
 }
 .tet-td {
-  color: $td_blue;
+  color: $td_color;
   &#tetName {
     color: $td_blue !important;
     span {
       color: inherit !important;
     };
   };
-  &.tet {
-    color: $td_color;
-  };
 };
-.r-hoverTD {
-  background-color: $td_b;
-}
-
 .tet-border-black {
   border-color: $twBlack;
-}
-
+};
 /* gray */
 .r-9ilb82 {
   color: rgb(110, 118, 125);
@@ -135,7 +126,6 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 .r-1kqtdi0 {
   border-color: #2f3336;
 }
-
 /* blue */
 .r-urgr8i {
   background-color: $tetBlue;
@@ -149,23 +139,6 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 .r-1bih22f {
   box-shadow: $tetBlueB;
 }
-// .tetBtn.tweetdeck {
-//   color: $tdBlue;
-//   &#tetName {
-//     color: $tdBlue !important;
-//   }
-// };
-
-.tetBtn.tweetdeck {
-  background-color: #1da1f2;
-  color: #fff;
-  &#tetName {
-    color: #1da1f2;
-    span {
-      color: inherit !important;
-    };
-  };
-};
 
 .r-13gxpu9 {
   color: $tetBlue;
@@ -325,15 +298,27 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 };
 
 .r-18jsvk2 {
-  color: rgb(15, 20, 25);
+  color: rgb(15, 20, 25) !important;
 };
+
+.tweetdeck {
+  background-color: #1da1f2;
+  color: #fff;
+  &#tetName {
+    color: #1da1f2;
+    span {
+      color: inherit !important;
+    };
+  };
+};
+
 .r-demo {
   border-style: solid !important;
   border-radius: 16px !important;
   border-width: 1px !important;
 };
 .r-jwli3a {
-  color: $twWhite;
+  color: $twWhite !important;
 };
 
 .tetNitterHover {
@@ -343,6 +328,7 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
   border-color: $accent_light !important;
   box-shadow: $accent_lightB !important;
 };
+.tet-icon-info.nitter,
 .tetBtn.nitter {
   color: $twWhite;
   background-color: $fg_dark;
@@ -364,6 +350,7 @@ svg.tetNTextColor,
 label.tetNTextColor>span {
   color: $fg_color;
 };
+.tetNText,
 .tetNText span {
   color: $fg_dark !important;
 };
