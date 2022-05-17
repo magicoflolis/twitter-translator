@@ -1464,31 +1464,32 @@
     });
     tet.ael(tetBtn,"click", (e) => {
       tet.halt(e);
-      let tr = TETConfig.translator;
+      let trMode,tr = TETConfig.translator;
+      (mode === "tdTweet") ? trMode = tetBtn.after(btnDiv) : trMode = source.append(btnDiv);
       if(tr == 'lingvaIT') {
         tet.getURL(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
           btnSpan.innerHTML = r.translation;
-          source.append(btnDiv);
+          trMode;
         });
       } else if(tr == 'libre') {
         tet.fetchURL(TETConfig.url.libre,content,src).then(r => {
           btnSpan.innerHTML = r.translatedText;
-          source.append(btnDiv);
+          trMode;
         })
       } else if(tr == 'mymemoryIT') {
         tet.getURL(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
           btnSpan.innerHTML = r.responseData.translatedText;
-          source.append(btnDiv);
+          trMode;
         })
       } else if(tr == 'googleIT') {
         tet.getURL(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
           btnSpan.innerHTML = r.data.translations[0].translatedText;
-          source.append(btnDiv);
+          trMode;
       })
       } else if(tr == 'deeplIT') {
         tet.getURL(`https://${TETConfig.api.version.includes("pro") ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
           btnSpan.innerHTML = r.translations[0].text;
-          source.append(btnDiv);
+          trMode;
       })
       } else {
         openlink(src,content,tr);

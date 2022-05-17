@@ -15,7 +15,7 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 
 | Preview |
 |:----------:|
-![Menu Preview](https://raw.githubusercontent.com/magicoflolis/twitter-translator/master/assets/ExternalTranslator.gif)|
+![Menu Preview](https://raw.githubusercontent.com/magicoflolis/twitter-translator/master/assets/preview1.gif)|
 
 ## Changelog
 
