@@ -55,7 +55,7 @@
 // @description:ru-RU   Добавляет сторонних переводчиков в Twitter
 // @description:ru      Добавляет сторонних переводчиков в Twitter
 // @description:es      Añade traductores de terceros a Twitter
-// @version      0.35
+// @version      0.36
 // @author       Magic <magicoflolis@tuta.io>
 // @icon         https://abs.twimg.com/favicons/twitter.ico
 // @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js

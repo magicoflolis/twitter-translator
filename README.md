@@ -36,8 +36,9 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 * Supports [TweetDeck](https://tweetdeck.twitter.com)
 * Supports every [Nitter](https://github.com/zedeus/nitter/wiki/Instances#official-instances)
 * Support for multiple Bios / Tweets on websites!
-* [ Misc ] Works while logged out!
-* [ Misc ] "Restore to Defaults" button.
+* Support for Twitter hover cards.
+* Works while logged out!
+* "Restore to Defaults" button.
 * [ WIP ] Added help for each menu item.
 
 ### Supported
