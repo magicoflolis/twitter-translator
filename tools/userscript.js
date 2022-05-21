@@ -1,21 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-escape */
 /* eslint-env node */
-// import { transformFileSync } from "@babel/core";
-import { transformFileSync } from "@swc/core";
+// import { transformFileSync } from "@swc/core";
 import { readFileSync, writeFile } from "fs";
 import watch from 'node-watch';
-
-// @grant        GM.deleteValue
-// @grant        GM_deleteValue
-// @grant        GM.getValue
-// @grant        GM_getValue
-// @grant        GM.info
-// @grant        GM_info
-// @grant        GM.setValue
-// @grant        GM_setValue
-// @grant        GM.xmlHttpRequest
-// @grant        GM_xmlhttpRequest
 
 const log = (...message) => {
   console.log('[%cNodeJS%c] %cDBG', 'color: rgb(0, 186, 124);', '', 'color: rgb(255, 212, 0);', `${[...message]} ${performance.now()}ms`)
@@ -26,10 +14,14 @@ delay = (ms) => {
 nano = (template, data) => {
   return template.replace(/\{([\w\.]*)\}/g, (str, key) => {
     let keys = key.split("."),
-      v = data[keys.shift()];
+    v = data[keys.shift()];
     for (let i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
     return typeof v !== "undefined" && v !== null ? v : "";
   });
+},
+p = {
+  dev: "./http-server/twittertranslator.dev.user.js",
+  pub: "./dist/twittertranslator.user.js",
 },
 js_env = process.env.JS_ENV === 'development',
 jsonData = JSON.parse(readFileSync('./package.json', 'utf-8')),
@@ -38,7 +30,8 @@ let header = readFileSync("./src/header.js").toString(),
 foreign = readFileSync("./dist/css/foreign.css").toString(),
 nitterCSS = readFileSync("./dist/css/useSiteColors.css").toString(),
 tetCSS = readFileSync("./dist/css/twittertranslator.css").toString(),
-code = transformFileSync("./src/main.js").code,
+code = readFileSync("./src/main.js").toString(),
+// code = transformFileSync("./src/main.js").code,
 renderOut = (outFile, jshead) => {
   let ujs = nano(header, {
     jshead: jshead,
@@ -93,7 +86,8 @@ jshead_common = `// @author       ${jsonData.author}
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_info
-// @grant        GM_xmlhttpRequest
+// @compatible   Chrome
+// @compatible   Firefox
 // ==/UserScript==`,
 jshead_prod = `// ==UserScript==
 // @name         ${jsonData.productName}
@@ -161,10 +155,10 @@ jshead_dev = `// ==UserScript==
 ${jshead_common}`;
 if(js_env){
   // Development version
-  renderOut("./http-server/twittertranslator.dev.user.js", jshead_dev);
+  renderOut(p.dev, jshead_dev);
 } else {
   // Release version
-  renderOut("./dist/twittertranslator.user.js", jshead_prod);
+  renderOut(p.pub, jshead_prod);
 }
 });
 
@@ -175,3 +169,14 @@ watcher.on('error', (err) => {
   watcher.close();
   delay(5000).then(() => watcher);
 });
+
+// @grant        GM.deleteValue
+// @grant        GM_deleteValue
+// @grant        GM.getValue
+// @grant        GM_getValue
+// @grant        GM.info
+// @grant        GM_info
+// @grant        GM.setValue
+// @grant        GM_setValue
+// @grant        GM.xmlHttpRequest
+// @grant        GM_xmlhttpRequest

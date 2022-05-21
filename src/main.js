@@ -22,6 +22,7 @@
     twitlonger: (lh === "www.twitlonger.com"),
     nitter: (/nitter|nittr|twitr|bird|hyper/.test(lr) ||
     lh === "twitter.076.ne.jp" ||
+    lh === "nttr.stream" ||
     lh === "twitter.censors.us"),
     remover: (/begin_password_reset|account|logout|login|signin|signout/.test(lr)),
   },
@@ -991,7 +992,9 @@
     /** Error handling for userscript */
     err(...error) {
       console.error('[%cTET%c] %cERROR', 'color: rgb(29, 155, 240);', '', 'color: rgb(249, 24, 128);', ...error);
-      handleError();
+    },
+    async fetchLink(url) {
+      return fetch(url).then(response => response.json());
     },
     async fetchURL(url,content,source) {
       let res = await fetch(url, {
@@ -1016,28 +1019,28 @@
         type === "toggle" ? items.classList.toggle(...context) :false;
       });
     },
-    getURL(url, responseType = 'json', retry = 3) {
-      return new Promise((resolve, reject) => {
-        GM_xmlhttpRequest({
-          method: 'GET',
-          url,
-          responseType,
-          onerror: e => {
-            (retry === 0) ? reject(e) : (
-              this.err('Network error, retry.'),
-              setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),1000)
-            );
-          },
-          onload: ({ status, response }) => {
-            (status === 200) ? resolve(response) :
-            (retry === 0) ? reject(`${status} ${url}`) : (
-              this.log(status, url),
-              setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),500)
-            );
-          },
-        });
-      })
-    },
+    // getURL(url, responseType = 'json', retry = 3) {
+    //   return new Promise((resolve, reject) => {
+    //     GM_xmlhttpRequest({
+    //       method: 'GET',
+    //       url,
+    //       responseType,
+    //       onerror: e => {
+    //         (retry === 0) ? reject(e) : (
+    //           this.err('Network error, retry.'),
+    //           setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),1000)
+    //         );
+    //       },
+    //       onload: ({ status, response }) => {
+    //         (status === 200) ? resolve(response) :
+    //         (retry === 0) ? reject(`${status} ${url}`) : (
+    //           this.log(status, url),
+    //           setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),500)
+    //         );
+    //       },
+    //     });
+    //   })
+    // },
     halt(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1058,7 +1061,6 @@
       let s = this.create("style");
       s.id = `tet-${name}`;
       s.innerHTML = css;
-      // return (!qs(`head > #tet-${name}`)) ? document.head.insertAdjacentHTML('beforeend', `<style id="tet-${name}">${css}</style>`) : false;
       return (!document.head.contains(s)) ? document.head.appendChild(s) : false;
     },
     /** Log handling for userscript */
@@ -1220,6 +1222,7 @@
                 <option class="tetBackground" value="r-18z3xeu">${languages.en.co}</option>
                 <option class="tetBackground" value="r-b5skir">${languages.en.cg}</option>
               <optgroup class="tetBackground" label="Misc">
+                <option class="tetBackground" disabled="" value="auto">${languages.en.ao}</option>
                 <option class="tetBackground" value="tweetdeck">TweetDeck</option>
                 <option class="tetBackground" value="nitter">Nitter</option>
               </optgroup>
@@ -1329,12 +1332,25 @@
 `,
   tetMenuButton = tet.create("div","mini tetDisplayColor css-901oao tetBtn"),
   btNav = tet.create("div","btNav css-1dbjc4n"),
-  autoTheme = find.twitter ? qs("body").style.backgroundColor : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
+  autoTheme = () => {
+    return new Promise((resolve) =>  {
+      if(find.twitter) {
+        resolve(document.body.style.backgroundColor);
+      } else if(find.tweetdeck) {
+        resolve("tweetdeck");
+      } else if(find.twitlonger) {
+        resolve("rgb(255, 255, 255)");
+      } else {
+        resolve("nitter");
+      };
+    })
+  },
   content = '',
-  // invalid_chars from https://greasyfork.org/scripts/423001
   // Couldn't figure out how to make my own
+  // invalid_chars from https://greasyfork.org/scripts/423001
   invalid_chars = {'\\': '＼', '\/': '／', '\|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
   elmFN = async (sel) => {
+    content = '';
     sel.childNodes.forEach((item) => {
       let children = item.textContent;
       if(children && children != "") {
@@ -1420,7 +1436,11 @@
     }).then((display) => {
       let tw = languages[TETConfig.lang ?? "en"].fn().tw;
       qs('#tetDemo').innerHTML = `${tw} ${display}`;
-      qs('.tet') ? qs('.tet').innerHTML = `${tw} ${display}` : false;
+      if(qs('.tet')) {
+        qs('.tet',true).forEach((t) => {
+          t.innerHTML = `${tw} ${display}`;
+        });
+      };
     });
   };
   async function openlink(source,content,tr) {
@@ -1442,20 +1462,17 @@
     }
     }).then(link => window.open(link,'_blank'))
   };
-  function handleButton(source,src,content,mode) {
+   /** Src Element, Src Language, Src Content, Inject Mode */
+  async function handleButton(source,src,content,mode) {
     mode = mode ?? "append";
     src = src ?? "auto";
     let tdStyle = 'align-items: end !important;font-size: inherit !important;font-weight: inherit !important;line-height: inherit !important;',
+    ntStyle = 'margin: 0px 0px 0px 58px !important; padding: .75em;',
     tetBtn = tet.create("div",`tet ${cSub} css-901oao`),
     btnDiv = tet.create("div",`css-901oao tetTextColor ${cText}`),
     btnSpan = tet.create("span","css-901oao");
     btnDiv.id = "tweet-text";
     btnDiv.append(btnSpan);
-    (mode === "append") ? source.append(tetBtn) :
-    (mode === "prepend") ? source.prepend(tetBtn) :
-    (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.setAttribute("style",tdStyle)) :
-    (mode === "tdBio") ? (source.after(tetBtn),tetBtn.setAttribute("style",`${tdStyle} padding-bottom: 4px !important;`)) :
-    (mode === "nitter") ? (source.parentElement.parentElement.after(tetBtn),tetBtn.setAttribute("style",'margin-left: 58px; padding: 1%;')) : mode.prepend(tetBtn);
     tet.ael(tetBtn,"mouseenter", (e) => {
       e.target.classList.add("r-hover");
     });
@@ -1463,39 +1480,60 @@
       e.target.classList.remove("r-hover");
     });
     tet.ael(tetBtn,"click", (e) => {
+      try {
       tet.halt(e);
-      let trMode,tr = TETConfig.translator;
-      (mode === "tdTweet") ? trMode = tetBtn.after(btnDiv) : trMode = source.append(btnDiv);
+      let tr = TETConfig.translator;
       if(tr == 'lingvaIT') {
-        tet.getURL(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
-          btnSpan.innerHTML = r.translation;
-          trMode;
+        if(!e.target.parentElement.contains(btnDiv)) {
+        tet.fetchLink(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
+          btnSpan.innerHTML = r.translation ?? r;
+          e.target.after(btnDiv);
         });
+        };
       } else if(tr == 'libre') {
+        if(!e.target.parentElement.contains(btnDiv)) {
         tet.fetchURL(TETConfig.url.libre,content,src).then(r => {
-          btnSpan.innerHTML = r.translatedText;
-          trMode;
-        })
-      } else if(tr == 'mymemoryIT') {
-        tet.getURL(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
-          btnSpan.innerHTML = r.responseData.translatedText;
-          trMode;
-        })
-      } else if(tr == 'googleIT') {
-        tet.getURL(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
-          btnSpan.innerHTML = r.data.translations[0].translatedText;
-          trMode;
-      })
-      } else if(tr == 'deeplIT') {
-        tet.getURL(`https://${TETConfig.api.version.includes("pro") ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
-          btnSpan.innerHTML = r.translations[0].text;
-          trMode;
-      })
-      } else {
-        openlink(src,content,tr);
+          btnSpan.innerHTML = r.translatedText ?? r;
+          e.target.after(btnDiv);
+        });
       };
+      } else if(tr == 'mymemoryIT') {
+        if(!e.target.parentElement.contains(btnDiv)) {
+        tet.fetchLink(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
+          btnSpan.innerHTML = r.responseData.translatedText ?? r;
+          e.target.after(btnDiv);
+        });
+      };
+      } else if(tr == 'googleIT') {
+        if(!e.target.parentElement.contains(btnDiv)) {
+        tet.fetchLink(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
+          btnSpan.innerHTML = r.data.translations[0].translatedText ?? r;
+          e.target.after(btnDiv);
+      });
+    };
+      } else if(tr == 'deeplIT') {
+        if(!e.target.parentElement.contains(btnDiv)) {
+        tet.fetchLink(`https://${TETConfig.api.version.includes("pro") ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
+          btnSpan.innerHTML = r.translations[0].text ?? r;
+          e.target.after(btnDiv);
+        });
+    };
+      } else {openlink(src,content,tr);};
+    } catch (e) {
+      tet.err(e);
+      btnSpan.innerHTML = `Error: ${e}`;
+      e.target.after(btnDiv);
+    };
     });
-    configDisplay();
+    (mode === "append") ? source.append(tetBtn) :
+    (mode === "after") ? source.after(tetBtn) :
+    (mode === "afterend") ? source.insertAdjacentHTML("afterend",tetBtn) :
+    (mode === "before") ? source.before(tetBtn) :
+    (mode === "prepend") ? source.prepend(tetBtn) :
+    (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.setAttribute("style",tdStyle)) :
+    (mode === "tdBio") ? (source.after(tetBtn),tetBtn.setAttribute("style",`${tdStyle} padding-bottom: 4px !important;`)) :
+    (mode === "nitter") ? (source.after(tetBtn),tetBtn.setAttribute("style",ntStyle),btnDiv.setAttribute("style",ntStyle)) : mode.prepend(tetBtn);
+    await configDisplay();
   };
   /** Restores config to default when an error occurs */
   function handleError() {
@@ -1510,15 +1548,17 @@
     nitter() {
       let bio = qs('div.profile-bio > p'),
       twtFN = () => {
-        tet.query("a.js-translate-call-to-action").then(() => {
-          qs("a.js-translate-call-to-action", true).forEach((i) => {
-            if(!i.nextElementSibling.className.includes("tet")) {
-              handleButton(i,i.previousElementSibling.lang,i.previousElementSibling.innerText, "tdTweet");
+        qs(".tweet-content", true).forEach(async (tc) => {
+          if(!tc.parentElement.parentElement.nextElementSibling) {
+            handleButton(tc.parentElement.parentElement,"auto",tc.innerText,"nitter");
+          } else {
+            if(!tc.parentElement.parentElement.nextElementSibling.className.includes("tet")) {
+              handleButton(tc.parentElement.parentElement,"auto",tc.innerText,"nitter");
             };
-          });
+          };
         });
         if(bio) {
-          if(!bio.parentElement.nextElementSibling.nextElementSibling.nextElementSibling) {
+          if(!qs(".profile-bio").contains(qs(".tet"))) {
             handleButton(bio.parentElement,"auto",bio.innerText);
           };
         };
@@ -1526,6 +1566,7 @@
       (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
     },
     tweetdeck() {
+      try {
       let bio = qs("p.prf-bio"),
       twtFN = () => {
       if(bio && !bio.nextElementSibling.className.includes("tet")) {
@@ -1542,8 +1583,12 @@
       });
     };
     TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(()=>twtFN()) : twtFN();
-    },
+  } catch (e) {
+    tet.err(e);
+  };
+  },
     twitlonger() {
+    try {
       let content = qs('p#posttext').innerText,
       source = qs('.actions.text-right'),
       twtFN = () => {
@@ -1552,86 +1597,99 @@
         };
       };
       TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
+    } catch (e) {
+      tet.err(e);
+    };
     },
     async twitter() {
       let root = "div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0", // "Translate Tweet/Bio"
-      eroot = qs(root,true),
+      broot = qs(root,true),
+      eroot = qs("div[lang]",true),
       twtFN = async () => {
-        content = '';
         if(find.logout) {
-          let tweet = qs('.r-1s2bzr4 > .r-1tl8opc');
-          if(qs('.r-6gpygo > div > .r-37j5jr')) {
-            let bio = qs('.r-6gpygo > div > .r-37j5jr',true)[1];
-            if(!bio.nextElementSibling) {
-              await elmFN(bio);
-              handleButton(bio,"auto",content,"tdTweet");
+          eroot.forEach(async (d) => {
+            if(!d.nextElementSibling) {
+              elmFN(d).then((c) => {
+                (!d.lang || d.lang === "") ? handleButton(d.parentElement,"auto",c) : handleButton(d.parentElement,d.lang,c);
+                tet.log("Injected into Bio / Tweet");
+              });
             };
-          };
-          if(tweet) {
-            if(!tweet.nextElementSibling) {
-              await elmFN(tweet);
-              handleButton(tweet,tweet.lang,content,"tdTweet");
-            };
-          };
+          });
         } else {
+          //await tet.delay(1000);
           tet.query(root).then(async () => {
-            eroot.forEach(async (e) => {
-              let translateTweet = e.previousElementSibling, // Tweet container
-              translateBio = translateTweet.dataset.testid; // Bio container
+            broot.forEach(async (e) => {
+              let tweetContainer = e.previousElementSibling;
               if(!e.nextElementSibling) {
-                if(translateTweet) {
-                  await elmFN(translateTweet);
-                  if(translateBio) {
-                    handleButton(e.parentElement,"auto",content);
-                  } else {
-                    handleButton(e.parentElement,translateTweet.lang,content);
-                  };
-                };
+                elmFN(tweetContainer).then((c) => {
+                  (!tweetContainer.lang || tweetContainer.lang === "") ? handleButton(tweetContainer.parentElement,"auto",c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
+                  tet.log("Injected into Bio / Tweet");
+                });
               };
             });
-          })
-        }
+          });
+        };
       };
-      TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
+      TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => twtFN()) : await twtFN();
       (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(document.location.pathname)) ? (tet.info("Hiding menu"), qs('#tetMenuButton').setAttribute('style', 'z-index: -1 !important;')) : qs('#tetMenuButton').setAttribute('style', '');
     },
     async inject() {
       tet.info("Site:",lh);
-      find.tweetdeck ? tet.query("section.js-column > div").then(()=>{
-        tet.ael(qs("body"),"mouseout",() => {
-          this.tweetdeck();
+      if(find.tweetdeck) {
+        tet.query("section.js-column > div").then(()=>{
+          tet.ael(qs("body"),"mouseout",() => {
+            this.tweetdeck();
+          });
+          tet.ael(qs("body"),"mouseover",() => {
+            this.tweetdeck();
+          });
         });
-        tet.ael(qs("body"),"mouseover",() => {
-          this.tweetdeck();
-        });
-    }) :
-      find.twitter ? tet.query("#react-root > div > div").then((react) => {
-        let r = qs("#react-root");
-        tet.ael(r,"animationstart",() => {
-          this.twitter();
-        });
-        tet.ael(r,"mouseover",() => {
-          this.twitter();
-        });
-        tet.observe(react, async () => {
-          if(qs("div.r-nsbfu8 > .r-1s2bzr4 > div")) {
-            if(!qs("div.r-1wtj0ep:nth-child(3) > div:nth-child(1) > .tet")) {
-              await elmFN(qs("div.r-nsbfu8 > .r-1s2bzr4 > div"));
-              handleButton(qs("div.r-nsbfu8 > .r-1s2bzr4 > div"),"auto",content);
+      };
+      if(find.twitter) {
+        tet.query("#react-root > div > div").then((react) => {
+          let r = qs("#react-root");
+          tet.ael(r,"animationstart",() => {
+            this.twitter();
+          });
+          tet.ael(r,"mouseover",() => {
+            this.twitter();
+          });
+          tet.observe(react,() => {
+            let hoverFN = async () => {
+              await tet.delay(800).then(async () => {
+                let hoverCard = qs("div.r-nsbfu8 > .r-1s2bzr4 > div");
+                if(hoverCard) {
+                  if(!hoverCard.contains(qs(".tet"))) {
+                    await elmFN(hoverCard);
+                    handleButton(hoverCard.lastElementChild,"auto",content,"after");
+                    // tet.log("Injected into hover card");
+                    tet.log(hoverCard.childNodes);
+                  };
+                };
+              });
             };
-          };
+            TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => hoverFN()) : hoverFN();
+          });
         });
-      }) :
-      find.twitlonger ? tet.query("#postcontent").then(this.twitlonger()) :
-      find.nitter ? tet.query(".container").then(this.nitter()) : false;
+      };
+      if(find.twitlonger) {
+        tet.query("#postcontent").then(this.twitlonger())
+      };
+      if(find.nitter) {
+        tet.query(".container").then((c) => {
+          tet.ael(c,"mouseover",() => {
+            this.nitter();
+          });
+          this.nitter();
+        })
+      };
     },
   };
   //#endregion
 
-  //#region Menu
-  async function Menu() {
+//#region Menu
+async function Menu() {
   try {
-    tet.info("Menu initialize");
     tetMenuButton.id = "tetMenuButton";
     tetMenuButton.title = languages.en.menu;
     btNav.id = "tetTW";
@@ -1642,41 +1700,50 @@
     document.body.appendChild(btNav);
     document.body.appendChild(tetMenuButton);
     let nav = qs('.navbackground'),
-      menuBtn = qs('#tetMenuButton'),
-      tetAlert = qs('.tetAlert'),
-      tetSel = qs('div#tetSelector',true),
-      selLG = qs('select#languages'),
-      selCS = qs('select#colorselect'),
-      selTH = qs('select#theme'),
-      selTR = qs('select#translator'),
-      selDS = qs('select#display'),
-      selDI = qs('select#delayInject'),
-      libre = qs('input.libre',true),
-      lingva = qs('input.lingva'),
-      dlAPI = qs('input.deepl'),
-      goAPI = qs('input.google'),
-      selAPI = qs('select#api-version'),
-      dColor = qs(".tetDisplayColor",true),
-      tColor = qs(".tetTextColor",true),
-      tDemo = qs('#tetDemo',true),
-      tHeader = qs('.tethelper-header',true),
-      tBG = qs(".tetBackground",true),
-      autoColor = find.twitter ? tet.query('a.r-sdzlij[href="/compose/tweet"]').then(e => e.classList[3]) : find.tweetdeck ? "tweetdeck" : find.twitlonger ? "rgb(255, 255, 255)" : "nitter",
-      autoCheck = (th = TETConfig.theme) => {
-        let isAuto = /auto/.test(th),
-        tv = isAuto ? autoTheme : th;
-        return isAuto ? tv = "auto" : tv;
-      };
-    dlAPI.value = TETConfig.api.deepl ?? "";
-    libre[0].value = TETConfig.api.libre ?? "";
+    menuBtn = qs('#tetMenuButton'),
+    tetAlert = qs('.tetAlert'),
+    tetSel = qs('div#tetSelector',true),
+    selLG = qs('select#languages'),
+    selCS = qs('select#colorselect'),
+    selTH = qs('select#theme'),
+    selTR = qs('select#translator'),
+    selDS = qs('select#display'),
+    selDI = qs('select#delayInject'),
+    libre = qs('input.libre',true),
+    lingva = qs('input.lingva'),
+    dlAPI = qs('input.deepl'),
+    goAPI = qs('input.google'),
+    selAPI = qs('select#api-version'),
+    dColor = qs(".tetDisplayColor",true),
+    tColor = qs(".tetTextColor",true),
+    tDemo = qs('#tetDemo',true),
+    tHeader = qs('.tethelper-header',true),
+    tBG = qs(".tetBackground",true);
+    // autoColor = async () => {
+    //   return new Promise(async (resolve) =>  {
+    //     if(find.twitter) {
+    //       await qs('a[href="/compose/tweet"]');
+    //       tet.log(qs('a[href="/compose/tweet"]'));
+    //       resolve(qs('a[href="/compose/tweet"]').style.backgroundColor);
+    //     } else if(find.tweetdeck) {
+    //       resolve("tweetdeck");
+    //     } else if(find.twitlonger) {
+    //       resolve("r-urgr8i");
+    //     } else {
+    //       resolve("nitter");
+    //     };
+    //   })
+    // };
+    dlAPI.value = TETConfig.api.deepl ?? tet.defaultcfg.api.deepl;
+    libre[0].value = TETConfig.api.libre ?? tet.defaultcfg.api.libre;
     libre[1].value = TETConfig.url.libre ?? tet.defaultcfg.url.libre;
     lingva.value = TETConfig.url.lingva ?? tet.defaultcfg.url.lingva;
-    goAPI.value = TETConfig.api.google ?? "";
+    goAPI.value = TETConfig.api.google ?? tet.defaultcfg.api.google;
     selAPI.value = TETConfig.api.version;
     selLG.value = TETConfig.lang ?? "en";
     let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
-    selCS.value = TETConfig.colors ?? "r-1dgebii";
-    selTH.value = autoCheck();
+    selCS.value = /auto/.test(TETConfig.colors) ? "auto" : TETConfig.colors;
+    selTH.value = /auto/.test(TETConfig.theme) ? "auto" : TETConfig.theme;
     selTR.value = TETConfig.translator;
     selDS.value = TETConfig.display;
     selDI.value = TETConfig.delay;
@@ -1732,11 +1799,9 @@
         };
       })
     },
-    TETMenuUpdate = (cSel,type) => {
+    TETMenuUpdate = async (cSel,type) => {
       if(type === "theme") {
-        let isAuto = /auto/.test(cSel);
         cText = "";
-        isAuto ? cSel = autoTheme : false;
         cBG = "rgba(91, 112, 131, 0.4)";
         (cSel == "rgb(255, 255, 255)") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-14lw9ot",cText = "r-18jsvk2") :
         (cSel == "rgb(21, 32, 43)") ? (cTheme = "r-yfoy6g",cText = "r-jwli3a") :
@@ -1744,12 +1809,9 @@
         (cSel == "tweetdeck") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-tetTD",cText = "r-jwli3a") : (
           cText = "r-jwli3a",
           cTheme = "r-kemksi");
-        isAuto ? cSel = "auto" : cSel;
       }
       else if(type === "colors") {
-        let isAuto = /auto/.test(cSel);
-        isAuto ? cSel = autoColor : false;
-        (cSel == "r-urgr8i") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
+        (cSel == "r-urgr8i" || cSel == "rgb(29, 155, 240)") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
         (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
         (cSel == "tweetdeck") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-td") :
         (cSel == "r-1vkxrha") ? (cHover = "r-1kplyi6",cColor = "r-v6khid r-cdj8wb",cSub = "r-61mi1v") :
@@ -1760,7 +1822,6 @@
           cHover = "r-1q3imqu",
           cColor = "r-p1n3y5 r-1bih22f",
           cSub = "r-13gxpu9");
-        isAuto ? cSel = "auto" : cSel;
       }
       else if (type == "translator") {
         qs('.tet-url').setAttribute("style", "display: inline;");
@@ -1790,7 +1851,16 @@
     //#endregion
     nav.setAttribute("style",`background-color:${cBG}`);
     TETMenuUpdate(selTR.value,"translator");
-    TETMenuUpdate(selTH.value,"theme");
+    if(/auto/.test(selTH.value)) {
+      TETMenuUpdate(await autoTheme(),"theme");
+    } else {
+      TETMenuUpdate(selTH.value,"theme");
+    };
+    // if(/auto/.test(selCS.value)) {
+    //   TETMenuUpdate(await autoColor(),"colors");
+    // } else {
+    //   TETMenuUpdate(selCS.value,"colors");
+    // };
     TETMenuUpdate(selCS.value,"colors");
     qs(".tet") ? tet.forEach(qs(".tet",true),"reload",cSub) : false;
     tet.forEach(tBG,"reload",cTheme);
@@ -1798,7 +1868,6 @@
     tet.forEach(tHeader,"reload",cSub);
     tet.forEach(tDemo,"reload",cSub);
     tet.forEach(dColor,"reload",TETConfig.colors);
-    tet.info("Menu functions");
     tet.ael(nav,"click",(e) => {
       !tetAlert.classList.contains("rm") ? tetAlert.classList.add("rm") : false;
       !qs("#tethelper").classList.contains("rm") ? (qs(".tet-help-container").classList.add("rm"),qs("#tethelper").classList.add("rm")) : false;
@@ -1851,30 +1920,40 @@
       menuBtn.classList.toggle("mini");
       tet.delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
     });
-    tet.ael(selTH,"change", (e) => {
+    tet.ael(selTH,"change", async (e) => {
       let cSel = e.target.value;
       tet.forEach(tBG,"remove",cTheme);
       tet.forEach(dColor,"remove",TETConfig.colors);
       tet.forEach(tColor,"remove",cText);
-      TETMenuUpdate(cSel,"theme");
-      TETConfig.theme = /auto/.test(cSel) ? "auto" : cSel;
+      if(/auto/.test(cSel)) {
+        TETMenuUpdate(await autoTheme(),"theme");
+      } else {
+        TETMenuUpdate(cSel,"theme");
+      };
+      TETConfig.theme = cSel;
       tet.forEach(tBG,"add",cTheme);
       tet.forEach(dColor,"add",TETConfig.colors);
       tet.forEach(tColor,"add",cText);
       tet.log(cText)
     });
-    tet.ael(selCS,"change", (e) => {
+    tet.ael(selCS,"change", async (e) => {
       let cSel = e.target.value;
       tet.forEach(dColor,"remove",TETConfig.colors);
       tet.forEach(tDemo,"remove",cSub);
       tet.forEach(tHeader,"remove",cSub);
       qs(".tet") ? tet.forEach(qs(".tet",true),"remove",cSub) : false;
+      // if(/auto/.test(cSel)) {
+      //   TETMenuUpdate(await autoColor(),"colors");
+      // } else {
+      //   TETMenuUpdate(cSel,"colors");
+      // };
       TETMenuUpdate(cSel,"colors");
-      TETConfig.colors = /auto/.test(cSel) ? "auto" : cSel;
+      TETConfig.colors = cSel;
       qs(".tet") ? tet.forEach(qs(".tet",true),"add",cSub) : false;
       tet.forEach(tHeader,"add",cSub);
       tet.forEach(tDemo,"add",cSub);
-      tet.forEach(dColor,"add",TETConfig.colors);
+      tet.forEach(dColor,"add",cSel);
+      TETConfig.colors = /auto/.test(cSel) ? "auto" : cSel;
     });
     tet.ael(selLG,"change", (e) => {
       TETConfig.lang = e.target.value;
@@ -1936,7 +2015,7 @@
     });
     TETLanguageChange();
     tet.delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
-    tet.info("Menu setup complete");
+    tet.info("Menu injection complete");
   } catch (e) {
     tet.err(e);
     /** [Common Error] Reloads page when TETConfig.api.deepl is not found */
@@ -1957,7 +2036,6 @@
     tet.err("Must be login!!! Canceling...");
     return;
   };
-
   //#region Initialize Userscript
   // Section from `AC-baidu-重定向优化百度搜狗谷歌必应搜索_favicon_双列`
   // Link: https://greasyfork.org/scripts/14178/code
@@ -1974,14 +2052,14 @@
         TETConfig = res;
       }
     } : (TETConfig = tet.defaultcfg,tet.info("First time initialize"));
-    const localData = localStorage.TETConfig;
-    (localData && localData.length > 0) ? TETConfig = JSON.parse(localData) : false;
+    (localStorage.TETConfig) ? TETConfig = JSON.parse(localStorage.TETConfig) : false;
     for (let key in tet.defaultcfg) {
       (typeof TETConfig[key]) ?? (TETConfig[key] = tet.defaultcfg[key]);
     };
     tet.info("Configuration loaded");
     tet.log("Config:",TETConfig);
   }).then(() => {
+    tet.info("Starting Menu injection");
     Menu();
     tet.info("Starting content script injection");
     site.inject();

@@ -17,7 +17,6 @@
 
 .txt-s0pan {
   flex-shrink: 1;
-  max-width: 100%;
   flex-direction: inherit !important;
   .txt-s1pan {
     max-width: inherit !important;
@@ -79,8 +78,17 @@ div.tetAlertTxt,
 }
 
 .tet-sp1an > div,
+.tetAlertBtns > div > span,
+#tetMenuButton > svg,
+.txt-header,
+.tetadvanced-icon,
+.txt-s0pan,
 .tet-at {
   max-width: 100%;
+}
+
+.tet-sp1an > div,
+.tet-at {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -111,6 +119,15 @@ div.tetAlertTxt,
 .txt-s1pan > div,
 #tetSelector>select {
   line-height: 20px;
+};
+
+.tetAvatarFrame,
+#tetAvatar,
+.tet-main,
+.tet-containter,
+.tet-av,
+div.tetAlertTxt {
+  width: 100%;
 };
 
 .tetAvatarFrame,
@@ -151,17 +168,27 @@ div.tetAlertTxt,
   position: relative;
 }
 
+.tet-header,
+.tet-icon-container,
+.tetadvanced-icon-container,
+.tetAlertBtns > div,
 .tetAlertTxt {
   text-align: center;
+}
+
+.tet-help-container a,
+.tet-icon-container,
+#tetDemo,
+.tet {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .tet {
   flex-wrap: wrap;
   font-size: 13px;
   overflow-wrap: break-word;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
   height: -webkit-min-content;
   height: -moz-min-content;
   height: min-content;
@@ -170,7 +197,6 @@ div.tetAlertTxt,
 
 .tetAvatarFrame {
   padding-bottom: 100%;
-  width: 100%;
   display: block;
   z-index: 0;
   position: absolute;
@@ -186,7 +212,6 @@ div.tetAlertTxt,
     z-index: -1;
     background-color: rgba(0, 0, 0, 0);
     height: 100%;
-    width: 100%;
     position: absolute;
   }
 }
@@ -195,7 +220,6 @@ div.tetAlertTxt,
   padding: 0px 32px 32px 32px !important;
   flex-shrink: 1;
   flex-grow: 1;
-  width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -207,7 +231,6 @@ div.tetAlertTxt,
 
 .tet-header {
   min-width: 0px;
-  text-align: center;
   white-space: normal;
   display: grid;
   margin: 32px 0px 12px 0px !important;
@@ -226,8 +249,6 @@ div.tetAlertTxt,
   bottom: 0px;
   position: fixed !important;
   z-index: 10000 !important;
-  // width: 80vw;
-  // height: 80vh;
   h1.tetAlertTxt {
     line-height: 24px;
     font-size: 20px;
@@ -238,12 +259,10 @@ div.tetAlertTxt,
   };
   .tetAlertTxt span {
     white-space: normal;
-    text-align: center;
     overflow-wrap: break-word;
   };
   div.tetAlertTxt {
     min-width: 0px;
-    width: 100%;
   };
   .tetConfirmation {
     width: 20%;
@@ -276,13 +295,11 @@ div.tetAlertTxt,
       justify-content: center;
       flex-grow: 1;
       flex-direction: row;
-      text-align: center;
       display: flex;
       > span {
         line-height: inherit !important;
         overflow-wrap: break-word;
         min-width: 0px;
-        max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -330,7 +347,6 @@ div.tetAlertTxt,
   flex-shrink: 1;
   overflow: hidden;
   .tet-containter {
-    width: 100%;
     &.tet-fg {
       margin-left: auto;
       margin-right: auto;
@@ -455,7 +471,6 @@ div.mini>span {
   };
   > svg {
     position: relative;
-    max-width: 100%;
     height: 1.25em;
     fill: currentcolor;
     margin-right: 12px;
@@ -543,7 +558,6 @@ div.mini>span {
   flex-shrink: 1;
   flex-grow: 1;
   .tet-av {
-    width: 100%;
     margin: 2px 12px 0px 12px !important;
     flex-grow: 0;
     flex-shrink: 1;
@@ -561,7 +575,6 @@ div.mini>span {
       align-items: start;
       justify-content: space-between;
       flex-direction: row;
-      max-width: 100%;
       .tet-at {
         display: flex;
         margin-left: 4px;
@@ -575,9 +588,6 @@ div.mini>span {
   margin: 4px 0px 0px 0px;
   font-size: 13px;
   flex-wrap: wrap;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
   min-width: 0px;
   display: flex !important;
 }
@@ -615,14 +625,10 @@ div.mini>span {
   display: inline-flex;
   position: absolute;
   bottom: 10px;
-  text-align: center;
   border-radius: 9999px;
   z-index: 1;
 }
 .tet-icon-container {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
   height: 35px;
   right: 25px;
   .tet-icon-info {
@@ -649,9 +655,6 @@ div.mini>span {
     text-decoration: none;
     margin-left: 10px;
     a {
-      width: -webkit-fit-content;
-      width: -moz-fit-content;
-      width: fit-content;
       display: inline-block;
       margin-left: 10px;
       margin-right: 10px;
@@ -670,7 +673,6 @@ div.mini>span {
         -ms-user-select: none;
             user-select: none;
     position: relative;
-    max-width: 100%;
     fill: currentcolor;
     border-radius: inherit;
     display: inline-block;
