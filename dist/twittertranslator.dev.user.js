@@ -1,4 +1,124 @@
-/* eslint-env greasemonkey */
+// ==UserScript==
+// @name         [Dev] Twitter External Translator
+// @name:bg      Външен преводач на Twitter
+// @name:zh      Twitter外部翻译器
+// @name:zh-CN   Twitter外部翻译器
+// @name:zh-TW   Twitter外部翻译器
+// @name:cs      Externí překladatel Twitter
+// @name:da      Twitter ekstern oversætter
+// @name:et      Twitteri väline tõlkija
+// @name:fi      Twitter Ulkoinen kääntäjä
+// @name:el      Εξωτερικός μεταφραστής Twitter
+// @name:hu      Twitter külső fordító
+// @name:lv      Twitter Ārējais tulkotājs
+// @name:lt      "Twitter" išorinis vertėjas
+// @name:ro      Twitter Traducător extern
+// @name:sk      Externý prekladateľ Twitter
+// @name:sl      Twitter Zunanji prevajalec
+// @name:sv      Twitter Extern översättare
+// @name:nl      Twitter Externe Vertaler
+// @name:fr      Traducteur externe Twitter
+// @name:de      Externer Twitter-Übersetzer
+// @name:it      Traduttore esterno di Twitter
+// @name:ja      ツイッター外部翻訳者
+// @name:pl      Zewnętrzny tłumacz Twittera
+// @name:pt      Tradutor externo do Twitter
+// @name:pt-BR   Tradutor externo do Twitter
+// @name:ru-RU   Twitter Внешний переводчик
+// @name:ru      Twitter Внешний переводчик
+// @name:es      Traductor externo de Twitter
+// @description  Adds external & internal translators to various sites.
+// @description:zh      将第三方翻译添加到推特
+// @description:zh-CN   将第三方翻译添加到推特
+// @description:zh-TW   將第三方翻譯添加到推特
+// @description:bg      Добавя преводачи на трети страни в Twitter
+// @description:cs      Přidává překladatele třetích stran na Twitter
+// @description:da      Tilføjer tredjepartsoversættere til Twitter
+// @description:et      Lisab kolmanda osapoole tõlkijad Twitterisse
+// @description:fi      Lisää kolmannen osapuolen kääntäjiä Twitteriin
+// @description:el      Προσθέτει μεταφραστές 3ου μέρους στο Twitter
+// @description:hu      Hozzáadja a 3. féltől származó fordítókat a Twitterhez
+// @description:lv      Pievieno trešās puses tulkotājus Twitter
+// @description:lt      Prideda trečiųjų šalių vertėjus į "Twitter
+// @description:ro      Adaugă traducători de la terțe părți la Twitter
+// @description:sk      Pridáva prekladateľov tretích strán na Twitter
+// @description:sl      Dodaja prevajalce tretjih oseb na Twitterju
+// @description:sv      Lägger till översättare från tredje part till Twitter
+// @description:nl      Voegt vertalers van derden toe aan Twitter
+// @description:fr      Ajout de traducteurs tiers à Twitter
+// @description:de      Fügt Drittanbieter-Übersetzer zu Twitter hinzu
+// @description:it      Aggiunge traduttori di terze parti a Twitter
+// @description:pl      Dodaje tłumaczy innych firm do Twittera
+// @description:pt      Adiciona tradutores de terceiros ao Twitter
+// @description:pt-BR   Adiciona tradutores de terceiros ao Twitter
+// @description:ja      サードパーティの翻訳者をツイッターに追加
+// @description:ru-RU   Добавляет сторонних переводчиков в Twitter
+// @description:ru      Добавляет сторонних переводчиков в Twitter
+// @description:es      Añade traductores de terceros a Twitter
+// @author       Magic <magicoflolis@tuta.io>
+// @version      1659400619010
+// @icon         https://abs.twimg.com/favicons/twitter.ico
+// @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
+// @updateURL    https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
+// @supportURL   https://github.com/magicoflolis/twitter-translator/issues/new
+// @namespace    https://github.com/magicoflolis/twitter-translator#twitter-external-translator
+// @homepageURL  https://github.com/magicoflolis/twitter-translator#twitter-external-translator
+// @license      GPL-3.0
+// @connect      *
+// @match        https://mobile.twitter.com/*
+// @match        https://twitter.com/*
+// @match        https://tweetdeck.twitter.com/*
+// @match        https://www.twitlonger.com/show/*
+// @match        https://nitter.*/*
+// @match        https://nitter.*.*/*
+// @match        https://nitter-home.kavin.rocks/*
+// @match        https://birdsite.xanny.family/*
+// @match        https://nttr.stream/*
+// @match        https://lu-nitter.resolv.ee/*
+// @match        https://twitter.076.ne.jp/*
+// @match        https://notabird.site/*
+// @match        https://n.hyperborea.cloud/*
+// @match        https://twitter.censors.us/*
+// @match        https://bird.trom.tf/*
+// @match        https://twitr.gq/*
+// @exclude      https://twitter.com/login
+// @exclude      https://twitter.com/signup
+// @exclude      https://twitter.com/i/flow/login
+// @exclude      https://twitter.com/i/flow/signup
+// @exclude      https://twitter.com/teams/*
+// @exclude      https://twitter.com/*/authorize?*
+// @exclude      https://twitter.com/*/begin_password_reset
+// @exclude      https://twitter.com/account/*
+// @exclude      https://mobile.twitter.com/i/flow/login
+// @exclude      https://mobile.twitter.com/i/flow/signup
+// @exclude      https://nitter.com
+// @grant        document.cookie
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_deleteValue
+// @grant        GM_info
+// @grant        GM_xmlhttpRequest
+// @grant        GM_openInTab
+// @connect      *
+// @compatible   Chrome
+// @compatible   Firefox
+// ==/UserScript==
+
+// Uncompressed source code:
+// https://github.com/magicoflolis/twitter-translator/src
+
+'use strict';
+
+(() => {
+  let twCSS = `.prf-header>div>.tet{display:inline-block !important;width:100% !important}.css-1dbjc4n{align-items:stretch;border-style:solid;border-width:0px;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;z-index:0}select{height:auto !important}
+`,
+  tetCSS = `.r-1bih22f{box-shadow:rgb(29, 161, 242) 0px 0px 0px 1px}.r-1cqwhho{box-shadow:rgb(23, 191, 99) 0px 0px 0px 1px}.r-b8m25f{box-shadow:rgb(244, 93, 34) 0px 0px 0px 1px}.r-11mmphe{box-shadow:rgb(121, 75, 196) 0px 0px 0px 1px}.r-jd07pc{box-shadow:rgb(224, 36, 94) 0px 0px 0px 1px}.r-cdj8wb{box-shadow:rgb(255, 173, 31) 0px 0px 0px 1px}.tet-29u:not(.tetswitch){background-color:rgb(29, 155, 240)}.tet-186u:not(.tetswitch){background-color:rgb(0, 186, 124)}.tet-122u:not(.tetswitch){background-color:rgb(255, 122, 0)}.tet-120u:not(.tetswitch){background-color:rgb(120, 86, 255)}.tet-249u:not(.tetswitch){background-color:rgb(249, 24, 128)}.tet-255u:not(.tetswitch){background-color:rgb(255, 212, 0)}.tetswitch.tet-29u>input:checked+label{background-color:rgba(26,145,218,.384)}.tetswitch.tet-29u>input:checked+label:before{background-color:#1d9bf0}.tetswitch.tet-186u>input:checked+label{background-color:rgba(21,172,89,.384)}.tetswitch.tet-186u>input:checked+label:before{background-color:#00ba7c}.tetswitch.tet-122u>input:checked+label{background-color:rgba(220,84,31,.384)}.tetswitch.tet-122u>input:checked+label:before{background-color:#ff7a00}.tetswitch.tet-120u>input:checked+label{background-color:rgba(134,93,202,.384)}.tetswitch.tet-120u>input:checked+label:before{background-color:#7856ff}.tetswitch.tet-249u>input:checked+label{background-color:rgba(202,32,85,.384)}.tetswitch.tet-249u>input:checked+label:before{background-color:#f91880}.tetswitch.tet-255u>input:checked+label{background-color:rgba(230,156,28,.384)}.tetswitch.tet-255u>input:checked+label:before{background-color:#ffd400}#tetReset,#tetMenuButton>span{color:#fff !important}#tetSelector>select{background-color:rgba(0,0,0,0);border:rgba(0,0,0,0)}#tetSelector>select:focus{box-shadow:none !important}.tet-at span{color:#6e767d}.navbackground.d1tet{background-color:rgba(91,112,131,.4)}.navbackground.d2tet{background-color:rgba(0,0,0,.4)}.navbackground.d3tet{background-color:rgba(91,112,131,.4)}.r-demo,.tet-help-container,#apifield,#tetSelector{border-color:rgba(0,0,0,0)}.r-demo.r-14lw9ot,.tet-help-container.r-14lw9ot,#apifield.r-14lw9ot,#tetSelector.r-14lw9ot{border-color:#536471}.r-demo.r-yfoy6g,.tet-help-container.r-yfoy6g,#apifield.r-yfoy6g,#tetSelector.r-yfoy6g{border-color:#38444d}.r-demo.nitter,.r-demo.r-tetTD,.r-demo.r-kemksi,.tet-help-container.nitter,.tet-help-container.r-tetTD,.tet-help-container.r-kemksi,#apifield.nitter,#apifield.r-tetTD,#apifield.r-kemksi,#tetSelector.nitter,#tetSelector.r-tetTD,#tetSelector.r-kemksi{border-color:#2f3336}.r-14lw9ot>div#tetName span{color:#536471}.r-kemksi>div#tetName span,.r-yfoy6g>div#tetName span{color:#6e767d}.tetBtn.nitter{border:rgba(0,0,0,0)}.Button--primary{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD{border-radius:14px;background-color:#15202b}.r-tetTD #tetName span{color:#8899a6}.prf-header>div>.tet.tet-td{color:#fff !important}.tet-td{color:#8899a6}.tet-td#tetName{color:#1da1f2 !important}.tet-td#tetName span{color:inherit !important}.tet-border-black{border-color:#000}.r-9ilb82{color:#6e767d}.r-1kqtdi0{border-color:#2f3336}.r-p1n3y5{border-color:#1d9bf0 !important}.r-1q3imqu{background-color:#1a91da}.r-13gxpu9{color:#1d9bf0}.r-13gxpu9#tetName{color:#1d9bf0 !important}.r-13gxpu9#tetName span{color:inherit !important}.r-v6khid{border-color:#ffd400 !important}.r-61mi1v{color:#ffd400}.r-61mi1v#tetName{color:#ffd400 !important}.r-61mi1v#tetName span{color:inherit !important}.r-1kplyi6{background-color:#e69c1c}.r-1iofnty{border-color:#f91880 !important}.r-daml9f{color:#f91880}.r-daml9f#tetName{color:#f91880 !important}.r-daml9f#tetName span{color:inherit !important}.r-1ucxkr8{background-color:#ca2055}.r-njt2r9{background-color:#865dca}.r-hy56xe{border-color:#7856ff !important}.r-xfsgu1{color:#7856ff}.r-xfsgu1#tetName{color:#7856ff !important}.r-xfsgu1#tetName span{color:inherit !important}.tet-122hu{background-color:#dc541f}.r-1xl5njo{border-color:#ff7a00 !important}.r-1qkqhnw{color:#ff7a00}.r-1qkqhnw#tetName{color:#ff7a00 !important}.r-1qkqhnw#tetName span{color:inherit !important}.r-zx61xx{background-color:#15ac59}.r-5ctkeg{border-color:#00ba7c !important}.r-nw8l94{color:#00ba7c}.r-nw8l94#tetName{color:#00ba7c !important}.r-nw8l94#tetName span{color:inherit !important}.r-yfoy6g{background-color:#15202b}.r-14lw9ot{background-color:#fff}.r-kemksi{background-color:#000}.r-18jsvk2{color:#0f1419 !important}.tweetdeck{background-color:#1da1f2;color:#fff}.tweetdeck#tetName{color:#1da1f2}.tweetdeck#tetName span{color:inherit !important}.r-demo{border-style:solid !important;border-radius:16px !important;border-width:1px !important}.r-jwli3a{color:#fff !important}.tetNitterHover{background-color:#ff6c60}.tetNitter{border-color:#ffaca0 !important;box-shadow:#ffaca0 0px 0px 0px 1px !important}.tet-icon-info.nitter,.tetBtn.nitter{color:#fff;background-color:#ff6c60}h1.tetNTextColor{color:#888889}.nitter{border-color:#ff6c60;background-color:#0f0f0f}.nitter div#tetName span{color:#ff6c60}input.tetNTextColor,select.tetNTextColor,div.tetNTextColor,svg.tetNTextColor,label.tetNTextColor>span{color:#f8f8f2}.tetNText,.tetNText span{color:#ff6c60 !important}.tetNBackground{background-color:#161616}.btNav,.txt-s0pan,.txt-s1pan,.tet-av,.tetAlertBtns>div{align-items:center !important}#tetName,.r-demo,#tetadvanced,.tetAlertTxt,.tet-header{cursor:default}.txt-s0pan{flex-shrink:1;flex-direction:inherit !important}.txt-s0pan .txt-s1pan{max-width:inherit !important;flex-direction:inherit !important;white-space:normal !important}.txt-s0pan .txt-s1pan>div{white-space:inherit !important}.txt-s0pan,.tetAlertBtns,.r-demo,.tet-av,.r-hover,#apifield{outline-style:none !important}.txt-s1pan>div,.tet-dc,.tet-at,.tetAlertTxt,.tet-info,.tetAlertBtns>div,#tetSelector>select{font-size:15px !important}.txt-s1pan>div,h1.tetAlertTxt,.tetAlertBtns>div{font-weight:700 !important}.tet,#tetDemo,.tet-dc,.tet-at,.tethelper-info,div.tetAlertTxt,.tet-info,.tet-icon-info,#tweet-text,#tetSelector>#tetName{font-weight:400}.tet,#tetDemo,.tetswitch>label,#tetSelector>#tetName{line-height:16px}.tet-sp1an>div,.tetAlertBtns>div>span,#tetMenuButton>svg,.txt-header,.tetadvanced-icon,.txt-s0pan,.tet-at{max-width:100%}.tet-sp1an>div,.tet-at{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tet-dc,.txt-s1pan>div,.tet-header,#tetSelector>#tetName,#tetSelector>select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.tet,#tweet-text,.tetAlertTxt span,.tetAlertBtns>div,.tet-main{font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}div.tetAlertTxt,.tet-info,.tet-dc,.tet-at,.tethelper-info,.tetAlertBtns>div,.txt-s1pan>div,#tetSelector>select{line-height:20px}.tetAvatarFrame,#tetAvatar,.tet-main,.tet-containter,.tet-av,div.tetAlertTxt{width:100%}.tetAvatarFrame,#tetAvatar{align-items:stretch;border:0px solid #000;box-sizing:border-box;display:flex;flex-direction:column;margin:0px;min-height:0px;min-width:0px;padding:0px}#tetSelector{min-width:0px;overflow-wrap:break-word}#tetSelector #tetName{min-width:0px;position:absolute;overflow-wrap:break-word}.tet,.tet-info,#tweet-text{margin-top:1% !important}#tweet-text,.tet-demoframe{position:relative}.tet-header,.tet-icon-container,.tetadvanced-icon-container,.tetAlertBtns>div,.tetAlertTxt{text-align:center}.tet-help-container a,.tet-icon-container,#tetDemo,.tet{width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}.tet{flex-wrap:wrap;font-size:13px;overflow-wrap:break-word;height:-webkit-min-content;height:-moz-min-content;height:min-content;display:flex;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important}.tetAvatarFrame{padding-bottom:100%;position:absolute;top:0px;right:0px;left:0px;bottom:0px}.tetAvatarFrame #tetAvatar{background-size:cover;background-repeat:no-repeat;background-position:center center;z-index:-1;background-color:rgba(0,0,0,0);height:100%;position:absolute}.tet-main{padding:0px 32px 32px 32px !important;flex-shrink:1;flex-grow:1;margin-left:auto;margin-right:auto}.tet-options{display:inline-grid;grid-template-rows:1fr 1fr 1fr}.tet-header{min-width:0px;white-space:normal;display:grid;margin:32px 0px 12px 0px !important}.tet-header .tet-info-name{line-height:28px;font-size:23px;font-weight:800}.tet-header .tet-info{color:#6e767d}.tetAlert{right:0px;left:0px;bottom:0px;position:fixed !important;z-index:10000 !important}.tetAlert h1.tetAlertTxt{line-height:24px;font-size:20px;min-width:0px}.tetAlert h1.tetAlertTxt span{font-family:inherit}.tetAlert .tetAlertTxt span{white-space:normal;overflow-wrap:break-word}.tetAlert div.tetAlertTxt{min-width:0px}.tetAlert .tetConfirmation{width:20%;border-radius:16px;left:40%;top:40%;position:fixed}.tetAlert .tetAlertBtns{margin:2% 25% 2% 25%;white-space:nowrap;transition-property:background-color,box-shadow;transition-duration:.2s;flex-grow:1;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-color:rgba(0,0,0,0);overflow:hidden;border-width:1px;border-style:solid;cursor:pointer}.tetAlert .tetAlertBtns:nth-child(2){margin:0px 25% 4% 25%}.tetAlert .tetAlertBtns>div{overflow-wrap:break-word;min-width:0px;justify-content:center;flex-grow:1;flex-direction:row;display:flex}.tetAlert .tetAlertBtns>div>span{line-height:inherit !important;overflow-wrap:break-word;min-width:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}.tetAlert .tetAlertBtns>div>span>span{border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}#tetForm,#tetadvanced{border-radius:16px}#tetForm>div,#tetadvanced>div{border-radius:16px;flex-grow:1;flex-shrink:1}#tetForm .tetBackground .tetTextColor,#tetadvanced .tetBackground .tetTextColor{overflow-wrap:break-word}#tetForm .tetBackground .tetTextColor span,#tetadvanced .tetBackground .tetTextColor span{overflow-wrap:break-word}#tetForm{max-width:80vw;max-height:90vh;min-width:600px !important;flex-shrink:1;overflow:hidden}#tetForm .tet-containter.tet-fg{margin-left:auto;margin-right:auto}#tetadvanced{max-width:90vw;max-height:90vh;min-width:500px;min-height:100px;flex-shrink:1;margin-left:1%;margin-right:1%}.tet-container{overflow:auto !important}.tetadvanced-container section.tetcheckbox>label,.tetadvanced-container section.tetselect{display:flex;justify-content:space-between;padding:.825em}.tetadvanced-container section.tetcheckbox>label{cursor:pointer}.tetadvanced-container .tetswitch{position:relative;width:38px;border-radius:20px;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;margin:5px}.tetadvanced-container .tetswitch>input{display:none}.tetadvanced-container .tetswitch>label{display:block;overflow:hidden;cursor:pointer;height:16px;padding:0;border-radius:20px;border:1px solid #000;background-color:#464646}.tetadvanced-container .tetswitch>label:before{content:"";display:block;width:20px;height:20px;margin:-2px;background:#dadce0;position:absolute;top:0;right:20px;border-radius:20px}.tetadvanced-container .tetswitch>input:checked+label{margin-left:0}.tetadvanced-container .tetswitch>input:checked+label:before{right:0px}.tet-head,.tet-dc span,.tet-demotext,.tetTextColor span,.tetConfirmation span,#tetName span,#tweet-text span,#tetMenuButton span{color:inherit;font:inherit;font-family:inherit;white-space:inherit;overflow-wrap:break-word}.rm,option[disabled=""],div:not(.mini)>#tetSVG,div.mini>span{display:none !important;visibility:hidden !important}.tetFreeze{overflow:hidden !important;-ms-scroll-chaining:none !important;overscroll-behavior:none !important}#tetMenuButton{z-index:10;width:8vw;height:auto;position:fixed;top:65%;left:0px}#tetMenuButton.tetTD{left:90% !important;top:0% !important}#tetMenuButton>svg{position:relative;height:1.25em;fill:currentcolor;margin-right:12px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;right:35% !important}.tetBtn{list-style:none;text-align:inherit;text-decoration:none;border-radius:15px;justify-content:center;display:flex !important;font-family:inherit !important;font-size:20px !important;font-weight:bold !important;padding:0px !important;outline:none !important}.tetBtn.mini{border:rgba(0,0,0,0) !important;background:rgba(0,0,0,0) !important}.tetBtn,#tet,.tet{cursor:pointer !important}.tet.tet-td{display:inherit}#tet{justify-items:center}#apifield{width:initial}#apifield,#tetName,#tetSelector>select{padding-left:2% !important}#apifield,#tetSelector{border-radius:4px;border-width:1px}#apifield,.tet-options>#tetSelector{margin:2% 6% 0px 6%}#tetSelector>select{text-align:left;padding-top:12px;padding-right:0px;padding-bottom:0px;cursor:pointer;border-radius:0px;margin:0px;-webkit-appearance:none;-moz-appearance:none;appearance:none}#tetReload,#tetReset{margin:2% 25% 0px 25%}.r-demo{margin:0px 32px 0px 32px !important;padding:12px 0px 12px 0px !important;overflow:hidden;flex-direction:row !important;flex-shrink:1;flex-grow:1}.r-demo .tet-av{margin:2px 12px 0px 12px !important;flex-grow:0;flex-shrink:1;flex-basis:48px;height:48px;overflow:hidden;display:block}.r-demo .tet-txt{flex-basis:0px;flex-grow:1;justify-content:center}.r-demo .tet-txt .txt-header{margin-bottom:2px;align-items:start;justify-content:space-between;flex-direction:row}.r-demo .tet-txt .txt-header .tet-at{display:flex;margin-left:4px;overflow-wrap:break-word;min-width:0px}#tetDemo{margin:4px 0px 0px 0px;font-size:13px;flex-wrap:wrap;min-width:0px;display:flex !important}.btNav{-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;justify-content:center !important;flex-direction:row !important;top:0px !important}.btNav a,.btNav :link{text-decoration:none !important}.btNav a:hover,.btNav :link:hover{text-decoration:none !important}.btNav span{font-family:inherit}.btNav,.navbackground{position:fixed !important;width:100vw;height:100vh}.navbackground{top:0;left:0}.navbackground.warn{z-index:10 !important}.tet-icon-container,.tetadvanced-icon-container{cursor:pointer;display:inline-flex;position:absolute;bottom:10px;border-radius:9999px;z-index:1}.tet-icon-container{height:35px;right:25px}.tet-icon-container .tet-icon-info{color:#fff;display:inline;width:35px;height:35px;line-height:35px;border-radius:inherit;font-family:"fontello";font-size:23px}.tet-icon-container .tet-icon-info:hover{color:unset !important}.tet-icon-container .tet-help-container{position:static;border-style:solid;border-width:2px;border-radius:inherit;line-height:35px;font-size:16px;font-weight:normal;text-decoration:none;margin-left:10px}.tet-icon-container .tet-help-container a{display:inline-block;margin-left:10px;margin-right:10px}.tetadvanced-icon-container{left:10px;width:28px;height:28px}.tetadvanced-icon-container .tetadvanced-icon{height:1.75rem;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;fill:currentcolor;border-radius:inherit;display:inline-block}.mini{min-height:3% !important;overflow:hidden;background:rgba(0,0,0,0);border-color:rgba(0,0,0,0)}.r-hover{-webkit-text-decoration-line:underline !important;text-decoration-line:underline !important}#tweet-text{font-size:23px !important;line-height:28px !important}.tet-help-info{color:unset}#tetNI{color:#fff}div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0{width:-webkit-fit-content !important;width:-moz-fit-content !important;width:fit-content !important}
+`,
+  nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #tetSelector{border-color:var(--border_grey)}#tetNT .r-demo.nitter,#tetNT .tet-help-container.nitter,#tetNT #apifield.nitter,#tetNT #tetSelector.nitter{border-color:var(--border_grey)}#tetNT .tetNitterHover{background-color:var(--fg_dark)}#tetNT .tetNitter{border-color:var(--accent_border) !important;box-shadow:var(--accent_border) !important}#tetNT .tetNitter #tetName{color:var(--fg_dark)}#tetNT .tetBtn.nitter{color:var(--fg_color);background-color:var(--fg_dark)}#tetNT h1.tetNTextColor{color:var(--grey)}#tetNT .nitter{background-color:var(--bg_color)}#tetNT .nitter div#tetName{color:var(--fg_dark)}#tetNT input.tetNTextColor,#tetNT select.tetNTextColor,#tetNT div.tetNTextColor,#tetNT svg.tetNTextColor,#tetNT label.tetNTextColor>span{color:var(--fg_color)}#tetNT .tetNText,#tetNT .tetNText span{color:var(--fg_dark) !important}#tetNT .tetNBackground{background-color:var(--bg_panel)}.tweetdeck{background-color:var(--btd-accent-color)}.r-tetTD{background-color:var(--btd-theme-background) !important}.r-tetBTD{background-color:var(--btd-theme-background) !important}.r-tetBTD #tetName span{color:var(--btd-accent-color)}
+`,
+  debugToggle = true;
+
+  /* eslint-env greasemonkey */
   //#region Config
   let tetInfo = {
     icon: GM_info.script.icon,
@@ -2215,3 +2335,6 @@ async function setupConfig() {
 setupConfig();
 
 //#endregion
+
+
+})();

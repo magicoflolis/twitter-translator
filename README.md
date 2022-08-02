@@ -39,20 +39,19 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 * Support for Twitter hover cards.
 * Works while logged out!
 * "Restore to Defaults" button.
-* [ WIP ] Added help for each menu item.
 
 ### Supported
 
 Translator | External | Website | Internal |
 :---------:|:-----------:|:-----------:|:---------:|
-Bing Microsoft Translator | ✅ |[link](https://www.bing.com/translator)| ❌ |
+Bing Microsoft Translator | ✅ |[link](https://www.bing.com/translator)| UNTESTED |
 DeepL Translate | ✅ |[link](https://www.deepl.com/translator)| ✅ |
 Google Translate | ✅ |[link](https://translate.google.com/)| ✅ |
 LibreTranslate | ❌ |[link](https://libretranslate.com/)| ✅ |
 Lingva Translate | ✅ |[link](https://lingva.ml/)| ✅ |
 MyMemory | ✅ |[link](https://mymemory.translated.net/)| ✅ |
-Translate.com | ✅ |[link](https://www.translate.com/)| ❌ |
-Yandex Translate | ✅ |[link](https://translate.yandex.com/)| ❌ |
+Translate.com | ✅ |[link](https://www.translate.com/)| UNTESTED |
+Yandex Translate | ✅ |[link](https://translate.yandex.com/)| UNTESTED |
 
 ## Documentation
 

@@ -2,22 +2,16 @@ $accent_border: #ff6c6091;
 $fg_color: #f8f8f2;
 $tetBlue: rgb(29, 155, 240);
 $tetBlueH: rgb(26, 145, 218);
-$tetBlueB: rgb(29, 161, 242) 0px 0px 0px 1px;
 $tetYellow: rgb(255, 212, 0);
 $tetYellowH: rgb(230, 156, 28);
-$tetYellowB: rgb(255, 173, 31) 0px 0px 0px 1px;
 $tetRed: rgb(249, 24, 128);
 $tetRedH: rgb(202, 32, 85);
-$tetRedB: rgb(224, 36, 94) 0px 0px 0px 1px;
 $tetPurple: rgb(120, 86, 255);
 $tetPurpleH: rgb(134, 93, 202);
-$tetPurpleB: rgb(121, 75, 196) 0px 0px 0px 1px;
 $tetOrange: rgb(255, 122, 0);
 $tetOrangeH: rgb(220, 84, 31);
-$tetOrangeB: rgb(244, 93, 34) 0px 0px 0px 1px;
 $tetGreen: rgb(0, 186, 124);
 $tetGreenH: rgb(21, 172, 89);
-$tetGreenB: rgb(23, 191, 99) 0px 0px 0px 1px;
 $twBlack: rgb(0, 0, 0);
 $twWhite: #fff;
 $twGray: #6e767d;
@@ -32,6 +26,52 @@ $td_blueB: #1da1f2 0px 0px 0px 1px;
 $grey: #888889;
 $accent_light: #FFACA0;
 $accent_lightB: #FFACA0 0px 0px 0px 1px;
+
+// name, color, hightlight, b
+// $tetColors:
+//   "Blue" rgb(29, 155, 240) rgb(26, 145, 218) rgb(29, 161, 242),
+//   "Green" rgb(0, 186, 124) rgb(21, 172, 89) rgb(23, 191, 99),
+//   "Orange" rgb(255, 122, 0) rgb(220, 84, 31) rgb(244, 93, 34),
+//   "Purple" rgb(120, 86, 255) rgb(134, 93, 202) rgb(121, 75, 196),
+//   "Red" rgb(249, 24, 128) rgb(202, 32, 85) rgb(224, 36, 94),
+//   "Yellow" rgb(255, 212, 0) rgb(230, 156, 28) rgb(255, 173, 31);
+$tetBShadows:
+  "r-1bih22f" "box-shadow" "rgb(29, 161, 242) 0px 0px 0px 1px",
+  "r-1cqwhho" "box-shadow" "rgb(23, 191, 99) 0px 0px 0px 1px",
+  "r-b8m25f" "box-shadow" "rgb(244, 93, 34) 0px 0px 0px 1px",
+  "r-11mmphe" "box-shadow" "rgb(121, 75, 196) 0px 0px 0px 1px",
+  "r-jd07pc" "box-shadow" "rgb(224, 36, 94) 0px 0px 0px 1px",
+  "r-cdj8wb" "box-shadow" "rgb(255, 173, 31) 0px 0px 0px 1px",
+  "tet-29u:not(.tetswitch)" "background-color" rgb(29, 155, 240),
+  "tet-186u:not(.tetswitch)" "background-color" rgb(0, 186, 124),
+  "tet-122u:not(.tetswitch)" "background-color" rgb(255, 122, 0),
+  "tet-120u:not(.tetswitch)" "background-color" rgb(120, 86, 255),
+  "tet-249u:not(.tetswitch)" "background-color" rgb(249, 24, 128),
+  "tet-255u:not(.tetswitch)" "background-color" rgb(255, 212, 0);
+
+  @each $name, $type, $color in $tetBShadows {
+    .#{$name} {
+      #{$type}: #{$color};
+    }
+  };
+
+
+$tetColors:
+  "tet-29u" rgb(29, 155, 240) rgb(26, 145, 218,.384),
+  "tet-186u" rgb(0, 186, 124) rgb(21, 172, 89,.384),
+  "tet-122u" rgb(255, 122, 0) rgb(220, 84, 31,.384),
+  "tet-120u" rgb(120, 86, 255) rgb(134, 93, 202,.384),
+  "tet-249u" rgb(249, 24, 128) rgb(202, 32, 85,.384),
+  "tet-255u" rgb(255, 212, 0) rgb(230, 156, 28,.384);
+
+  @each $name, $color, $hightlight in $tetColors {
+    .tetswitch.#{$name} > input:checked+label {
+      background-color: $hightlight;
+      &:before {
+        background-color: $color;
+      }
+    }
+  };
 
 #tetReset,
 #tetMenuButton > span {
@@ -104,6 +144,7 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
     color: $td_color;
   }
 };
+
 .prf-header > div > .tet.tet-td {
   color: #fff !important;
 }
@@ -127,19 +168,12 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
   border-color: #2f3336;
 }
 /* blue */
-.r-urgr8i {
-  background-color: $tetBlue;
-}
 .r-p1n3y5 {
   border-color: $tetBlue !important;
 }
 .r-1q3imqu {
   background-color: $tetBlueH;
 }
-.r-1bih22f {
-  box-shadow: $tetBlueB;
-}
-
 .r-13gxpu9 {
   color: $tetBlue;
   &#tetName {
@@ -151,10 +185,6 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 };
 
 /* yellow */
-.r-1vkxrha {
-  background-color: $tetYellow;
-}
-
 .r-v6khid {
   border-color: $tetYellow !important;
 }
@@ -173,15 +203,7 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
   background-color: $tetYellowH;
 }
 
-.r-cdj8wb {
-  box-shadow: $tetYellowB;
-}
-
 /* red */
-.r-1dgebii {
-  background-color: $tetRed;
-}
-
 .r-1iofnty {
   border-color: $tetRed !important;
 }
@@ -200,25 +222,13 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
   background-color: $tetRedH;
 }
 
-.r-jd07pc {
-  box-shadow: $tetRedB;
-}
-
 /* purple */
-.r-168457u {
-  background-color: $tetPurple;
-}
-
 .r-njt2r9 {
   background-color: $tetPurpleH;
 }
 
 .r-hy56xe {
   border-color: $tetPurple !important;
-}
-
-.r-11mmphe {
-  box-shadow: $tetPurpleB;
 }
 
 .r-xfsgu1 {
@@ -232,22 +242,13 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 };
 
 /* orange */
-.r-18z3xeu {
-  background-color: $tetOrange;
-}
-
-.r-1kplyi6 {
+.tet-122hu {
   background-color: $tetOrangeH;
 }
 
 .r-1xl5njo {
   border-color: $tetOrange !important;
 }
-
-.r-b8m25f {
-  box-shadow: $tetOrangeB;
-}
-
 .r-1qkqhnw {
   color: $tetOrange;
   &#tetName {
@@ -259,20 +260,12 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 };
 
 /* green */
-.r-b5skir {
-  background-color: $tetGreen;
-}
-
 .r-zx61xx {
   background-color: $tetGreenH;
 }
 
 .r-5ctkeg {
   border-color: $tetGreen !important;
-}
-
-.r-1cqwhho {
-  box-shadow: $tetGreenB;
 }
 
 .r-nw8l94 {
@@ -302,10 +295,10 @@ $accent_lightB: #FFACA0 0px 0px 0px 1px;
 };
 
 .tweetdeck {
-  background-color: #1da1f2;
+  background-color: $td_blue;
   color: #fff;
   &#tetName {
-    color: #1da1f2;
+    color: $td_blue;
     span {
       color: inherit !important;
     };

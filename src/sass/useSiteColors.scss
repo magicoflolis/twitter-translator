@@ -47,6 +47,17 @@
   };
 };
 
-// #tetTW {
+.tweetdeck {
+  background-color: var(--btd-accent-color);
+};
 
-// }
+.r-tetTD {
+  background-color: var(--btd-theme-background) !important;
+};
+
+.r-tetBTD {
+  background-color: var(--btd-theme-background) !important;
+  #tetName span {
+    color: var(--btd-accent-color);
+  }
+};

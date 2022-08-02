@@ -3,11 +3,14 @@
 // Uncompressed source code:
 // https://github.com/magicoflolis/twitter-translator/src
 
-// Compiler:
-// https://swc.rs/
+'use strict';
 
-let twCSS = `{foreign}`,
-tetCSS = `{tetCSS}`,
-nitterCSS = `{nitterCSS}`;
+(() => {
+  let twCSS = `{foreign}`,
+  tetCSS = `{tetCSS}`,
+  nitterCSS = `{nitterCSS}`,
+  debugToggle = {debugToggle};
 
-{code}
+  {code}
+
+})();
