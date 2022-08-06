@@ -55,8 +55,8 @@
 // @description:ru-RU   Добавляет сторонних переводчиков в Twitter
 // @description:ru      Добавляет сторонних переводчиков в Twitter
 // @description:es      Añade traductores de terceros a Twitter
-// @version      0.38
 // @author       Magic <magicoflolis@tuta.io>
+// @version      0.39
 // @icon         https://abs.twimg.com/favicons/twitter.ico
 // @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
 // @updateURL    https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
@@ -64,11 +64,11 @@
 // @namespace    https://github.com/magicoflolis/twitter-translator#twitter-external-translator
 // @homepageURL  https://github.com/magicoflolis/twitter-translator#twitter-external-translator
 // @license      GPL-3.0
+// @connect      *
 // @match        https://mobile.twitter.com/*
 // @match        https://twitter.com/*
 // @match        https://tweetdeck.twitter.com/*
 // @match        https://www.twitlonger.com/show/*
-// @match        https://nitter.net/*
 // @match        https://nitter.*/*
 // @match        https://nitter.*.*/*
 // @match        https://nitter-home.kavin.rocks/*
@@ -92,10 +92,14 @@
 // @exclude      https://mobile.twitter.com/i/flow/login
 // @exclude      https://mobile.twitter.com/i/flow/signup
 // @exclude      https://nitter.com
+// @grant        document.cookie
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_info
+// @grant        GM_xmlhttpRequest
+// @grant        GM_openInTab
+// @connect      *
 // @compatible   Chrome
 // @compatible   Firefox
 // ==/UserScript==
@@ -103,46 +107,68 @@
 // Uncompressed source code:
 // https://github.com/magicoflolis/twitter-translator/src
 
-// Compiler:
-// https://swc.rs/
+'use strict';
 
-let twCSS = `.prf-header>div>.tet{display:inline-block !important;width:100% !important}.css-1dbjc4n{align-items:stretch;border-style:solid;border-width:0px;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;z-index:0}select{height:auto !important}
+(() => {
+  let twCSS = `.prf-header>div>.tet{display:inline-block !important;width:100% !important}.css-1dbjc4n{align-items:stretch;border-style:solid;border-width:0px;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;z-index:0}select{height:auto !important}
 `,
-tetCSS = `#tetReset,#tetMenuButton>span{color:#fff !important}#tetSelector>select{background-color:rgba(0,0,0,0);border:rgba(0,0,0,0)}#tetSelector>select:focus{box-shadow:none !important}.tet-at span{color:#6e767d}.navbackground.d1tet{background-color:rgba(91,112,131,.4)}.navbackground.d2tet{background-color:rgba(0,0,0,.4)}.navbackground.d3tet{background-color:rgba(91,112,131,.4)}.r-demo,.tet-help-container,#apifield,#tetSelector{border-color:rgba(0,0,0,0)}.r-demo.r-14lw9ot,.tet-help-container.r-14lw9ot,#apifield.r-14lw9ot,#tetSelector.r-14lw9ot{border-color:#536471}.r-demo.r-yfoy6g,.tet-help-container.r-yfoy6g,#apifield.r-yfoy6g,#tetSelector.r-yfoy6g{border-color:#38444d}.r-demo.nitter,.r-demo.r-tetTD,.r-demo.r-kemksi,.tet-help-container.nitter,.tet-help-container.r-tetTD,.tet-help-container.r-kemksi,#apifield.nitter,#apifield.r-tetTD,#apifield.r-kemksi,#tetSelector.nitter,#tetSelector.r-tetTD,#tetSelector.r-kemksi{border-color:#2f3336}.r-14lw9ot>div#tetName span{color:#536471}.r-kemksi>div#tetName span,.r-yfoy6g>div#tetName span{color:#6e767d}.tetBtn.nitter{border:rgba(0,0,0,0)}.Button--primary{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD{border-radius:14px;background-color:#15202b}.r-tetTD #tetName span{color:#8899a6}.prf-header>div>.tet.tet-td{color:#fff !important}.tet-td{color:#8899a6}.tet-td#tetName{color:#1da1f2 !important}.tet-td#tetName span{color:inherit !important}.tet-border-black{border-color:#000}.r-9ilb82{color:#6e767d}.r-1kqtdi0{border-color:#2f3336}.r-urgr8i{background-color:#1d9bf0}.r-p1n3y5{border-color:#1d9bf0 !important}.r-1q3imqu{background-color:#1a91da}.r-1bih22f{box-shadow:#1da1f2 0px 0px 0px 1px}.r-13gxpu9{color:#1d9bf0}.r-13gxpu9#tetName{color:#1d9bf0 !important}.r-13gxpu9#tetName span{color:inherit !important}.r-1vkxrha{background-color:#ffd400}.r-v6khid{border-color:#ffd400 !important}.r-61mi1v{color:#ffd400}.r-61mi1v#tetName{color:#ffd400 !important}.r-61mi1v#tetName span{color:inherit !important}.r-1kplyi6{background-color:#e69c1c}.r-cdj8wb{box-shadow:#ffad1f 0px 0px 0px 1px}.r-1dgebii{background-color:#f91880}.r-1iofnty{border-color:#f91880 !important}.r-daml9f{color:#f91880}.r-daml9f#tetName{color:#f91880 !important}.r-daml9f#tetName span{color:inherit !important}.r-1ucxkr8{background-color:#ca2055}.r-jd07pc{box-shadow:#e0245e 0px 0px 0px 1px}.r-168457u{background-color:#7856ff}.r-njt2r9{background-color:#865dca}.r-hy56xe{border-color:#7856ff !important}.r-11mmphe{box-shadow:#794bc4 0px 0px 0px 1px}.r-xfsgu1{color:#7856ff}.r-xfsgu1#tetName{color:#7856ff !important}.r-xfsgu1#tetName span{color:inherit !important}.r-18z3xeu{background-color:#ff7a00}.r-1kplyi6{background-color:#dc541f}.r-1xl5njo{border-color:#ff7a00 !important}.r-b8m25f{box-shadow:#f45d22 0px 0px 0px 1px}.r-1qkqhnw{color:#ff7a00}.r-1qkqhnw#tetName{color:#ff7a00 !important}.r-1qkqhnw#tetName span{color:inherit !important}.r-b5skir{background-color:#00ba7c}.r-zx61xx{background-color:#15ac59}.r-5ctkeg{border-color:#00ba7c !important}.r-1cqwhho{box-shadow:#17bf63 0px 0px 0px 1px}.r-nw8l94{color:#00ba7c}.r-nw8l94#tetName{color:#00ba7c !important}.r-nw8l94#tetName span{color:inherit !important}.r-yfoy6g{background-color:#15202b}.r-14lw9ot{background-color:#fff}.r-kemksi{background-color:#000}.r-18jsvk2{color:#0f1419 !important}.tweetdeck{background-color:#1da1f2;color:#fff}.tweetdeck#tetName{color:#1da1f2}.tweetdeck#tetName span{color:inherit !important}.r-demo{border-style:solid !important;border-radius:16px !important;border-width:1px !important}.r-jwli3a{color:#fff !important}.tetNitterHover{background-color:#ff6c60}.tetNitter{border-color:#ffaca0 !important;box-shadow:#ffaca0 0px 0px 0px 1px !important}.tet-icon-info.nitter,.tetBtn.nitter{color:#fff;background-color:#ff6c60}h1.tetNTextColor{color:#888889}.nitter{border-color:#ff6c60;background-color:#0f0f0f}.nitter div#tetName span{color:#ff6c60}input.tetNTextColor,select.tetNTextColor,div.tetNTextColor,svg.tetNTextColor,label.tetNTextColor>span{color:#f8f8f2}.tetNText,.tetNText span{color:#ff6c60 !important}.tetNBackground{background-color:#161616}.btNav,.txt-s0pan,.txt-s1pan,.tet-av,.tetAlertBtns>div{align-items:center !important}#tetName,.r-demo,#tetadvanced,#tethelper,.tetAlertTxt,.tet-header{cursor:default}.txt-s0pan{flex-shrink:1;flex-direction:inherit !important}.txt-s0pan .txt-s1pan{max-width:inherit !important;flex-direction:inherit !important;white-space:normal !important}.txt-s0pan .txt-s1pan>div{white-space:inherit !important}.txt-s0pan,.tetAlertBtns,.r-demo,.tet-av,.r-hover,#apifield{outline-style:none !important}.txt-s1pan>div,.tet-dc,.tet-at,.tethelper-info,.tethelper-header,.tetAlertTxt,.tet-info,.tetAlertBtns>div,#tetSelector>select{font-size:15px !important}.txt-s1pan>div,h1.tetAlertTxt,.tetAlertBtns>div,.tethelper-header{font-weight:700 !important}.tet,#tetDemo,.tet-dc,.tet-at,.tethelper-info,div.tetAlertTxt,.tet-info,.tet-icon-info,#tweet-text,#tetSelector>#tetName{font-weight:400}.tet,#tetDemo,.tetswitch>label,#tetSelector>#tetName{line-height:16px}.tet-sp1an>div,.tetAlertBtns>div>span,#tetMenuButton>svg,.txt-header,.tetadvanced-icon,.txt-s0pan,.tet-at{max-width:100%}.tet-sp1an>div,.tet-at{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tet-dc,.txt-s1pan>div,.tet-header,#tetSelector>#tetName,#tetSelector>select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.tet,#tweet-text,.tetAlertTxt span,.tetAlertBtns>div,.tet-main{font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}div.tetAlertTxt,.tet-info,.tet-dc,.tet-at,.tethelper-info,.tetAlertBtns>div,.txt-s1pan>div,#tetSelector>select{line-height:20px}.tetAvatarFrame,#tetAvatar,.tet-main,.tet-containter,.tet-av,div.tetAlertTxt{width:100%}.tetAvatarFrame,#tetAvatar{align-items:stretch;border:0px solid #000;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;z-index:0}#tetSelector{min-width:0px;overflow-wrap:break-word}#tetSelector #tetName{min-width:0px;position:absolute;overflow-wrap:break-word}.tet,.tet-info,#tweet-text{margin-top:1% !important}#tweet-text,.tet-demoframe{position:relative}.tet-header,.tet-icon-container,.tetadvanced-icon-container,.tetAlertBtns>div,.tetAlertTxt{text-align:center}.tet-help-container a,.tet-icon-container,#tetDemo,.tet{width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}.tet{flex-wrap:wrap;font-size:13px;overflow-wrap:break-word;height:-webkit-min-content;height:-moz-min-content;height:min-content;display:flex}.tetAvatarFrame{padding-bottom:100%;display:block;z-index:0;position:absolute;top:0px;right:0px;left:0px;bottom:0px}.tetAvatarFrame #tetAvatar{background-image:url("//abs.twimg.com/favicons/twitter.ico");background-size:cover;background-repeat:no-repeat;background-position:center center;z-index:-1;background-color:rgba(0,0,0,0);height:100%;position:absolute}.tet-main{padding:0px 32px 32px 32px !important;flex-shrink:1;flex-grow:1;margin-left:auto;margin-right:auto}.tet-options{display:inline-grid;grid-template-rows:1fr 1fr 1fr}.tet-header{min-width:0px;white-space:normal;display:grid;margin:32px 0px 12px 0px !important}.tet-header .tet-info-name{line-height:28px;font-size:23px;font-weight:800}.tet-header .tet-info{color:#6e767d}.tetAlert{right:0px;left:0px;bottom:0px;position:fixed !important;z-index:10000 !important}.tetAlert h1.tetAlertTxt{line-height:24px;font-size:20px;min-width:0px}.tetAlert h1.tetAlertTxt span{font-family:inherit}.tetAlert .tetAlertTxt span{white-space:normal;overflow-wrap:break-word}.tetAlert div.tetAlertTxt{min-width:0px}.tetAlert .tetConfirmation{width:20%;border-radius:16px;left:40%;top:40%;position:fixed}.tetAlert .tetAlertBtns{margin:2% 25% 2% 25%;white-space:nowrap;transition-property:background-color,box-shadow;transition-duration:.2s;flex-grow:1;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-color:rgba(0,0,0,0);overflow:hidden;border-width:1px;border-style:solid;cursor:pointer}.tetAlert .tetAlertBtns:nth-child(2){margin:0px 25% 4% 25%}.tetAlert .tetAlertBtns>div{overflow-wrap:break-word;min-width:0px;justify-content:center;flex-grow:1;flex-direction:row;display:flex}.tetAlert .tetAlertBtns>div>span{line-height:inherit !important;overflow-wrap:break-word;min-width:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}.tetAlert .tetAlertBtns>div>span>span{border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}#tetForm,#tetadvanced,#tethelper{border-radius:16px}#tetForm>div,#tetadvanced>div,#tethelper>div{border-radius:16px;flex-grow:1;flex-shrink:1}#tetForm .tetBackground .tetTextColor,#tetadvanced .tetBackground .tetTextColor,#tethelper .tetBackground .tetTextColor{overflow-wrap:break-word}#tetForm .tetBackground .tetTextColor span,#tetadvanced .tetBackground .tetTextColor span,#tethelper .tetBackground .tetTextColor span{overflow-wrap:break-word}#tetForm{max-width:80vw;max-height:90vh;min-width:600px !important;flex-shrink:1;overflow:hidden}#tetForm .tet-containter.tet-fg{margin-left:auto;margin-right:auto}#tetadvanced,#tethelper{max-width:90vw;max-height:90vh;min-width:500px;min-height:100px;flex-shrink:1;margin-left:1%;margin-right:1%}.tet-container{overflow:auto !important}.tethelper-header{white-space:nowrap;line-height:23px !important;min-width:0px}.tetadvanced-container section.tetcheckbox>label,.tetadvanced-container section.tetselect{display:flex;justify-content:space-between;padding:.825em}.tetadvanced-container section.tetcheckbox>label{cursor:pointer}.tetadvanced-container .tetswitch{position:relative;width:38px;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;margin:5px}.tetadvanced-container .tetswitch>input{display:none}.tetadvanced-container .tetswitch>label{display:block;overflow:hidden;cursor:pointer;height:16px;padding:0;border-radius:20px;border:1px solid #000;background-color:#464646}.tetadvanced-container .tetswitch>label:before{content:"";display:block;width:20px;height:20px;margin:-2px;background:#dadce0;position:absolute;top:0;right:20px;border-radius:20px}.tetadvanced-container .tetswitch>input:checked+label{margin-left:0;background-color:rgba(29,160,242,.384)}.tetadvanced-container .tetswitch>input:checked+label:before{right:0px;background-color:#1d9bf0}.tet-head,.tet-dc>span,.tet-demotext,.tetTextColor span,.tetConfirmation span,#tetName span,#tweet-text>span,#tetMenuButton>span{color:inherit;font:inherit;font-family:inherit;white-space:inherit;overflow-wrap:break-word}.rm,option[disabled=""],div:not(.mini)>#tetSVG,div.mini>span{display:none !important;visibility:hidden !important}.tetFreeze{overflow:hidden !important;-ms-scroll-chaining:none !important;overscroll-behavior:none !important}#tetMenuButton{z-index:10;width:8vw;height:auto;position:fixed;top:65%;left:0px}#tetMenuButton.tetTD{left:90% !important;top:0% !important}#tetMenuButton>svg{position:relative;height:1.25em;fill:currentcolor;margin-right:12px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;right:35% !important}#tetMenuButton,.tetAlertBtns,#tetReload,#tetReset{list-style:none;text-align:inherit;text-decoration:none;border-radius:15px;justify-content:center;display:flex !important;font-family:inherit !important;font-size:20px !important;font-weight:bold !important;padding:0px !important;outline:none !important}.tetBtn.mini{border:rgba(0,0,0,0) !important;background:rgba(0,0,0,0) !important}#tetMenuButton,.tetAlertBtns,#tetReload,#tetReset,#tet,.tet{cursor:pointer !important}.tet.tet-td{display:inherit}#tet{justify-items:center}#apifield{width:initial}#apifield,#tetName,#tetSelector>select{padding-left:2% !important}#apifield,#tetSelector{border-radius:4px;border-width:1px}#apifield,.tet-options>#tetSelector{margin:2% 6% 0px 6%}#tetSelector>select{text-align:left;padding-top:12px;padding-right:0px;padding-bottom:0px;cursor:pointer;border-radius:0px;margin:0px;-webkit-appearance:none;-moz-appearance:none;appearance:none}#tetReload,#tetReset{margin:2% 25% 0px 25%}.r-demo{margin:0px 32px 0px 32px !important;padding:12px 0px 12px 0px !important;overflow:hidden;flex-direction:row !important;flex-shrink:1;flex-grow:1}.r-demo .tet-av{margin:2px 12px 0px 12px !important;flex-grow:0;flex-shrink:1;flex-basis:48px;height:48px;overflow:hidden;display:block}.r-demo .tet-txt{flex-basis:0px;flex-grow:1;justify-content:center}.r-demo .tet-txt .txt-header{margin-bottom:2px;align-items:start;justify-content:space-between;flex-direction:row}.r-demo .tet-txt .txt-header .tet-at{display:flex;margin-left:4px;overflow-wrap:break-word;min-width:0px}#tetDemo{margin:4px 0px 0px 0px;font-size:13px;flex-wrap:wrap;min-width:0px;display:flex !important}.btNav{justify-content:center !important;flex-direction:row !important;top:0px !important}.btNav a,.btNav :link{text-decoration:none !important}.btNav a:hover,.btNav :link:hover{text-decoration:none !important}.btNav span{font-family:inherit}.btNav,.navbackground{position:fixed !important;width:100vw;height:100vh}.navbackground{top:0;left:0}.navbackground.warn{z-index:10 !important}.tet-icon-container,.tetadvanced-icon-container{cursor:pointer;display:inline-flex;position:absolute;bottom:10px;border-radius:9999px;z-index:1}.tet-icon-container{height:35px;right:25px}.tet-icon-container .tet-icon-info{color:#fff;display:inline;width:35px;height:35px;line-height:35px;border-radius:inherit;font-family:"fontello";font-size:23px}.tet-icon-container .tet-icon-info:hover{color:unset !important}.tet-icon-container .tet-help-container{position:static;border-style:solid;border-width:2px;border-radius:inherit;line-height:35px;font-size:16px;font-weight:normal;text-decoration:none;margin-left:10px}.tet-icon-container .tet-help-container a{display:inline-block;margin-left:10px;margin-right:10px}.tetadvanced-icon-container{left:10px;width:28px;height:28px}.tetadvanced-icon-container .tetadvanced-icon{height:1.75rem;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;fill:currentcolor;border-radius:inherit;display:inline-block}.mini{min-height:3% !important;overflow:hidden;background:rgba(0,0,0,0);border-color:rgba(0,0,0,0)}.r-hover{-webkit-text-decoration-line:underline !important;text-decoration-line:underline !important}#tweet-text{font-size:23px !important;line-height:28px !important}.tet-help-info{color:unset}div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0{width:-webkit-fit-content !important;width:-moz-fit-content !important;width:fit-content !important}
+  tetCSS = `.r-1bih22f{box-shadow:rgb(29, 161, 242) 0px 0px 0px 1px}.r-1cqwhho{box-shadow:rgb(23, 191, 99) 0px 0px 0px 1px}.r-b8m25f{box-shadow:rgb(244, 93, 34) 0px 0px 0px 1px}.r-11mmphe{box-shadow:rgb(121, 75, 196) 0px 0px 0px 1px}.r-jd07pc{box-shadow:rgb(224, 36, 94) 0px 0px 0px 1px}.r-cdj8wb{box-shadow:rgb(255, 173, 31) 0px 0px 0px 1px}.tet-29u:not(.tetswitch){background-color:rgb(29, 155, 240)}.tet-186u:not(.tetswitch){background-color:rgb(0, 186, 124)}.tet-122u:not(.tetswitch){background-color:rgb(255, 122, 0)}.tet-120u:not(.tetswitch){background-color:rgb(120, 86, 255)}.tet-249u:not(.tetswitch){background-color:rgb(249, 24, 128)}.tet-255u:not(.tetswitch){background-color:rgb(255, 212, 0)}.tetswitch.tet-29u>input:checked+label{background-color:rgba(26,145,218,.384)}.tetswitch.tet-29u>input:checked+label:before{background-color:#1d9bf0}.tetswitch.tet-186u>input:checked+label{background-color:rgba(21,172,89,.384)}.tetswitch.tet-186u>input:checked+label:before{background-color:#00ba7c}.tetswitch.tet-122u>input:checked+label{background-color:rgba(220,84,31,.384)}.tetswitch.tet-122u>input:checked+label:before{background-color:#ff7a00}.tetswitch.tet-120u>input:checked+label{background-color:rgba(134,93,202,.384)}.tetswitch.tet-120u>input:checked+label:before{background-color:#7856ff}.tetswitch.tet-249u>input:checked+label{background-color:rgba(202,32,85,.384)}.tetswitch.tet-249u>input:checked+label:before{background-color:#f91880}.tetswitch.tet-255u>input:checked+label{background-color:rgba(230,156,28,.384)}.tetswitch.tet-255u>input:checked+label:before{background-color:#ffd400}.tetswitch.nitter>input:checked+label{background-color:rgba(255,108,96,.384)}.tetswitch.nitter>input:checked+label:before{background-color:#ff6c60}.tetswitch.tweetdeck>input:checked+label{background-color:rgba(29,161,242,.384)}.tetswitch.tweetdeck>input:checked+label:before{background-color:#1da1f2}#tetReset,#tetMenuButton>span{color:#fff !important}#tetSelector>select{background-color:rgba(0,0,0,0);border:rgba(0,0,0,0)}#tetSelector>select:focus{box-shadow:none !important}.tet-at span{color:#6e767d}.navbackground.d1tet{background-color:rgba(91,112,131,.4)}.navbackground.d2tet{background-color:rgba(0,0,0,.4)}.navbackground.d3tet{background-color:rgba(91,112,131,.4)}.r-demo,.tet-help-container,#apifield,#tetSelector{border-color:rgba(0,0,0,0)}.r-demo.r-14lw9ot,.tet-help-container.r-14lw9ot,#apifield.r-14lw9ot,#tetSelector.r-14lw9ot{border-color:#536471}.r-demo.r-yfoy6g,.tet-help-container.r-yfoy6g,#apifield.r-yfoy6g,#tetSelector.r-yfoy6g{border-color:#38444d}.r-demo.nitter,.r-demo.r-tetTD,.r-demo.r-kemksi,.tet-help-container.nitter,.tet-help-container.r-tetTD,.tet-help-container.r-kemksi,#apifield.nitter,#apifield.r-tetTD,#apifield.r-kemksi,#tetSelector.nitter,#tetSelector.r-tetTD,#tetSelector.r-kemksi{border-color:#2f3336}.r-14lw9ot>div#tetName span{color:#536471}.r-kemksi>div#tetName span,.r-yfoy6g>div#tetName span{color:#6e767d}.tetBtn.nitter{border:rgba(0,0,0,0)}.Button--primary{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD{border-radius:14px;background-color:#15202b}.r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}.r-tetTD #tetName span{color:#8899a6}.prf-header>div>.tet.tet-td{color:#fff !important}.tet-td{color:#8899a6}.tet-td#tetName{color:#1da1f2 !important}.tet-td#tetName span{color:inherit !important}.tet-border-black{border-color:#000}.r-9ilb82{color:#6e767d}.r-1kqtdi0{border-color:#2f3336}.r-p1n3y5{border-color:#1d9bf0 !important}.r-1q3imqu{background-color:#1a91da}.r-13gxpu9{color:#1d9bf0}.r-13gxpu9#tetName{color:#1d9bf0 !important}.r-13gxpu9#tetName span{color:inherit !important}.r-v6khid{border-color:#ffd400 !important}.r-61mi1v{color:#ffd400}.r-61mi1v#tetName{color:#ffd400 !important}.r-61mi1v#tetName span{color:inherit !important}.r-1kplyi6{background-color:#e69c1c}.r-1iofnty{border-color:#f91880 !important}.r-daml9f{color:#f91880}.r-daml9f#tetName{color:#f91880 !important}.r-daml9f#tetName span{color:inherit !important}.r-1ucxkr8{background-color:#ca2055}.r-njt2r9{background-color:#865dca}.r-hy56xe{border-color:#7856ff !important}.r-xfsgu1{color:#7856ff}.r-xfsgu1#tetName{color:#7856ff !important}.r-xfsgu1#tetName span{color:inherit !important}.tet-122hu{background-color:#dc541f}.r-1xl5njo{border-color:#ff7a00 !important}.r-1qkqhnw{color:#ff7a00}.r-1qkqhnw#tetName{color:#ff7a00 !important}.r-1qkqhnw#tetName span{color:inherit !important}.r-zx61xx{background-color:#15ac59}.r-5ctkeg{border-color:#00ba7c !important}.r-nw8l94{color:#00ba7c}.r-nw8l94#tetName{color:#00ba7c !important}.r-nw8l94#tetName span{color:inherit !important}.r-yfoy6g{background-color:#15202b}.r-14lw9ot{background-color:#fff}.r-kemksi{background-color:#000}.r-18jsvk2{color:#0f1419 !important}.tweetdeck:not(.tetswitch){background-color:#1da1f2;color:#fff}.tweetdeck:not(.tetswitch)#tetName{color:#1da1f2}.tweetdeck:not(.tetswitch)#tetName span{color:inherit !important}.r-demo{border-style:solid !important;border-radius:16px !important;border-width:1px !important}.r-jwli3a{color:#fff !important}.tetNitterHover{background-color:#ff6c60}.tetNitter{border-color:#ffaca0 !important;box-shadow:#ffaca0 0px 0px 0px 1px !important}.tet-icon-info.nitter,.tetBtn.nitter{color:#fff;background-color:#ff6c60}h1.tetNTextColor{color:#888889}.nitter:not(.tetswitch,.tetBtn){border-color:#ff6c60;background-color:#0f0f0f}.nitter:not(.tetswitch,.tetBtn) div#tetName span{color:#ff6c60}input.tetNTextColor,select.tetNTextColor,div.tetNTextColor,svg.tetNTextColor,label.tetNTextColor>span{color:#f8f8f2}.tetNText,.tetNText span{color:#ff6c60 !important}.tetNBackground{background-color:#161616}.btNav,.txt-s0pan,.txt-s1pan,.tet-av,.tetAlertBtns>div{align-items:center !important}#tetName,.r-demo,#tetadvanced,.tetAlertTxt,.tet-header{cursor:default}.txt-s0pan{flex-shrink:1;flex-direction:inherit !important}.txt-s0pan .txt-s1pan{max-width:inherit !important;flex-direction:inherit !important;white-space:normal !important}.txt-s0pan .txt-s1pan>div{white-space:inherit !important}.txt-s0pan,.tetAlertBtns,.r-demo,.tet-av,.r-hover,#apifield{outline-style:none !important}.txt-s1pan>div,.tet-dc,.tet-at,.tetAlertTxt,.tet-info,.btNav label,.tetAlertBtns>div,#tetSelector>select{font-size:15px !important}.txt-s1pan>div,h1.tetAlertTxt,.tetAlertBtns>div{font-weight:700 !important}.tet,#tetDemo,.tet-dc,.tet-at,.tethelper-info,div.tetAlertTxt,.tet-info,.tet-icon-info,#tweet-text,#tetSelector>#tetName{font-weight:400}.tet,#tetDemo,.tetswitch>label,#tetSelector>#tetName{line-height:16px}.tet-sp1an>div,.tetAlertBtns>div>span,#tetMenuButton>svg,.txt-header,.tetadvanced-icon,.txt-s0pan,.tet-at{max-width:100%}.tet-sp1an>div,.tet-at{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tet-dc,.txt-s1pan>div,.tet-header,#tetSelector>#tetName,#tetSelector>select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.tet,#tweet-text,.tetAlertTxt span,.tetAlertBtns>div,.tet-main{font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}div.tetAlertTxt,.tet-info,.tet-dc,.tet-at,.tethelper-info,.tetAlertBtns>div,.txt-s1pan>div,#tetSelector>select{line-height:20px}.tetAvatarFrame,#tetAvatar,.tet-main,.tet-containter,.tet-av,div.tetAlertTxt{width:100%}.tetAvatarFrame,#tetAvatar{align-items:stretch;border:0px solid #000;box-sizing:border-box;display:flex;flex-direction:column;margin:0px;min-height:0px;min-width:0px;padding:0px}#tetSelector{min-width:0px;overflow-wrap:break-word}#tetSelector #tetName{min-width:0px;position:absolute;overflow-wrap:break-word}.tet,.tet-info,#tweet-text{margin-top:1% !important}#tweet-text,.tet-demoframe{position:relative}.tet-header,.tet-icon-container,.tetadvanced-icon-container,.tetAlertBtns>div,.tetAlertTxt{text-align:center}.tet-help-container a,.tet-icon-container,#tetDemo,.tet{width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}.tet{flex-wrap:wrap;font-size:13px;overflow-wrap:break-word;height:-webkit-min-content;height:-moz-min-content;height:min-content;display:flex;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important}.tetAvatarFrame{padding-bottom:100%;position:absolute;top:0px;right:0px;left:0px;bottom:0px}.tetAvatarFrame #tetAvatar{background-size:cover;background-repeat:no-repeat;background-position:center center;z-index:-1;background-color:rgba(0,0,0,0);height:100%;position:absolute}.tet-main{padding:0px 32px 32px 32px !important;flex-shrink:1;flex-grow:1;margin-left:auto;margin-right:auto}.tet-options{display:inline-grid;grid-template-rows:1fr 1fr 1fr}.tet-header{min-width:0px;white-space:normal;display:grid;margin:32px 0px 12px 0px !important}.tet-header .tet-info-name{line-height:28px;font-size:23px;font-weight:800}.tet-header .tet-info{color:#6e767d}.tetAlert{right:0px;left:0px;bottom:0px;position:fixed !important;z-index:10000 !important}.tetAlert h1.tetAlertTxt{line-height:24px;font-size:20px;min-width:0px}.tetAlert h1.tetAlertTxt span{font-family:inherit}.tetAlert .tetAlertTxt span{white-space:normal;overflow-wrap:break-word}.tetAlert div.tetAlertTxt{min-width:0px}.tetAlert .tetConfirmation{width:20%;border-radius:16px;left:40%;top:40%;position:fixed}.tetAlert .tetAlertBtns{margin:2% 25% 2% 25%;white-space:nowrap;transition-property:background-color,box-shadow;transition-duration:.2s;flex-grow:1;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-color:rgba(0,0,0,0);overflow:hidden;border-width:1px;border-style:solid;cursor:pointer}.tetAlert .tetAlertBtns:nth-child(2){margin:0px 25% 4% 25%}.tetAlert .tetAlertBtns>div{overflow-wrap:break-word;min-width:0px;justify-content:center;flex-grow:1;flex-direction:row;display:flex}.tetAlert .tetAlertBtns>div>span{line-height:inherit !important;overflow-wrap:break-word;min-width:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}.tetAlert .tetAlertBtns>div>span>span{border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}#tetForm,#tetadvanced{border-radius:16px}#tetForm>div,#tetadvanced>div{border-radius:16px;flex-grow:1;flex-shrink:1}#tetForm .tetBackground .tetTextColor,#tetadvanced .tetBackground .tetTextColor{overflow-wrap:break-word}#tetForm .tetBackground .tetTextColor span,#tetadvanced .tetBackground .tetTextColor span{overflow-wrap:break-word}#tetForm{max-width:80vw;max-height:90vh;min-width:600px !important;flex-shrink:1;overflow:hidden}#tetForm .tet-containter.tet-fg{margin-left:auto;margin-right:auto}#tetadvanced{max-width:90vw;max-height:90vh;min-width:500px;min-height:100px;flex-shrink:1;margin-left:1%;margin-right:1%}.tet-container{overflow:auto !important}.tetadvanced-container section.tetcheckbox>label,.tetadvanced-container section.tetselect{display:flex;justify-content:space-between;padding:.825em}.tetadvanced-container section.tetcheckbox>label{cursor:pointer}.tetadvanced-container .tetswitch{position:relative;width:38px;border-radius:20px;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;margin:5px}.tetadvanced-container .tetswitch>input{display:none}.tetadvanced-container .tetswitch>label{display:block;overflow:hidden;cursor:pointer;height:16px;padding:0;border-radius:20px;border:1px solid #000;background-color:#464646}.tetadvanced-container .tetswitch>label:before{content:"";display:block;width:20px;height:20px;margin:-2px;background:#dadce0;position:absolute;top:0;right:20px;border-radius:20px}.tetadvanced-container .tetswitch>input:checked+label{margin-left:0}.tetadvanced-container .tetswitch>input:checked+label:before{right:0px}.tet-head,.tet-dc span,.tet-demotext,.tetTextColor span,.tetConfirmation span,#tetName span,#tweet-text span,#tetMenuButton span{color:inherit;font:inherit;font-family:inherit;white-space:inherit;overflow-wrap:break-word}.rm,option[disabled=""],div:not(.mini)>#tetSVG,div.mini>span{display:none !important;visibility:hidden !important}.tetFreeze{overflow:hidden !important;-ms-scroll-chaining:none !important;overscroll-behavior:none !important}#tetMenuButton{z-index:10;width:8vw;height:auto;position:fixed;top:65%;left:0px}#tetMenuButton.tetTD{left:90% !important;top:0% !important}#tetMenuButton.mobile{top:0% !important}#tetMenuButton>svg{position:relative;height:1.25em;fill:currentcolor;margin-right:12px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;right:35% !important}.tetBtn{list-style:none;text-align:inherit;text-decoration:none;border-radius:15px;justify-content:center;display:flex !important;font-family:inherit !important;font-size:20px !important;font-weight:bold !important;padding:0px !important;outline:none !important}.tetBtn.mini{border:rgba(0,0,0,0) !important;background:rgba(0,0,0,0) !important}.tetBtn,#tet,.tet{cursor:pointer !important}.tet.tet-td{display:inherit}#tet{justify-items:center}#apifield{width:initial}#apifield,#tetName,#tetSelector>select{padding-left:2% !important}#apifield,#tetSelector{border-radius:4px;border-width:1px}#apifield,.tet-options>#tetSelector{margin:2% 6% 0px 6%}#tetSelector>select{text-align:left;padding-top:12px;padding-right:0px;padding-bottom:0px;cursor:pointer;border-radius:0px;margin:0px;-webkit-appearance:none;-moz-appearance:none;appearance:none}#tetReload,#tetReset{margin:2% 25% 0px 25%}.r-demo{margin:0px 32px 0px 32px !important;padding:12px 0px 12px 0px !important;overflow:hidden;flex-direction:row !important;flex-shrink:1;flex-grow:1}.r-demo .tet-av{margin:2px 12px 0px 12px !important;flex-grow:0;flex-shrink:1;flex-basis:48px;height:48px;overflow:hidden;display:block}.r-demo .tet-txt{flex-basis:0px;flex-grow:1;justify-content:center}.r-demo .tet-txt .txt-header{margin-bottom:2px;align-items:start;justify-content:space-between;flex-direction:row}.r-demo .tet-txt .txt-header .tet-at{display:flex;margin-left:4px;overflow-wrap:break-word;min-width:0px}#tetDemo{margin:4px 0px 0px 0px;font-size:13px;flex-wrap:wrap;min-width:0px;display:flex !important}.btNav{-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;justify-content:center !important;flex-direction:row !important;top:0px !important}.btNav a,.btNav :link{text-decoration:none !important}.btNav a:hover,.btNav :link:hover{text-decoration:none !important}.btNav span{font-family:inherit}.btNav,.navbackground{position:fixed !important;width:100vw;height:100vh}.navbackground{top:0;left:0}.navbackground.warn{z-index:10 !important}.tet-icon-container,.tetadvanced-icon-container{cursor:pointer;display:inline-flex;position:absolute;bottom:10px;border-radius:9999px;z-index:1}.tet-icon-container{height:35px;right:25px}.tet-icon-container .tet-icon-info{color:#fff;display:inline;width:35px;height:35px;line-height:35px;border-radius:inherit;font-family:"fontello";font-size:23px}.tet-icon-container .tet-icon-info:hover{color:unset !important}.tet-icon-container .tet-help-container{position:static;border-style:solid;border-width:2px;border-radius:inherit;line-height:35px;font-size:16px;font-weight:normal;text-decoration:none;margin-left:10px}.tet-icon-container .tet-help-container a{display:inline-block;margin-left:10px;margin-right:10px}.tetadvanced-icon-container{left:10px;width:28px;height:28px}.tetadvanced-icon-container .tetadvanced-icon{height:1.75rem;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;fill:currentcolor;border-radius:inherit;display:inline-block}.mini{min-height:3% !important;overflow:hidden;background:rgba(0,0,0,0);border-color:rgba(0,0,0,0)}.r-hover{-webkit-text-decoration-line:underline !important;text-decoration-line:underline !important}#tweet-text{font-size:23px !important;line-height:28px !important}.tet-help-info{color:unset}#tetNI{color:#fff}div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0{width:-webkit-fit-content !important;width:-moz-fit-content !important;width:fit-content !important}
 `,
-nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #tetSelector{border-color:var(--border_grey)}#tetNT .r-demo.nitter,#tetNT .tet-help-container.nitter,#tetNT #apifield.nitter,#tetNT #tetSelector.nitter{border-color:var(--border_grey)}#tetNT .tetNitterHover{background-color:var(--fg_dark)}#tetNT .tetNitter{border-color:var(--accent_border) !important;box-shadow:var(--accent_border) !important}#tetNT .tetNitter #tetName{color:var(--fg_dark)}#tetNT .tetBtn.nitter{color:var(--fg_color);background-color:var(--fg_dark)}#tetNT h1.tetNTextColor{color:var(--grey)}#tetNT .nitter{background-color:var(--bg_color)}#tetNT .nitter div#tetName{color:var(--fg_dark)}#tetNT input.tetNTextColor,#tetNT select.tetNTextColor,#tetNT div.tetNTextColor,#tetNT svg.tetNTextColor,#tetNT label.tetNTextColor>span{color:var(--fg_color)}#tetNT .tetNText,#tetNT .tetNText span{color:var(--fg_dark) !important}#tetNT .tetNBackground{background-color:var(--bg_panel)}
-`;
-
-/* eslint-env greasemonkey */
-(async () => {
-  //#region Config
+  nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #tetSelector{border-color:var(--border_grey)}#tetNT .r-demo.nitter,#tetNT .tet-help-container.nitter,#tetNT #apifield.nitter,#tetNT #tetSelector.nitter{border-color:var(--border_grey)}#tetNT .tetNitterHover{background-color:var(--fg_dark)}#tetNT .tetNitter#tetSelector:hover{border-color:var(--accent_border) !important;box-shadow:var(--accent_border) !important}#tetNT .tetNitter#tetSelector:hover #tetName span{color:var(--fg_dark)}#tetNT .tetBtn.nitter{color:var(--fg_color);background-color:var(--fg_dark)}#tetNT h1.tetNTextColor{color:var(--grey)}#tetNT .nitter:not(.tetswitch,.tetBtn){background-color:var(--bg_color)}#tetNT .nitter:not(.tetswitch,.tetBtn) div#tetName{color:var(--fg_dark)}#tetNT input.tetNTextColor,#tetNT select.tetNTextColor,#tetNT div.tetNTextColor,#tetNT svg.tetNTextColor,#tetNT label.tetNTextColor>span{color:var(--fg_color)}#tetNT .tetNText,#tetNT .tetNText span{color:var(--fg_dark) !important}#tetNT .tetNBackground{background-color:var(--bg_panel)}.tweetdeck:not(.tetswitch){background-color:var(--btd-accent-color)}.r-tetTD{background-color:var(--btd-theme-background) !important}.r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}.r-tetBTD{background-color:var(--btd-theme-background) !important}.r-tetBTD #tetName span{color:var(--btd-accent-color)}
+`,
+  debugToggle = false;
   let tetInfo = {
     icon: GM_info.script.icon,
     name: GM_info.script.name,
     version: GM_info.script.version,
     namespace: GM_info.script.namespace
   },
-  tetHelper = tetInfo.namespace;
-  /** Element | querySelector all */
-  const qs = (element,all) => {
-    return !all ? document.querySelector(element) : document.querySelectorAll(element);
+  tetHelper = tetInfo.namespace,
+  dLng = "en";
+  const win = self ?? window,
+  doc = win.document,
+  err = (...msg) => {
+    console.error('[%cTET%c] %cERROR', 'color: rgb(29, 155, 240);', '', 'color: rgb(249, 24, 128);', ...msg);
+  },
+  delay = ms => new Promise(resolve => setTimeout(resolve, ms)),
+  qs = (element,root) => {
+    root = root ?? doc;
+    return root.querySelector(element);
+  },
+  qsA = (element,root) => {
+    root = root ?? doc;
+    return root.querySelectorAll(element);
+  },
+  make = (element,cname,attrs = {}) => {
+    let el = doc.createElement(element);
+    cname ? (el.className = cname) : false;
+    if(attrs) {
+      for(let key in attrs) {el[key] = attrs[key]};
+    };
+    return el;
+  },
+  ael = (elm,event,callback) => {
+    elm = elm ?? doc;
+    return elm.addEventListener(event,callback);
+  },
+  openPage = (url) => {
+    if(typeof GM_openInTab !== 'undefined') {
+      GM_openInTab(url,{ active: true, insert: true });
+    } else {
+      win.open(url,'_blank');
+    };
   },
   defaultDesc = "Pretend I'm a foreign language.",
-  lh = window.location.host,
-  lr = window.location.href,
+  lh = doc.location.host,
+  lr = doc.location.href,
   find = {
-    logout: (!document.cookie.includes("twid")),
+    logout: !getCookie("twid"),
+    nitter: (/nitter|nittr|twitr|bird|hyper/.test(lr) || lh === "twitter.076.ne.jp" || lh === "nttr.stream" || lh === "twitter.censors.us"),
     twitter: (lh === "twitter.com" || lh === "mobile.twitter.com"),
     tweetdeck: (lh === "tweetdeck.twitter.com"),
     twitlonger: (lh === "www.twitlonger.com"),
-    nitter: (/nitter|nittr|twitr|bird|hyper/.test(lr) ||
-    lh === "twitter.076.ne.jp" ||
-    lh === "nttr.stream" ||
-    lh === "twitter.censors.us"),
     remover: (/begin_password_reset|account|logout|login|signin|signout/.test(lr)),
   },
-  // Favicon from each website.
-  // Each converted to "Data URI" as to prevent blocking.
   icons = {
     azure: 'data:image/vnd.microsoft.icon;base64,AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAgBAAACUWAAAlFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL5vAwq9awRdu2cHmbtoBo+7aQaOumgGjrloBo65ZwaPuWcGlrdlB0kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA03oAYs5zAJnZjR+P45otjuCVKI7glSiO4JQojuCSKI7gkiiO4JIoj+CTKZffkCVc4JAiDAAAAAAAAAAAumoJTbtpBvq7aAb/u2gH/7poB/+4Zwf/uGcH/7hmB/+3Zgf/tmUI4LBgCAUAAAAAAAAAAAAAAAAAAAAAAAAAANB3AEvWeQD7yW8A/8h6Dv/imC3/4pcq/+CVKf/glCj/4JMp/9+SKP/fkij/35Io/9+RKPzikSdQAAAAAAAAAAC3ZwlcuWcH/7lnB/+4Zwf/uGYH/7dlB/+2ZQf/tmUH/7VkCP+1ZAj/smIISwAAAAAAAAAAAAAAAAAAAADTeQBQ1XgA/9V4AP/AaQD/u3AK/+SbLv/jmSz/4pcq/+CWKf/hlSn/4JUo/9+TKP/fkyj/4JMo/+CRJ1oAAAAAAAAAALhoCAy4Zwe0t2UH/7ZlB/62ZQf/tWUI/7RkB/+0ZAf/tGQI/7RjCP+xYgifAAAAAAAAAAAAAAAA0ngAaNR5AP/WeQD/0ncA/7ZkAP/Kgxr/6qMx/+KZKv/imSr/4pgq/+GXKv/hlyn/4ZYq/+CWKf/glCi135InCwAAAAAAAAAAAAAAALZmCGC2ZQf/tWQI/7RkCP+zZAj/s2MI/7JjCP+yYwj/sWII/69hCe0AAAAAAAAAANd6AHzUeAD/1XgA/9Z5AP/LcgD/tWgB/9qWKP/noC7/4pss/+KaK//imiv/4por/+KZKv/hmCr/4Zgp/+CXKmAAAAAAAAAAAAAAAAAAAAAAs2MIErRjCPqzYwj/smMH/7JiCP+xYgn/sGIJ/7BhCf6wYQn/qFwK/7VlBzjYewBe1XgA/9R4AP/VeQD/1XkA/79oAP+9dA3/6KQy/+WfLf/kniz/450r/+OcK//jmyv/4por/+KaKv/imSr74JgpEQAAAAAAAAAAAAAAAAAAAAAAAAAAsWMHtLJiCf+wYQn/sGEI/7BhCf+vYQn/rmAJ/6peCv+lWwv/yXID7tp8AP/TeAD/1HgA/9V5AP/SdgD/tWMA/8uHHP/tqzX/5KAt/+SgLP/kny3/454s/+OdLP/jnSz+45wr/+KaK7UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwYglgr2EJ/69gCf+uYAn/rmAJ/q5gCf+pXAr/qFwK/8hwA//ZewD/1HgA/9R4AP/UeAD/1nkA/8xxAP+1ZwH/25sq/+qoMv/loi3/5aIu/+ShLf/kny3/5KAs/uSfLP/jniz/450tYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK9gDBKuYAn5rWAI/6xfCf6sXgn+qVwK/6xeCv/LcgL/338A/9h6AP/XegD/1HgA/9V4AP/VeQD/vmYA/751Dv/qrTX/56Yv/+alLv/moy7/5aMu/+ajLv/koS7+5KAt/+WgLfrkoC0RAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK5fCq+rXgn/q14K/6peCv+kWQv/tmYH/9l7AP/TeAD/0XYB/9N3APjdfQDs2XwA8s5yAPKvWQDr0I4g9vCzOP/npi//5qcv/+alL//mpC//5aQv/+WjLv/moy7/5aAtsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAArF8LWqpdCv+qXQv/qV0L/6dcC/+oXAv/qV0K/6hdCv+nWwr/p1wK7bppBhPXdwAN0XQADdGNGhToqzLq6asy/+epMP/oqC//56cw/+anMP/mpi//5qYu/+alL//loi1bAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACqYAsNqVwK+adcC/+nXAv/p1wL/6ZaC/+iWAz/olgM/qJYDP+gVwz/lE8LQAAAAAAAAAAA9L89QOyvM//pqzD/6Ksw/+iqMf/oqTH/56kw/+eoMP/npy//5qYv9+SkLA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACmWwuvpVsL/6VaC/+lWgv/pFoL/6RZDP6jWQz+o1kM/6NZDP+cUgelAAAAAAAAAADutTSk6q4y/+quMf/prTH/6K0x/+msMf/pqzD/56kx/+ipMP/npzCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKVaDFmlWgz/o1kL/6NZDP+jWQz/olgM/6BYDP+gVwz/oFcN/5pRCfEAAAAAAAAAAPC4NvDqsTL/6q8y/+qvMv/prTL/6a4x/+mtMf/prDH/6asx/+mrMFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAp1kPCKNZDPKhWAv/oVgM/6FYDP+gVwz/oFcM/59WDP+fVg3/l08K/5hVDzDmrjIt8bo2/+uzM//rsjP/67Ay/+qwM//qsDL/6a4y/+quMf/orTHw7bMxBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoFgNpaBXC/+gVwz/n1YM/55WDP+fVg3+nlUN/p1WDf+VTgz/jU0Nl+StMZjyvDb/7LU0/+u0M//rsjP/67Iz/+qyM//rsDP/6q8y/+uxMaMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACfVw9Qn1YM/55VDP+dVg3/nVUN/51UDP+cVA3/nFUN/45ICv+LUA7+57Mz/fO+N/7stjX+7LY0/uy1NP/stDP/67Qz/+uyM//qsTP/7bMzTwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ9XDwadVQ3ynFQN/5xUDv+cVQ7/mlQO/5pUDf+bUw7/fToG/6JsG//5xzv/8bw2/u24Nf7tuDX/7bc1/+y2Nf/stTX/67Qz/+u0M/HutTgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJpWDaObUw3/mlMO/5lTDv+ZUw7/mVMO/5RPDf93OQj/x5Qp///OPf/uujb/7rk2/+25Nf/uuDX/7bg1/+23Nv/stzT/7bY2pQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAmFQOSplSDf+YUg7/l1EO/5dRDv+YUg//iUUL/4ZNEf/puTb/9sQ6/++8N//vvDf/77s2/+66Nf/tujb/7ro2/+24Nf/utjZLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACWUBAFllEO7ZdRDv+XUA/+llEP/5ZQD/53NQf+pXEd//7SPv/xwDj/8L83//C+N//vvjj/7703/++8N//uvDf/7rk17++wLgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACWUBCflVAP/5VQEP6VUA//j0wP/3M2Cf7Jmiz//9Y///DAOP/wwTj/8MA4/++/OP/wvzj+8L43/u+9Nv/uvTmfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJVPEEuTTxD/k08Q/5NPEP6DQQz/gksR/+3AOf/6zDz/8cM5//DDOf/xwjn/8ME5//DBOP7wwDj/8L82//C/O0oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlk4QBZBNEO6RTRD/kU4Q/nExB/+jch7//9pB//THO//yxTr/8cU6//LDOv/xxDn/8cI5//HBOP/wwjjv8MA9BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAj04Qn5BMEP+LSRD/bTIK/8ufLv//3kL/8sc7//PIO//yxzr/8sY6//LFOv/yxDr/8sQ5//DCO58AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACPTRBLj0wR/3w7DP98RhH/78c7//zTPv/zyjz/88o7//LJOv/zyDv/8sc6//LGOv/yxjn/8sM8SgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJBJEAWKSRHgbzML/6x8I///3EH/9s08//TLPP/0yzz/9Mo8//TKPP/0yjz/9Mk7//PHO93wwD8EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIRCD0l8QhCW3LEzkP/aQI70yzuO9cs8jvXKO471yzyO9cs7jvTKO5D2yzuU9cg7RQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////+AH8ABgA+AAYAPAAGADgABwAwAA8AAAAPgAAAH4AAAB+AAAAfwAAAP8AAAD/ABgA/4AYAf+AGAH/gAAB/8AAA//AAAP/wAAD/+AAB//gAAf/4AAH//AAD//wAA//8AAP//gAH//4AB//+AAf//wAP///////////8=',
     bing: 'data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFzSURBVDhPrZDLSwJRGEfnXwiiRURkLnpQlNlUo4usQGgjkdXGhVtXPYiglUS1jTYRLtsVRRC1CMI0qEAokFQssBeRhY8ZTRwzK385w5VupKTQgbO4Z777wR2GRuMUvRpHcoYcy0d7kEJekspDs/eKvNxuKk5y6XDbb6AluXS49dxFSpJLp2ctA1qpdR0Cnc6PO3ngL7pt76CVGuvIQnX0jqaTFGrPYk55sBjsUhq0UlM7P5dbjtNQuhKocoeh9Dy45eFCqOdE0JLMNJ6KqDnnUe0JosN/X/zfqKYToCVZptIdMtfv3EB3dQ1j4LKX5J+0WnjQksxwy0F92+wjFOYb1E34QqaAt/CCBtMzaKWm34i+9K5EwFrDaLY8odZ4W/wJuoVwRGG4gyQ3GeQN9iQGNwX0rfLg5gW0j0fRaX2wk/HfjPiyFWP+LEYvPjDsykBesCVgwCZAuxiHaiquJKPFGfJl2e8FYm5BDP02YZ98/m8Y5gsM/AoQ7XCKzQAAAABJRU5ErkJggg==',
@@ -169,8 +195,6 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       }
     }
   },
-  //#region Languages
-  defaultLang = qs("html").lang,
   languages = {
     en: {
       sel: `English (en)`,
@@ -194,19 +218,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Icon`,
       res: `Restore to Defaults`,
-      desc: {
-        language: `Website Language`,
-        display: `Prefer text only? How about just an icon instead?`,
-        color: `A rainbow of choices.`,
-        theme: `It's best to match your current theme!`,
-      },
+      l: `Loading`,
       quest: {
         head: `Are you sure?`,
         body: `Website will be reloaded.`,
         yes: `Yes`,
         no: `No`,
       },
-      fn: checkLng
     },
     zh: {
       sel: `中文 (zh)`,
@@ -230,19 +248,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `案文`,
       i: `图标`,
       res: `恢复`,
-      desc: {
-        language: `网站语言`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `你确定吗？`,
         body: `网站将被重新加载`,
         yes: `是的`,
         no: `不确定`,
       },
-      fn: checkLng
     },
     bg: {
       sel: `Български (bg)`,
@@ -266,19 +278,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Текст`,
       i: `Икона`,
       res: `Възстановявам`,
-      desc: {
-        language: `Език на сайта`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Сигурни ли сте?`,
         body: `Уебсайтът ще бъде презареден.`,
         yes: `Да`,
         no: `Не`,
       },
-      fn: checkLng
     },
     cs: {
       sel: `Česky (cs)`,
@@ -302,19 +308,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Ikona`,
       res: `Obnovit`,
-      desc: {
-        language: `Jazyk stránek`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Jste si jistý?`,
         body: `Webové stránky budou znovu načteny.`,
         yes: `Ano`,
         no: `Ne`,
       },
-      fn: checkLng
     },
     da: {
       sel: `Dansk (da)`,
@@ -338,19 +338,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Tekst`,
       i: `Ikon`,
       res: `Genskabe`,
-      desc: {
-        language: `Sprog på webstedet`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Er du sikker?`,
         body: `Hjemmesiden vil blive genindlæst.`,
         yes: `Ja`,
         no: `Nej`,
       },
-      fn: checkLng
     },
     et: {
       sel: `Eesti (et)`,
@@ -374,19 +368,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Tekst`,
       i: `Ikoon`,
       res: `Taastada`,
-      desc: {
-        language: `Saidi keel`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Oled sa kindel?`,
         body: `Veebileht laaditakse uuesti.`,
         yes: `Jah`,
         no: `Ei`,
       },
-      fn: checkLng
     },
     fi: {
       sel: `Suomalainen (fi)`,
@@ -410,19 +398,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Teksti`,
       i: `Kuvake`,
       res: `Palauta`,
-      desc: {
-        language: `Sivuston kieli`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Oletko varma?`,
         body: `Sivusto ladataan uudelleen.`,
         yes: `Kyllä`,
         no: `Ei`,
       },
-      fn: checkLng
     },
     el: {
       sel: `Ελληνική (el)`,
@@ -446,19 +428,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Κείμενο`,
       i: `Εικονίδιο`,
       res: `Επαναφορά`,
-      desc: {
-        language: `Γλώσσα ιστότοπου`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Είσαι σίγουρος;`,
         body: `Η ιστοσελίδα θα επαναφορτωθεί.`,
         yes: `Ναι`,
         no: `Όχι`,
       },
-      fn: checkLng
     },
     hu: {
       sel: `Magyar (hu)`,
@@ -482,19 +458,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Szöveg`,
       i: `Ikon`,
       res: `Visszaállítása`,
-      desc: {
-        language: `Az oldal nyelve`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Biztos vagy benne?`,
         body: `A weboldal újratöltődik.`,
         yes: `Igen`,
         no: `Nem`,
       },
-      fn: checkLng
     },
     lv: {
       sel: `Latviešu (lv)`,
@@ -518,19 +488,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Teksts`,
       i: `Ikona`,
       res: `Atjaunot`,
-      desc: {
-        language: `Vietnes valoda`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Vai esat pārliecināts?`,
         body: `Tīmekļa vietne tiks ielādēta no jauna.`,
         yes: `Jā`,
         no: `Nē`,
       },
-      fn: checkLng
     },
     lt: {
       sel: `Lietuvių kalba (lt)`,
@@ -554,19 +518,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Tekstas`,
       i: `Ikona`,
       res: `Atkurti`,
-      desc: {
-        language: `Svetainės kalba`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Ar tikrai?`,
         body: `Svetainė bus iš naujo įkelta.`,
         yes: `Taip`,
         no: `Ne`,
       },
-      fn: checkLng
     },
     ro: {
       sel: `Românesc (ro)`,
@@ -590,19 +548,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Icoană`,
       res: `Restaurați`,
-      desc: {
-        language: `Limba site-ului`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Ești sigur?`,
         body: `Site-ul va fi reîncărcat.`,
         yes: `Da`,
         no: `Nu`,
       },
-      fn: checkLng
     },
     sk: {
       sel: `Slovenská (sk)`,
@@ -626,19 +578,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Ikona`,
       res: `Obnovenie`,
-      desc: {
-        language: `Jazyk stránky`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Ste si istý?`,
         body: `Webová stránka bude znovu načítaná.`,
         yes: `Áno`,
         no: `Nie`,
       },
-      fn: checkLng
     },
     sl: {
       sel: `Slovenski (sl)`,
@@ -662,19 +608,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Besedilo`,
       i: `Ikona`,
       res: `Obnovitev`,
-      desc: {
-        language: `Jezik spletnega mesta`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Ste prepričani?`,
         body: `Spletna stran bo ponovno naložena.`,
         yes: `Da`,
         no: `Ne`,
       },
-      fn: checkLng
     },
     sv: {
       sel: `Svenska (sv)`,
@@ -698,19 +638,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Ikon`,
       res: `Återställ`,
-      desc: {
-        language: `Språk på webbplatsen`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Är du säker?`,
         body: `Webbplatsen kommer att laddas om.`,
         yes: `Ja`,
         no: `Nej`,
       },
-      fn: checkLng
     },
     nl: {
       sel: `Nederlands (nl)`,
@@ -734,19 +668,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Tekst`,
       i: `Icoon`,
       res: `Herstel`,
-      desc: {
-        language: `Taal van de site`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Ben je zeker?`,
         body: `De website wordt opnieuw geladen.`,
         yes: `Ja`,
         no: `Nee`,
       },
-      fn: checkLng
     },
     fr: {
       sel: `Français (fr)`,
@@ -770,19 +698,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Texte`,
       i: `Icône`,
       res: `Restaurer`,
-      desc: {
-        language: `Langue du site`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Vous êtes sûr ?`,
         body: `Le site web va être rechargé.`,
         yes: `Oui`,
         no: `Non`,
       },
-      fn: checkLng
     },
     de: {
       sel: `Deutsch (de)`,
@@ -806,19 +728,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Text`,
       i: `Icon`,
       res: `Wiederherstellen`,
-      desc: {
-        language: `Sprache der Website`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Sind Sie sicher?`,
         body: `Die Website wird neu geladen.`,
         yes: `Ja`,
         no: `Nein`,
       },
-      fn: checkLng
     },
     it: {
       sel: `Italiano (it)`,
@@ -842,19 +758,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Testo`,
       i: `Icona`,
       res: `Ripristinare`,
-      desc: {
-        language: `Lingua del sito`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Sei sicuro?`,
         body: `Il sito sarà ricaricato.`,
         yes: `Sì`,
         no: `No`,
       },
-      fn: checkLng
     },
     ja: {
       sel: `日本語 (ja)`,
@@ -878,19 +788,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `テキスト`,
       i: `アイコン`,
       res: `リストア`,
-      desc: {
-        language: `サイトの言語`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `本当にいいの？`,
         body: `ウェブサイトが再読み込みされます。`,
         yes: `はい`,
         no: `いいえ`,
       },
-      fn: checkLng
     },
     pl: {
       sel: `Polski (pl)`,
@@ -914,19 +818,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Tekst`,
       i: `Ikona`,
       res: `Przywróć`,
-      desc: {
-        language: `Język strony`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Czy jesteś pewien?`,
         body: `Strona zostanie przeładowana.`,
         yes: `Tak`,
         no: `Nie`,
       },
-      fn: checkLng
     },
     pt: {
       sel: `Português (pt)`,
@@ -950,19 +848,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Texto`,
       i: `Ícone`,
       res: `Restaurar`,
-      desc: {
-        language: `Idioma do sítio`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Tem a certeza?`,
         body: `O website será carregado de novo.`,
         yes: `Sim`,
         no: `Não`,
       },
-      fn: checkLng
     },
     ru: {
       sel: `Russisch (ru)`,
@@ -986,19 +878,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Текст`,
       i: `иконка`,
       res: `Восстановить`,
-      desc: {
-        language: `Язык сайта`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `Вы уверены?`,
         body: `Сайт будет перезагружен.`,
         yes: `Да`,
         no: `Нет`,
       },
-      fn: checkLng
     },
     es: {
       sel: `Español (es)`,
@@ -1022,23 +908,31 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       t: `Texto`,
       i: `Icono`,
       res: `Restaurar`,
-      desc: {
-        language: `Idioma del sitio`,
-        display: ` [WIP] Display`,
-        color: ` [WIP] Color`,
-        theme: ` [WIP] Theme`,
-      },
+      l: `Loading`,
       quest: {
         head: `¿Está seguro?`,
         body: `El sitio web será recargado.`,
         yes: `Sí`,
         no: `No`,
       },
-      fn: checkLng
     },
+  },
+  lngFN = () => {
+    for(const key in languages) {
+      if(typeof win.navigator.languages !== 'undefined') {
+        for(let l of win.navigator.languages) {
+          if(l !== key) continue;
+          dLng = l;
+          break;
+        };
+      } else {
+        dLng = win.navigator.language ?? qs("html").lang;
+        break;
+      };
+    };
   };
-  //#endregion
   let TETConfig = {},
+  lng = {},
   cBG = "rgba(91, 112, 131, 0.4)",
   cColor = "r-p1n3y5 r-1bih22f",
   cHover = "r-1q3imqu",
@@ -1046,27 +940,21 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
   cTheme = "r-kemksi",
   cSub = "r-13gxpu9",
   tet = {
-    /**
-    * addEventListener
-    * @param {string} elm - Element
-    * @param {Options|string} event - Event type
-    * @param {Function} callback - Callback function
-    */
-    ael(elm = document,event,callback) {
-      return elm.addEventListener(event, callback);
-    },
     defaultcfg: {
-      debug: /Dev/.test(tetInfo.name),
-      lang: defaultLang,
+      debug: debugToggle,
+      lang: dLng,
       translator: 'deepl',
       display: "text + icon",
-      colors: "r-urgr8i",
+      colors: "auto",
       theme: "auto",
       delay: "none",
+      sitetheme: true,
       api: {
         deepl: "",
         google: "",
         libre: "",
+        translate: "",
+        yandex: "",
         version: "api-free",
       },
       url: {
@@ -1076,18 +964,16 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
         deeplIT: "https://api.deepl.com",
         google: "https://translate.google.com",
         googleIT: "https://translation.googleapis.com",
-        libre: "https://libretranslate.de/translate",
+        libre: "https://translate.argosopentech.com/translate",
         lingva: "https://lingva.ml",
         mymemory: "https://mymemory.translated.net",
         mymemoryIT: "https://api.mymemory.translated.net",
         translate: "https://www.translate.com",
-        translateIT: "",
+        translateIT: "https://api.translate.com/translate/v1/mt",
         yandex: "https://translate.yandex.com",
-        yandexIT: "",
+        yandexIT: "https://translate.api.cloud.yandex.net/translate/v2/translate",
       },
-    },
-    delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      nitterInstances: [],
     },
     /** Waits until `args` return true */
     async check(args) {
@@ -1096,128 +982,111 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       }
       return args;
     },
-    /** Can create various elements */
-    create(element,cname,type,value) {
-      let el = document.createElement(element);
-      cname ? (el.className = cname) : false;
-      type ? (el.type = type) : false;
-      value ? (el.value = value) : false;
-      return el;
-    },
-    /** Error handling for userscript */
-    err(...error) {
-      console.error('[%cTET%c] %cERROR', 'color: rgb(29, 155, 240);', '', 'color: rgb(249, 24, 128);', ...error);
-    },
-    async fetchLink(url) {
-      return fetch(url).then(response => response.json());
-    },
-    async fetchURL(url,content,source) {
-      let res = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          q: `${content}`,
-          source: `${source}`,
-          target: `${TETConfig.lang}`,
-          api_key: `${TETConfig.api.libre}`
-        }),
-        headers: { "Content-Type": "application/json" }
-      }),
-      r = await res.json();
-      return Promise.resolve(r);
-    },
-    forEach(elm,type = "toggle",...context) {
-      elm.forEach((items) => {
-        type === "add" ? items.classList.add(...context) :
-        type === "reload" ? (items.classList.remove(...context),items.classList.add(...context)) :
-        type === "remove" ? items.classList.remove(...context) :
-        type === "replace" ? items.classList.replace(...context) :
-        type === "toggle" ? items.classList.toggle(...context) :false;
-      });
-    },
-    // getURL(url, responseType = 'json', retry = 3) {
-    //   return new Promise((resolve, reject) => {
-    //     GM_xmlhttpRequest({
-    //       method: 'GET',
-    //       url,
-    //       responseType,
-    //       onerror: e => {
-    //         (retry === 0) ? reject(e) : (
-    //           this.err('Network error, retry.'),
-    //           setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),1000)
-    //         );
-    //       },
-    //       onload: ({ status, response }) => {
-    //         (status === 200) ? resolve(response) :
-    //         (retry === 0) ? reject(`${status} ${url}`) : (
-    //           this.log(status, url),
-    //           setTimeout(() => resolve(this.getURL(url, responseType, retry - 1)),500)
-    //         );
-    //       },
-    //     });
-    //   })
-    // },
     halt(e) {
       e.preventDefault();
       e.stopPropagation();
     },
-    /** Information handling for userscript */
     info(...message) {
-      if(!TETConfig.debug) {
-        return;
-      };
+      if(!TETConfig["debug"]) return;
       console.info('[%cTET%c] %cINF', 'color: rgb(29, 155, 240);', '', 'color: rgb(0, 186, 124);', ...message);
     },
-    /**
-    * Will inject CSS into the head of the document.
-    * @param {string} css - The CSS to inject
-    * @param {string} name - Each CSS starts with the following IDs: #tet-${common/foreign/etc}
-    */
-    loadCSS(css, name = "common") {
-      let s = this.create("style");
-      s.id = `tet-${name}`;
-      s.innerHTML = css;
-      return (!document.head.contains(s)) ? document.head.appendChild(s) : false;
+    loadCSS(css,name) {
+      name = name ?? "common";
+      let s = make("style",null, {
+        id: `tet-${name}`,
+        innerHTML: css,
+      });
+      (doc.head || doc.documentElement || doc).appendChild(s);
     },
-    /** Log handling for userscript */
     log(...message) {
-      if(!TETConfig.debug) {
-        return;
-      };
+      if(!TETConfig["debug"]) return;
       console.log('[%cTET%c] %cDBG', 'color: rgb(29, 155, 240);', '', 'color: rgb(255, 212, 0);', ...message);
     },
-    /** element, mouseenterFn, mouseleaveFn */
-    mouseEvents(elms,enter,leave = enter) {
-      elms.forEach((e) => {
-        this.ael(e,"mouseenter",enter);
-        this.ael(e,"mouseleave",leave);
-      });
+    async mouseEvents(elms,enter,leave) {
+      try {
+      leave = leave ?? enter;
+      if(typeof elms === "string") {
+        await this.qa(elms).then((elements) => {
+          elements.forEach((e) => {
+            ael(e,"mouseenter",enter);
+            ael(e,"mouseleave",leave);
+          })
+        })
+      } else {
+        elms.forEach((e) => {
+          ael(e,"mouseenter",enter);
+          ael(e,"mouseleave",leave);
+        });
+      };
+      } catch (error) {
+        return err(error.message);
+      }
     },
-    /**
-    * @param {Node} element
-    * @param {MutationCallback} callback
-    * @param {MutationObserverInit} options
-    */
     observe(element, callback, options = {subtree:true,childList:true}) {
       let observer = new MutationObserver(callback);
       callback([], observer);
       observer.observe(element, options);
       return observer;
     },
-    /**
-     * Waits until querySelector(`element`) exists
-     * @source {@link https://stackoverflow.com/a/53269990/9872174}
-     */
-    async query(element) {
-      while ( document.querySelector(element) === null) {
+    async query(selector,root) {
+      root = root ?? doc;
+      while ( root.querySelector(selector) === null) {
         await new Promise( resolve =>  requestAnimationFrame(resolve) )
-      };
-      return document.querySelector(element);
+      }
+      return root.querySelector(selector);
     },
-    /** Saves the Config to localStorage */
+    async qa(selector,root) {
+      try {
+        return await new Promise((resolve, reject) => {
+          root = root ?? doc;
+          if (root.querySelector(selector) === null) {
+            reject(new Error(`Element(s) not found ${root}.querySelector(${selector})`));
+          } else {
+            resolve(root.querySelectorAll(selector));
+          }
+        });
+      } catch (error) {
+        return err(error.message);
+      }
+    },
     save() {
-      GM_setValue("Config", JSON.stringify(TETConfig));
-      localStorage.TETConfig = JSON.stringify(TETConfig);
+      try {
+        localStorage.setItem("TETConfig",JSON.stringify(TETConfig));
+        GM_setValue("Config",JSON.stringify(TETConfig));
+      } catch(e) {err(e)};
     },
+  },
+  fetchURL = (url,method = "GET",responseType = 'json',extras = {}) => {
+    return new Promise((resolve, reject) => {
+      if(typeof GM_xmlhttpRequest !== 'undefined') {
+        GM_xmlhttpRequest({
+          method: method,
+          url,
+          responseType,
+          ...extras,
+          onprogress: p => tet.info(`Progress: ${p.loaded} / ${p.total}`),
+          onerror: e => reject(e),
+          onload: ({ status, response }) => {
+            if(status !== 200) reject(`${status} ${url}`);
+            resolve(response);
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          ...extras,
+        }).then((response) => {
+          if(!response.ok) reject(response);
+          if(responseType.includes("json")) {
+            resolve(response.json());
+          } else if(responseType.includes("text")) {
+            resolve(response.text());
+          } else {
+            resolve(response.blob());
+          };
+        });
+      };
+    });
   },
   menu = `<div class="navbackground rm"></div>
   <div class="tetAlert rm css-1dbjc4n">
@@ -1244,7 +1113,7 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
         <div class="tetBackground r-demo css-1dbjc4n">
           <div class="tet-av css-1dbjc4n">
             <div class="tetAvatarFrame">
-              <div id="tetAvatar"></div>
+
             </div>
           </div>
           <div class="css-1dbjc4n tet-txt">
@@ -1261,7 +1130,7 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
               </div>
             </div>
             <div class="tetTextColor css-901oao tet-dc"><span class="css-901oao tet-demotext">${defaultDesc}</span></div>
-            <div id="tetDemo" class="css-901oao"></div>
+            <div id="tetDemo" class="css-901oao tetSub"></div>
           </div>
         </div>
         <div class="css-1dbjc4n tet-options">
@@ -1307,14 +1176,14 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
                 <option class="tetBackground" value="yandex">Yandex Translator</option>
               </optgroup>
               <optgroup class="tetBackground" label="Internal Translators ⤵">
-                <option class="tetBackground" disabled="" value="bingIT">Azure Cognitive Services</option>
+                <option class="tetBackground" value="bingIT">Azure Cognitive Services</option>
                 <option class="tetBackground" value="deeplIT">DeepL</option>
                 <option class="tetBackground" value="googleIT">Google Cloud</option>
                 <option class="tetBackground" value="libre">LibreTranslate</option>
                 <option class="tetBackground" value="lingvaIT">Lingva Translate ✨</option>
                 <option class="tetBackground" value="mymemoryIT">MyMemory</option>
-                <option class="tetBackground" disabled="" value="translateIT">Translate.com</option>
-                <option class="tetBackground" disabled="" value="yandexIT">Yandex Translator</option>
+                <option class="tetBackground" value="translateIT">Translation API</option>
+                <option class="tetBackground" value="yandexIT">Yandex Translate API</option>
               </optgroup>
             </select>
           </div>
@@ -1330,16 +1199,16 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
             <div id="tetName" class="tetTextColor css-901oao"><span class="css-901oao">${languages.en.col}</span></div>
             <select id="colorselect" name="colorselect" class="tetTextColor">
               <optgroup class="tetBackground" label="Twitter">
-                <option class="tetBackground" value="r-urgr8i">${languages.en.cb}</option>
-                <option class="tetBackground" value="r-1vkxrha">${languages.en.cy}</option>
-                <option class="tetBackground" value="r-1dgebii">${languages.en.cr}</option>
-                <option class="tetBackground" value="r-168457u">${languages.en.cp}</option>
-                <option class="tetBackground" value="r-18z3xeu">${languages.en.co}</option>
-                <option class="tetBackground" value="r-b5skir">${languages.en.cg}</option>
+                <option class="tetBackground" value="tet-29u">${languages.en.cb}</option>
+                <option class="tetBackground" value="tet-186u">${languages.en.cg}</option>
+                <option class="tetBackground" value="tet-122u">${languages.en.co}</option>
+                <option class="tetBackground" value="tet-120u">${languages.en.cp}</option>
+                <option class="tetBackground" value="tet-249u">${languages.en.cr}</option>
+                <option class="tetBackground" value="tet-255u">${languages.en.cy}</option>
               <optgroup class="tetBackground" label="Misc">
-                <option class="tetBackground" disabled="" value="auto">${languages.en.ao}</option>
-                <option class="tetBackground" value="tweetdeck">TweetDeck</option>
+                <option class="tetBackground" value="auto">${languages.en.ao}</option>
                 <option class="tetBackground" value="nitter">Nitter</option>
+                <option class="tetBackground" value="tweetdeck">TweetDeck</option>
               </optgroup>
             </select>
           </div>
@@ -1353,8 +1222,8 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
               </optgroup>
               <optgroup class="tetBackground" label="Misc">
                 <option class="tetBackground" value="auto">${languages.en.ao}</option>
-                <option class="tetBackground" value="tweetdeck">TweetDeck</option>
                 <option class="tetBackground" value="nitter">Nitter</option>
+                <option class="tetBackground" value="tweetdeck">TweetDeck</option>
               </optgroup>
             </select>
           </div>
@@ -1369,35 +1238,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
           <input id="apifield" type="url" name="apikey" placeholder="(OPTIONAL) PASTE URL" class="tetTextColor tetBackground tet-url css-1dbjc4n r-16xksha">
           <input id="apifield" type="password" name="apikey" placeholder="(OPTIONAL) PASTE API KEY" class="tetTextColor tetBackground tetFields libre css-1dbjc4n r-16xksha">
           <input id="apifield" type="url" name="apikey" placeholder="PASTE URL" class="tetTextColor tetBackground tetFields libre css-1dbjc4n r-16xksha">
+          <input id="apifield" type="password" name="apikey" placeholder="PASTE FOLDER ID" class="tetTextColor tetBackground tetFields yandex css-1dbjc4n r-16xksha">
+          <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields translate css-1dbjc4n r-16xksha">
           <input id="apifield" type="url" name="apikey" placeholder="PASTE URL" class="tetTextColor tetBackground tetFields lingva css-1dbjc4n r-16xksha">
           <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields google css-1dbjc4n r-16xksha">
           <input id="apifield" type="password" name="apikey" placeholder="PASTE API KEY" class="tetTextColor tetBackground tetFields bing css-1dbjc4n r-16xksha">
         </div>
         <div id="tetReset" class="tetDisplayColor css-901oao tetBtn">Defaults</div>
-      </div>
-    </div>
-  </div>
-  <div id="tethelper" class="rm css-1dbjc4n">
-    <div class="tetBackground css-1dbjc4n">
-      <div class="tetTextColor css-901oao tet-header">
-        <span class="tet-info-name css-901oao">Help</span>
-      </div>
-      <div class="css-1dbjc4n tet-main tetTextColor tet-container tethelper-container">
-        <span id="tetName" class="css-901oao tethelper-header tetlg">${languages.en.lg}</span>
-        <span id="tetName" class="css-901oao tethelper-info tetlg">${languages.en.desc.translate}</span>
-        <span id="tetName" class="css-901oao tethelper-header tettr">${languages.en.tr}</span>
-        <span id="tetName" class="css-901oao tethelper-info tettr">https://github.com/magicoflolis/twitter-translator#supported</span>
-        <span id="tetName" class="css-901oao tethelper-header tetds">${languages.en.ds}</span>
-        <span id="tetName" class="css-901oao tethelper-info tetds"></span>
-        <span id="tetName" class="css-901oao tethelper-header tetcol">${languages.en.col}</span>
-        <span id="tetName" class="css-901oao tethelper-info tetcol"></span>
-        <span id="tetName" class="css-901oao tethelper-header tetth">${languages.en.th}</span>
-        <span id="tetName" class="css-901oao tethelper-info tetth"></span>
-        <span id="tetName" class="css-901oao tethelper-header tetlink">Link</span>
-        <span id="tetName" class="css-901oao tethelper-info tetlink">Allows user to edit chosen url.</span>
-        <span id="tetName" class="css-901oao tethelper-info tetexample">Example:</span>
-        <span id="tetName" class="css-901oao tethelper-info">https://translate.google.com => https://translate.google.co.uk</span>
-        <span id="tetName" class="css-901oao tethelper-info">https://lingva.ml => https://translate.alefvanoon.xyz</span>
       </div>
     </div>
   </div>
@@ -1423,222 +1270,256 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
             <option class="tetBackground" value="5000">5000ms</option>
           </select>
         </div>
+        <section class="tetcheckbox tetst rm">
+          <label class="tetTextColor">
+            <span>Use website theme</span>
+            <div class="tetswitch tetDisplayColor">
+              <input type="checkbox" name="sitetheme" id="sitetheme" />
+              <label for="sitetheme"></label>
+            </div>
+          </label>
+        </section>
         <section class="tetcheckbox">
           <label class="tetTextColor">
             <span>Console log</span>
-            <div class="tetswitch">
+            <div class="tetswitch tetDisplayColor">
               <input type="checkbox" name="debug" id="debug" />
               <label for="debug"></label>
             </div>
           </label>
         </section>
+        <div id="tetNI" class="tetDisplayColor css-901oao tetBtn">Fetch Latest Nitter Instances</div>
       </div>
     </div>
+</div>
+<div class="rm tetadvanced-icon-container">
+  <svg viewBox="0 0 24 24" class="tetadvanced-icon tetTextColor"><g><path d="M12 8.21c-2.09 0-3.79 1.7-3.79 3.79s1.7 3.79 3.79 3.79 3.79-1.7 3.79-3.79-1.7-3.79-3.79-3.79zm0 6.08c-1.262 0-2.29-1.026-2.29-2.29S10.74 9.71 12 9.71s2.29 1.026 2.29 2.29-1.028 2.29-2.29 2.29z"></path><path d="M12.36 22.375h-.722c-1.183 0-2.154-.888-2.262-2.064l-.014-.147c-.025-.287-.207-.533-.472-.644-.286-.12-.582-.065-.798.115l-.116.097c-.868.725-2.253.663-3.06-.14l-.51-.51c-.836-.84-.896-2.154-.14-3.06l.098-.118c.186-.222.23-.523.122-.787-.11-.272-.358-.454-.646-.48l-.15-.014c-1.18-.107-2.067-1.08-2.067-2.262v-.722c0-1.183.888-2.154 2.064-2.262l.156-.014c.285-.025.53-.207.642-.473.11-.27.065-.573-.12-.795l-.094-.116c-.757-.908-.698-2.223.137-3.06l.512-.512c.804-.804 2.188-.865 3.06-.14l.116.098c.218.184.528.23.79.122.27-.112.452-.358.477-.643l.014-.153c.107-1.18 1.08-2.066 2.262-2.066h.722c1.183 0 2.154.888 2.262 2.064l.014.156c.025.285.206.53.472.64.277.117.58.062.794-.117l.12-.102c.867-.723 2.254-.662 3.06.14l.51.512c.836.838.896 2.153.14 3.06l-.1.118c-.188.22-.234.522-.123.788.112.27.36.45.646.478l.152.014c1.18.107 2.067 1.08 2.067 2.262v.723c0 1.183-.888 2.154-2.064 2.262l-.155.014c-.284.024-.53.205-.64.47-.113.272-.067.574.117.795l.1.12c.756.905.696 2.22-.14 3.06l-.51.51c-.807.804-2.19.864-3.06.14l-.115-.096c-.217-.183-.53-.23-.79-.122-.273.114-.455.36-.48.646l-.014.15c-.107 1.173-1.08 2.06-2.262 2.06zm-3.773-4.42c.3 0 .593.06.87.175.79.328 1.324 1.054 1.4 1.896l.014.147c.037.4.367.7.77.7h.722c.4 0 .73-.3.768-.7l.014-.148c.076-.842.61-1.567 1.392-1.892.793-.33 1.696-.182 2.333.35l.113.094c.178.148.366.18.493.18.206 0 .4-.08.546-.227l.51-.51c.284-.284.305-.73.048-1.038l-.1-.12c-.542-.65-.677-1.54-.352-2.323.326-.79 1.052-1.32 1.894-1.397l.155-.014c.397-.037.7-.367.7-.77v-.722c0-.4-.303-.73-.702-.768l-.152-.014c-.846-.078-1.57-.61-1.895-1.393-.326-.788-.19-1.678.353-2.327l.1-.118c.257-.31.236-.756-.048-1.04l-.51-.51c-.146-.147-.34-.227-.546-.227-.127 0-.315.032-.492.18l-.12.1c-.634.528-1.55.67-2.322.354-.788-.327-1.32-1.052-1.397-1.896l-.014-.155c-.035-.397-.365-.7-.767-.7h-.723c-.4 0-.73.303-.768.702l-.014.152c-.076.843-.608 1.568-1.39 1.893-.787.326-1.693.183-2.33-.35l-.118-.096c-.18-.15-.368-.18-.495-.18-.206 0-.4.08-.546.226l-.512.51c-.282.284-.303.73-.046 1.038l.1.118c.54.653.677 1.544.352 2.325-.327.788-1.052 1.32-1.895 1.397l-.156.014c-.397.037-.7.367-.7.77v.722c0 .4.303.73.702.768l.15.014c.848.078 1.573.612 1.897 1.396.325.786.19 1.675-.353 2.325l-.096.115c-.26.31-.238.756.046 1.04l.51.51c.146.147.34.227.546.227.127 0 .315-.03.492-.18l.116-.096c.406-.336.923-.524 1.453-.524z"></path></g></svg>
+</div>
+<div class="rm tet-icon-container">
+  <a class="tet-icon-info tetDisplayColor" title="Help">?</a>
+  <div class="rm tetBackground tet-help-container">
+    <a class="tet-help-info tetTextColor" href="${tetHelper}" target="_blank">Visit GitHub ⤴</a>
   </div>
-  <div class="rm tetadvanced-icon-container">
-    <svg viewBox="0 0 24 24" class="tetadvanced-icon tetTextColor"><g><path d="M12 8.21c-2.09 0-3.79 1.7-3.79 3.79s1.7 3.79 3.79 3.79 3.79-1.7 3.79-3.79-1.7-3.79-3.79-3.79zm0 6.08c-1.262 0-2.29-1.026-2.29-2.29S10.74 9.71 12 9.71s2.29 1.026 2.29 2.29-1.028 2.29-2.29 2.29z"></path><path d="M12.36 22.375h-.722c-1.183 0-2.154-.888-2.262-2.064l-.014-.147c-.025-.287-.207-.533-.472-.644-.286-.12-.582-.065-.798.115l-.116.097c-.868.725-2.253.663-3.06-.14l-.51-.51c-.836-.84-.896-2.154-.14-3.06l.098-.118c.186-.222.23-.523.122-.787-.11-.272-.358-.454-.646-.48l-.15-.014c-1.18-.107-2.067-1.08-2.067-2.262v-.722c0-1.183.888-2.154 2.064-2.262l.156-.014c.285-.025.53-.207.642-.473.11-.27.065-.573-.12-.795l-.094-.116c-.757-.908-.698-2.223.137-3.06l.512-.512c.804-.804 2.188-.865 3.06-.14l.116.098c.218.184.528.23.79.122.27-.112.452-.358.477-.643l.014-.153c.107-1.18 1.08-2.066 2.262-2.066h.722c1.183 0 2.154.888 2.262 2.064l.014.156c.025.285.206.53.472.64.277.117.58.062.794-.117l.12-.102c.867-.723 2.254-.662 3.06.14l.51.512c.836.838.896 2.153.14 3.06l-.1.118c-.188.22-.234.522-.123.788.112.27.36.45.646.478l.152.014c1.18.107 2.067 1.08 2.067 2.262v.723c0 1.183-.888 2.154-2.064 2.262l-.155.014c-.284.024-.53.205-.64.47-.113.272-.067.574.117.795l.1.12c.756.905.696 2.22-.14 3.06l-.51.51c-.807.804-2.19.864-3.06.14l-.115-.096c-.217-.183-.53-.23-.79-.122-.273.114-.455.36-.48.646l-.014.15c-.107 1.173-1.08 2.06-2.262 2.06zm-3.773-4.42c.3 0 .593.06.87.175.79.328 1.324 1.054 1.4 1.896l.014.147c.037.4.367.7.77.7h.722c.4 0 .73-.3.768-.7l.014-.148c.076-.842.61-1.567 1.392-1.892.793-.33 1.696-.182 2.333.35l.113.094c.178.148.366.18.493.18.206 0 .4-.08.546-.227l.51-.51c.284-.284.305-.73.048-1.038l-.1-.12c-.542-.65-.677-1.54-.352-2.323.326-.79 1.052-1.32 1.894-1.397l.155-.014c.397-.037.7-.367.7-.77v-.722c0-.4-.303-.73-.702-.768l-.152-.014c-.846-.078-1.57-.61-1.895-1.393-.326-.788-.19-1.678.353-2.327l.1-.118c.257-.31.236-.756-.048-1.04l-.51-.51c-.146-.147-.34-.227-.546-.227-.127 0-.315.032-.492.18l-.12.1c-.634.528-1.55.67-2.322.354-.788-.327-1.32-1.052-1.397-1.896l-.014-.155c-.035-.397-.365-.7-.767-.7h-.723c-.4 0-.73.303-.768.702l-.014.152c-.076.843-.608 1.568-1.39 1.893-.787.326-1.693.183-2.33-.35l-.118-.096c-.18-.15-.368-.18-.495-.18-.206 0-.4.08-.546.226l-.512.51c-.282.284-.303.73-.046 1.038l.1.118c.54.653.677 1.544.352 2.325-.327.788-1.052 1.32-1.895 1.397l-.156.014c-.397.037-.7.367-.7.77v.722c0 .4.303.73.702.768l.15.014c.848.078 1.573.612 1.897 1.396.325.786.19 1.675-.353 2.325l-.096.115c-.26.31-.238.756.046 1.04l.51.51c.146.147.34.227.546.227.127 0 .315-.03.492-.18l.116-.096c.406-.336.923-.524 1.453-.524z"></path></g></svg>
-  </div>
-  <div class="rm tet-icon-container">
-    <a class="tet-icon-info tetDisplayColor" title="Help">?</a>
-    <div class="rm tetBackground tet-help-container">
-      <a class="tet-help-info tetTextColor" href="${tetHelper}" target="_blank">Visit GitHub ⤴</a>
-    </div>
-  </div>
+</div>
 `,
-  tetMenuButton = tet.create("div","mini tetDisplayColor css-901oao tetBtn"),
-  btNav = tet.create("div","btNav css-1dbjc4n"),
-  autoTheme = () => {
-    return new Promise((resolve) =>  {
-      if(find.twitter) {
-        resolve(document.body.style.backgroundColor);
-      } else if(find.tweetdeck) {
-        resolve("tweetdeck");
-      } else if(find.twitlonger) {
-        resolve("rgb(255, 255, 255)");
-      } else {
-        resolve("nitter");
-      };
-    })
-  },
+  tetMenuButton = make("div","mini tetDisplayColor css-901oao tetBtn", {
+    id: "tetMenuButton",
+    title: languages.en.menu,
+    innerHTML: `<svg viewBox="0 0 24 24" id="tetSVG" class="tetTextColor" width="15"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm8.472 9.442c-.242.19-.472.368-.63.486-.68-1.265-1.002-1.78-1.256-2.007-.163-.145-.37-.223-.78-.375-.367-.136-1.482-.55-1.65-.85-.087-.153.136-.602.23-.793.088-.177.164-.33.196-.497.123-.646-.33-1.146-.728-1.59-.066-.072-.153-.17-.23-.26.335-.12.862-.26 1.42-.384 1.95 1.448 3.26 3.704 3.428 6.272zm-9.788-7.83c.076.25.145.5.182.678-.255.15-.663.363-.96.52-.262.136-.522.273-.738.392-.247.137-.442.234-.6.313-.347.174-.598.3-.833.553-.068.073-.26.278-1.02 1.886l-1.79-.656c1.293-1.94 3.362-3.31 5.76-3.685zM12 20.5c-4.687 0-8.5-3.813-8.5-8.5 0-1.197.25-2.335.7-3.37.47.182 1.713.66 2.75 1.035-.107.336-.245.854-.26 1.333-.03.855.502 1.7.562 1.792.053.08.12.15.2.207.303.21.687.5.827.616.063.343.166 1.26.23 1.833.144 1.266.175 1.48.24 1.65.005.012.514 1.188 1.315 1.188.576-.003.673-.206 1.855-2.688.244-.512.45-.95.513-1.058.1-.144.597-.61.87-.83.55-.442.76-1.82.413-2.682-.335-.83-1.92-2.08-2.5-2.195-.17-.033-.43-.04-.953-.053-.497-.01-1.25-.028-1.536-.09-.098-.024-.314-.094-.605-.196.32-.668.627-1.28.71-1.4.05-.052.168-.112.408-.234.17-.086.383-.192.653-.34.208-.116.458-.247.71-.38 1.168-.612 1.484-.8 1.658-1.082.11-.177.263-.44-.04-1.544 1.042.027 2.038.24 2.955.61-.89.32-1.024.595-1.106.77-.367.784.256 1.475.667 1.93.096.107.24.268.32.38l-.017.036c-.234.472-.67 1.35-.196 2.194.406.72 1.384 1.13 2.437 1.52.134.05.25.092.33.126.16.208.496.79 1 1.735l.154.285c.078.14.33.505.842.505.167 0 .363-.04.59-.137.032-.013.083-.035.18-.094C19.72 17.405 16.22 20.5 12 20.5zm-3.812-9.45c.01-.285.102-.646.184-.907l.027.006c.397.09 1.037.11 1.83.13.32.006.59.008.615 0 .326.143 1.355 1 1.483 1.31.113.28.05.812-.034 1.01-.233.197-.845.735-1.085 1.078-.093.13-.212.373-.64 1.274-.133.276-.313.654-.488 1.013-.026-.225-.054-.472-.08-.686-.225-2.003-.273-2.22-.42-2.445-.05-.078-.202-.31-1.135-.973-.117-.213-.268-.564-.26-.813z"></path></g></svg><span class="css-901oao">${languages.en.menu}</span>`,
+  }),
+  btNav = make("div","btNav css-1dbjc4n", {
+    id: "tetTW",
+    role: "dialog",
+    style: "z-index: -1 !important;",
+    innerHTML: menu,
+  }),
   content = '',
   // Couldn't figure out how to make my own
   // invalid_chars from https://greasyfork.org/scripts/423001
   invalid_chars = {'\\': '＼', '\/': '／', '\|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
-  elmFN = async (sel) => {
-    content = '';
-    sel.childNodes.forEach((item) => {
-      let children = item.textContent;
-      if(children && children != "") {
-        content += children.split('\n').join(' ').replace(/\s*https:\/\/t\.co\/\w+/g, '').replace(/[\\\/\|<>\*\?:#"]/g, v => invalid_chars[v]);
+  elmFN = (sel) => {
+    return new Promise((resolve) => {
+      let txtFilter = sel.textContent.match(/[\p{Alpha}\p{M}\p{Nd}\p{Pc}\p{Join_C}\p{Po}\p{So}\p{Sc}\d]/gu) || [];
+      content = '';
+      for(let key of txtFilter) {
+        content += key.replace(/[\\\/\|<>\*\?:#"]/g, v => invalid_chars[v]);
       };
+      resolve(encodeURIComponent(content));
     });
-    return content;
   };
-  //#endregion
-  //#region Site n Menu Fn
-  function checkLng() {
-    return {
-      tw: this.tw,
-      lg: this.lg,
-      tr: this.tr,
-      ds: this.ds,
-      t: this.t,
-      i: this.i,
-      ti: `${this.t} + ${this.i}`,
-      res: this.res,
-      menu: this.menu,
-      th: this.th,
-      ao: this.ao,
-      df: this.df,
-      di: this.di,
-      lo: this.lo,
-      col: this.col,
-      cb: this.cb,
-      cy: this.cy,
-      cr: this.cr,
-      cp: this.cp,
-      co: this.co,
-      cg: this.cg,
-      language: `${this.desc.language}: ${defaultLang}`,
-      display: this.desc.display,
-      color: this.desc.color,
-      theme: this.desc.theme,
-      head: this.quest.head,
-      body: this.quest.body,
-      yes: this.quest.yes,
-      no: this.quest.no
-    }
+  function getCookie(name) {
+    let matches = doc.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+    return matches ? decodeURIComponent(matches[1]) : false;
+  };
+  function langChange(lchange) {
+    tet.info("Updating language");
+    let cfglng = TETConfig["lang"] ?? "en";
+    if(lchange) {
+      lng = {};
+      cfglng = lchange ?? cfglng;
+    };
+    for(const key in languages) {
+      if(key !== cfglng) continue;
+      if(!Object.prototype.hasOwnProperty.call(lng, key)) {
+        lng[key] = languages[key];
+      } else if (key === "quest") {
+        for (const key3 in languages[key]) {
+          if(!Object.prototype.hasOwnProperty.call(lng[key], key3)) {
+            lng[key][key3] = languages[key][key3];
+          };
+        };
+      };
+    };
+    lng[cfglng]["ti"] = `${lng[cfglng]["t"]} + ${lng[cfglng]["i"]}`;
+    tet.log("Language:",lng);
   };
   async function configDisplay() {
-    let dis = TETConfig.display,
-      tra = TETConfig.translator,
-      v = icons.fn();
-    return new Promise((resolve) => {
+    return await new Promise((resolve) => {
+      let v = icons.fn(),
+      dis = TETConfig["display"],
+      tra = TETConfig["translator"];
+      if(!dis) throw new Error(`TETConfig["display"] is undefined ${dis}`);
       if(dis === "text + icon") {
-        (tra == "lingvaIT" || tra == "lingva") ? resolve(`Lingva Translate ${v.lingva}`) :
-        (tra == "libre") ? resolve(`LibreTranslate ${v.libre}`) :
+        tra.match(/lingva/gi) ? resolve(`Lingva Translate ${v.lingva}`) :
+        tra.match(/libre/gi) ? resolve(`LibreTranslate ${v.libre}`) :
         (tra == "bingIT") ? resolve(`Azure Cognitive Services ${v.azure}`) :
         (tra == "bing") ? resolve(`Bing ${v.bing}`) :
         (tra == "googleIT") ? resolve(`Google Cloud ${v.gCloud}`) :
         (tra == "google") ? resolve(`Google ${v.google}`) :
-        (tra == "mymemory" || tra == "mymemoryIT") ? resolve(`MyMemory ${v.mymemory}`) :
-        (tra == "translate" || tra == "translateIT") ? resolve(`Translate.com ${v.translate}`) :
-        (tra == "yandex" || tra == "yandexIT") ? resolve(`Yandex ${v.yandex}`) :
-        resolve(`DeepL ${v.deepl}`);
+        tra.match(/mymemory/gi) ? resolve(`MyMemory ${v.mymemory}`) :
+        tra.match(/translate/gi) ? resolve(`Translate.com ${v.translate}`) :
+        tra.match(/yandex/gi) ? resolve(`Yandex ${v.yandex}`) : resolve(`DeepL ${v.deepl}`);
       } else if(dis === "icon") {
-        (tra == "lingva" || tra == "lingvaIT") ? resolve(v.lingva) :
-        (tra == "libre") ? resolve(v.libre) :
+        tra.match(/lingva/gi) ? resolve(v.lingva) :
+        tra.match(/libre/gi) ? resolve(v.libre) :
         (tra == "bingIT") ? resolve(v.azure) :
         (tra == "bing") ? resolve(v.bing) :
         (tra == "googleIT") ? resolve(v.gCloud) :
         (tra == "google") ? resolve(v.google) :
-        (tra == "mymemory" || tra == "mymemoryIT") ? resolve(v.mymemory) :
-        (tra == "translate" || tra == "translateIT") ? resolve(v.translate) :
-        (tra == "yandex" || tra == "yandexIT") ? resolve(v.yandex) :
-        resolve(v.deepl);
+        tra.match(/mymemory/gi) ? resolve(v.mymemory) :
+        tra.match(/translate/gi) ? resolve(v.translate) :
+        tra.match(/yandex/gi) ? resolve(v.yandex) : resolve(v.deepl);
       } else {
-        (tra == "lingva" || tra == "lingvaIT") ? resolve("Lingva Translate") :
-        (tra == "libre") ? resolve("LibreTranslate") :
+        tra.match(/lingva/gi) ? resolve("Lingva Translate") :
+        tra.match(/libre/gi) ? resolve("LibreTranslate") :
         (tra == "bingIT") ? resolve("Azure Cognitive Services") :
         (tra == "bing") ? resolve("Bing") :
         (tra == "googleIT") ? resolve("Google Cloud") :
         (tra == "google") ? resolve("Google") :
-        (tra == "mymemory" || tra == "mymemoryIT") ? resolve("MyMemory") :
-        (tra == "translate" || tra == "translateIT") ? resolve("Translate.com") :
-        (tra == "yandex" || tra == "yandexIT") ? resolve("Yandex") :
-        resolve("DeepL");
+        tra.match(/mymemory/gi) ? resolve("MyMemory") :
+        tra.match(/translate/gi)? resolve("Translate.com") :
+        tra.match(/yandex/gi) ? resolve("Yandex") : resolve("DeepL");
       };
     }).then((display) => {
-      let tw = languages[TETConfig.lang ?? "en"].fn().tw;
+      let tw = lng[TETConfig["lang"] ?? "en"].tw;
       qs('#tetDemo').innerHTML = `${tw} ${display}`;
-      if(qs('.tet')) {
-        qs('.tet',true).forEach((t) => {
-          t.innerHTML = `${tw} ${display}`;
-        });
+      if(!qs(".tet")) return;
+      for(let t of qsA(".tet")) {
+        t.innerHTML = `${tw} ${display}`;
       };
-    });
+    }).catch(error => err(error.message));
   };
-  async function openlink(source,content,tr) {
-    return new Promise((resolve) => {
-    if(tr == 'lingva') {
-      resolve(`${TETConfig.url[tr]}/${source}/${TETConfig.lang}/${content}`)
-    } else if(tr == 'yandex') {
-      resolve(`${TETConfig.url[tr]}/?lang=${source}-${TETConfig.lang}&text=${content}`)
-    } else if(tr == 'bing') {
-      resolve(`${TETConfig.url[tr]}/translator/?text=${content}&from=${source}&to=${TETConfig.lang}`)
-    } else if(tr == 'google') {
-      resolve(`${TETConfig.url[tr]}/?q=${content}&sl=${source}&tl=${TETConfig.lang}`)
-    } else if(tr == 'mymemory') {
-      resolve(`${TETConfig.url[tr]}/${TETConfig.lang}/${source}/${TETConfig.lang}/${content}`)
-    } else if(tr == 'translate') {
-      resolve(`${TETConfig.url[tr]}/machine-translation#${source}/${TETConfig.lang}/${content}`)
-    } else {
-      resolve(`${TETConfig.url[tr]}/translator#${source}/${TETConfig.lang}/${content}`)
-    }
-    }).then(link => window.open(link,'_blank'))
-  };
-   /** Src Element, Src Language, Src Content, Inject Mode */
-  async function handleButton(source,src,content,mode) {
+  function handleButton(source,src,content,mode) {
     mode = mode ?? "append";
     src = src ?? "auto";
     let tdStyle = 'align-items: end !important;font-size: inherit !important;font-weight: inherit !important;line-height: inherit !important;',
     ntStyle = 'margin: 0px 0px 0px 58px !important; padding: .75em;',
-    tetBtn = tet.create("div",`tet ${cSub} css-901oao`),
-    btnDiv = tet.create("div",`css-901oao tetTextColor ${cText}`),
-    btnSpan = tet.create("span","css-901oao");
-    btnDiv.id = "tweet-text";
+    tetBtn = make("div",`tet ${cSub} css-901oao`),
+    btnDiv = make("div",`css-901oao tetTextColor ${cText}`, {
+      id: "tweet-text",
+    }),
+    btnSpan = make("span","css-901oao");
     btnDiv.append(btnSpan);
-    tet.ael(tetBtn,"mouseenter", (e) => {
-      e.target.classList.add("r-hover");
-    });
-    tet.ael(tetBtn,"mouseleave", (e) => {
-      e.target.classList.remove("r-hover");
-    });
-    tet.ael(tetBtn,"click", (e) => {
-      try {
+    ael(tetBtn,"mouseenter",e => e.target.classList.add("r-hover"));
+    ael(tetBtn,"mouseleave",e => e.target.classList.remove("r-hover"));
+    ael(tetBtn,"click", (e) => {
       tet.halt(e);
-      let tr = TETConfig.translator;
-      if(tr == 'lingvaIT') {
-        if(!e.target.parentElement.contains(btnDiv)) {
-        tet.fetchLink(`${TETConfig.url.lingva}/api/v1/${src}/${TETConfig.lang}/${content}`).then(r => {
-          btnSpan.innerHTML = r.translation ?? r;
-          e.target.after(btnDiv);
-        });
+      let pretxt = e.target.innerHTML,
+      tr = TETConfig["translator"],
+      findTR = () => {
+        return new Promise((resolve) => {
+          if(tr.match(/IT|libre/gi)) {
+            if(e.target.parentElement.contains(btnDiv)) {
+              btnDiv.classList.toggle("rm");
+              resolve("Already exists");
+            } else {
+              e.target.innerHTML = `[TET] ${lng[TETConfig["lang"]].l}...`;
+              if(tr.match(/lingva/gi)) {
+                resolve(fetchURL(`${TETConfig["url"]["lingva"]}/api/v1/${src}/${TETConfig["lang"]}/${content}`))
+              } else if(tr.match(/libre/gi)) {
+                resolve(fetchURL(TETConfig["url"]["libre"],"POST", {
+                  body: JSON.stringify({
+                    q: content,
+                    source: src,
+                    target: TETConfig["lang"],
+                    format: "text",
+                    api_key: TETConfig["api"]["libre"]
+                  }),
+                }))
+              } else if(tr.match(/bing/gi)) {
+                throw new Error("Work in progress");
+              } else if(tr.match(/google/gi)) {
+                resolve(fetchURL(`${TETConfig["url"][tr]}/language/translate/v2?q=${content}&target=${TETConfig["lang"]}&source=${src}&key=${TETConfig.api.google}`))
+              } else if(tr.match(/mymemory/gi)) {
+                resolve(fetchURL(`${TETConfig["url"][tr]}/get?q=${content}&langpair=${src}|${TETConfig["lang"]}`))
+              } else if(tr.match(/translate/gi)) {
+                resolve(fetchURL("https://api.translate.com/translate/v1/login","POST", {
+                  body: JSON.stringify({
+                    email: src,
+                    password: TETConfig["lang"]
+                  }),
+                }).then(() => {
+                  fetchURL(TETConfig["url"][tr],"POST", {
+                    body: JSON.stringify({
+                      text: content,
+                      source_language: src,
+                      translation_language: TETConfig["lang"]
+                    }),
+                  })
+                }))
+              } else if(tr.match(/yandex/gi)) {
+                resolve(fetchURL(TETConfig["url"][tr],"POST", {
+                  body: JSON.stringify({
+                    sourceLanguageCode: src,
+                    targetLanguageCode: TETConfig["lang"],
+                    format: "string",
+                    texts: [content],
+                    folderId: TETConfig["api"]["yandex"]
+                  }),
+                }))
+              } else if(tr.match(/deepl/gi)) {
+                resolve(fetchURL(`https://${TETConfig["api"]["version"].match(/pro/gi) ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig["lang"]}`))
+              } else {
+                throw new Error("Unable to locate selected translator");
+              };
+            };
+          } else {
+            if(tr.match(/lingva/gi)) {
+              resolve(`${TETConfig["url"][tr]}/${src}/${TETConfig["lang"]}/${content}`)
+            }else if(tr.match(/bing/gi)) {
+              resolve(`${TETConfig["url"][tr]}/translator/?text=${content}&from=${src}&to=${TETConfig["lang"]}`)
+            } else if(tr.match(/google/gi)) {
+              resolve(`${TETConfig["url"][tr]}/?q=${content}&sl=${src}&tl=${TETConfig["lang"]}`)
+            } else if(tr.match(/mymemory/gi)) {
+              resolve(`${TETConfig["url"][tr]}/${TETConfig["lang"]}/${src}/${TETConfig["lang"]}/${content}`)
+            } else if(tr.match(/translate/gi)) {
+              resolve(`${TETConfig["url"][tr]}/machine-translation#${src}/${TETConfig["lang"]}/${content}`)
+            } else if(tr.match(/yandex/gi)) {
+              resolve(`${TETConfig["url"][tr]}/?lang=${src}-${TETConfig["lang"]}&text=${content}`)
+            } else if(tr.match(/deepl/gi)) {
+              resolve(`${TETConfig["url"][tr]}/translator#${src}/${TETConfig["lang"]}/${content}`)
+            } else {
+              throw new Error("Unable to locate selected translator");
+            };
+          };
+        })
+      };
+      findTR().then(r => {
+        let find = () => {
+          for (let k in r) {
+            return k.includes("translation") ? r.translation :
+            k.includes("responseData") ? r.responseData.translatedText :
+            k.includes("data") ? (r.data.translations[0].translatedText ?? r.data.translation) :
+            k.includes("translatedText") ? r.translatedText :
+            k.includes("translations") ? r.translations[0].text : r;
+          };
         };
-      } else if(tr == 'libre') {
-        if(!e.target.parentElement.contains(btnDiv)) {
-        tet.fetchURL(TETConfig.url.libre,content,src).then(r => {
-          btnSpan.innerHTML = r.translatedText ?? r;
-          e.target.after(btnDiv);
-        });
-      };
-      } else if(tr == 'mymemoryIT') {
-        if(!e.target.parentElement.contains(btnDiv)) {
-        tet.fetchLink(`${TETConfig.url[tr]}/get?q=${content}&langpair=${src}|${TETConfig.lang}`).then(r => {
-          btnSpan.innerHTML = r.responseData.translatedText ?? r;
-          e.target.after(btnDiv);
-        });
-      };
-      } else if(tr == 'googleIT') {
-        if(!e.target.parentElement.contains(btnDiv)) {
-        tet.fetchLink(`${TETConfig.url[tr]}/language/translate/v2?q=${content}&target=${TETConfig.lang}&source=${src}&key=${TETConfig.api.google}`).then(r => {
-          btnSpan.innerHTML = r.data.translations[0].translatedText ?? r;
-          e.target.after(btnDiv);
+        if(typeof r === "string") {
+          if(r.match(/Already exists/gi)) return;
+          e.target.innerHTML = pretxt;
+          openPage(r);
+        } else {
+          btnSpan.innerHTML = find();
+          if(!e.target.parentElement.contains(btnDiv)) {
+            e.target.innerHTML = pretxt;
+            e.target.after(btnDiv);
+          };
+        };
+      }).catch((error) => {
+        err(error.message);
+        btnSpan.innerHTML += `---> ${error}`;
+        if(!e.target.parentElement.contains(btnDiv)) e.target.after(btnDiv);
       });
-    };
-      } else if(tr == 'deeplIT') {
-        if(!e.target.parentElement.contains(btnDiv)) {
-        tet.fetchLink(`https://${TETConfig.api.version.includes("pro") ? 'api' : 'api-free'}.deepl.com/v2/translate?auth_key=${TETConfig.api.deepl}&text=${content}&target_lang=${TETConfig.lang}`).then(r => {
-          btnSpan.innerHTML = r.translations[0].text ?? r;
-          e.target.after(btnDiv);
-        });
-    };
-      } else {openlink(src,content,tr);};
-    } catch (e) {
-      tet.err(e);
-      btnSpan.innerHTML = `Error: ${e}`;
-      e.target.after(btnDiv);
-    };
     });
     (mode === "append") ? source.append(tetBtn) :
     (mode === "after") ? source.after(tetBtn) :
@@ -1648,22 +1529,13 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
     (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.setAttribute("style",tdStyle)) :
     (mode === "tdBio") ? (source.after(tetBtn),tetBtn.setAttribute("style",`${tdStyle} padding-bottom: 4px !important;`)) :
     (mode === "nitter") ? (source.after(tetBtn),tetBtn.setAttribute("style",ntStyle),btnDiv.setAttribute("style",ntStyle)) : mode.prepend(tetBtn);
-    await configDisplay();
+    configDisplay();
   };
-  /** Restores config to default when an error occurs */
-  function handleError() {
-    TETConfig = tet.defaultcfg;
-    find.tweetdeck ? TETConfig.lang = "en" : false;
-    tet.save();
-  };
-  //#endregion
-
-  //#region Sites
   const site = {
     nitter() {
       let bio = qs('div.profile-bio > p'),
       twtFN = () => {
-        qs(".tweet-content", true).forEach(async (tc) => {
+        qsA(".tweet-content").forEach((tc) => {
           if(!tc.parentElement.parentElement.nextElementSibling) {
             handleButton(tc.parentElement.parentElement,"auto",tc.innerText,"nitter");
           } else {
@@ -1678,121 +1550,164 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
           };
         };
       };
-      (TETConfig.delay !== "none") ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
+      (TETConfig["delay"] !== "none") ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
     },
     tweetdeck() {
-      try {
-      let bio = qs("p.prf-bio"),
-      twtFN = () => {
-      if(bio && !bio.nextElementSibling.className.includes("tet")) {
-        handleButton(bio,"auto",bio.innerText,"tdBio");
+      let twtFN = () => {
+        for (let item of qsA("p.js-tweet-text")) {
+          if(item.lang.includes(languages[TETConfig["lang"] ?? "en"]) && !item.nextElementSibling) continue;
+          if(!item.nextElementSibling) continue;
+          if(!item.nextElementSibling.className.includes("js-translate-call-to-action")) continue;
+          if(!item.nextElementSibling.nextElementSibling) continue;
+          if(item.nextElementSibling.nextElementSibling.className.includes("tet")) continue;
+          handleButton(item.nextElementSibling,item.lang,item.innerText,"tdTweet");
+        }
       };
-      qs("p.js-tweet-text",true).forEach((item) => {
-        if(!item.lang.includes(languages[TETConfig.lang ?? "en"]) && item.nextElementSibling) {
-          if(item.nextElementSibling.className.includes("js-translate-call-to-action")) {
-            if(!item.nextElementSibling.nextElementSibling.className.includes("tet")) {
-              handleButton(item.nextElementSibling,item.lang,item.innerText,"tdTweet");
-            };
-          };
-        };
-      });
-    };
-    TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(()=>twtFN()) : twtFN();
-  } catch (e) {
-    tet.err(e);
-  };
-  },
+      TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(()=>twtFN()) : twtFN();
+    },
     twitlonger() {
-    try {
       let content = qs('p#posttext').innerText,
       source = qs('.actions.text-right'),
       twtFN = () => {
-        if(source && !qs('.tet')) {
-          handleButton(source,"auto",content,"prepend");
-        };
+        if(source && !qs('.tet')) {handleButton(source,"auto",content,"prepend");};
       };
-      TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => twtFN()) : twtFN();
-    } catch (e) {
-      tet.err(e);
-    };
+      TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
     },
-    async twitter() {
-      let root = "div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0", // "Translate Tweet/Bio"
-      broot = qs(root,true),
-      eroot = qs("div[lang]",true),
-      twtFN = async () => {
-        if(find.logout) {
-          eroot.forEach(async (d) => {
-            if(!d.nextElementSibling) {
-              elmFN(d).then((c) => {
-                (!d.lang || d.lang === "") ? handleButton(d.parentElement,"auto",c) : handleButton(d.parentElement,d.lang,c);
-                tet.log("Injected into Bio / Tweet");
-              });
-            };
-          });
-        } else {
-          //await tet.delay(1000);
-          tet.query(root).then(async () => {
-            broot.forEach(async (e) => {
-              let tweetContainer = e.previousElementSibling;
-              if(!e.nextElementSibling) {
-                elmFN(tweetContainer).then((c) => {
-                  (!tweetContainer.lang || tweetContainer.lang === "") ? handleButton(tweetContainer.parentElement,"auto",c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
-                  tet.log("Injected into Bio / Tweet");
-                });
-              };
+    twitter() {
+      let twtFN = () => {
+        for(let e of qsA("div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0")) { // "Translate Tweet/Bio"
+          let tweetContainer = e.previousElementSibling;
+          if(!e.nextElementSibling || !e.nextElementSibling.className.includes("tet")) {
+            elmFN(tweetContainer).then((c) => {
+              (!tweetContainer.lang || tweetContainer.lang === "") ? handleButton(tweetContainer.parentElement,"auto",c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
             });
-          });
-        };
+          };
+        }
       };
-      TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => twtFN()) : await twtFN();
-      (/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(document.location.pathname)) ? (tet.info("Hiding menu"), qs('#tetMenuButton').setAttribute('style', 'z-index: -1 !important;')) : qs('#tetMenuButton').setAttribute('style', '');
+      TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
     },
     async inject() {
       tet.info("Site:",lh);
       if(find.tweetdeck) {
         tet.query("section.js-column > div").then(()=>{
-          tet.ael(qs("body"),"mouseout",() => {
-            this.tweetdeck();
+          tet.observe(qs(".js-modals-container"), (mutations) => {
+            for(let mutation of mutations) {
+              for(let node of mutation.addedNodes) {
+                for(let elem of node.querySelectorAll('p[class*="prf-bio"]')) {
+                  let twtFN = () => {
+                    if(elem && !elem.nextElementSibling.className.includes("tet")) {
+                      handleButton(elem,"auto",elem.innerText,"tdBio");
+                    };
+                  };
+                  TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(()=>twtFN()) : twtFN();
+                  break;
+                }
+              }
+            }
           });
-          tet.ael(qs("body"),"mouseover",() => {
-            this.tweetdeck();
+          let preElem = qs(".application").className;
+          tet.observe(qs(".application"), (mutations) => {
+            for(let mutation of mutations) {
+              for(let node of mutation.addedNodes) {
+                if (!(node instanceof HTMLElement)) continue;
+                for(let elem of node.querySelectorAll('div[class*="tweet-detail"]')) {
+                  if(elem.className === preElem) continue;
+                  preElem = elem.className;
+                  delay(250).then(()=>this.tweetdeck());
+                  break;
+                }
+              }
+            }
           });
         });
       };
       if(find.twitter) {
         tet.query("#react-root > div > div").then((react) => {
-          let r = qs("#react-root");
-          tet.ael(r,"animationstart",() => {
-            this.twitter();
+          tet.query("main").then(() => {
+            let preElement = qs("body"),
+            preBio = qs("body"),
+            prePath = doc.location.pathname,
+            loTwitter = (elem) => {
+              let preE = qs("body"),
+              twtFN = () => {
+                elmFN(elem).then((c) => {
+                  (!elem.lang || elem.lang === "") ? handleButton(elem.parentElement,"auto",c) : handleButton(elem.parentElement,elem.lang,c);
+                });
+              };
+              TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
+            };
+            tet.observe(qs("body"), (mutations) => {
+              for(let mutation of mutations) {
+                for(let node of mutation.addedNodes) {
+                  if (!(node instanceof HTMLElement)) continue;
+                  if(find.logout) {
+                    for(let elem of node.querySelectorAll('div.css-901oao')) {
+                      if(!elem.dataset.testid) continue;
+                      if(elem.dataset.testid.match(/tweetText/gi)) {
+                        if(elem === preElement) continue;
+                        preElement = elem;
+                        loTwitter(elem);
+                      };
+                      if(elem.dataset.testid.match(/UserDescription/gi)) {
+                        if(elem === preBio) continue;
+                        preBio = elem;
+                        loTwitter(elem);
+                      };
+                    };
+                  } else {
+                    for(let elem of node.querySelectorAll('div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0')) {
+                      if(elem === preElement) continue;
+                      preElement = elem;
+                      delay(250).then(()=>this.twitter());
+                    };
+                    for(let elem of node.querySelectorAll('div[data-testid*="UserDescription"]')) {
+                      if(elem === preBio) continue;
+                      preBio = elem;
+                      delay(250).then(()=>this.twitter());
+                    };
+                    if(node.matches('div[data-testid*="UserDescription"]')) {
+                      if(elem === preBio) continue;
+                      preBio = elem;
+                      delay(250).then(()=>this.twitter());
+                    };
+                  };
+                  let curPath = doc.location.pathname;
+                  if(curPath === prePath) continue;
+                  prePath = curPath;
+                  if(/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(doc.location.pathname)) {
+                    tet.info("Hiding menu");
+                    qs('#tetMenuButton').setAttribute('style', 'z-index: -1 !important;');
+                  } else {
+                    qs('#tetMenuButton').setAttribute('style', '');
+                  };
+                }
+              }
+            });
           });
-          tet.ael(r,"mouseover",() => {
-            this.twitter();
-          });
-          tet.observe(react,() => {
-            let hoverFN = async () => {
-              await tet.delay(800).then(async () => {
-                let hoverCard = qs("div.r-nsbfu8 > .r-1s2bzr4 > div");
-                if(hoverCard) {
-                  if(!hoverCard.contains(qs(".tet"))) {
+          tet.query("#layers").then((l) => {
+            tet.observe(l, (mutations) => {
+              for(let mutation of mutations) {
+                for(let node of mutation.addedNodes) {
+                  if(!(node instanceof HTMLElement)) continue;
+                  if(!node.matches('img')) continue;
+                  let hoverFN = async () => {
+                    let hoverCard = qs("div.r-nsbfu8 > .r-1s2bzr4 > div");
+                    if(!hoverCard) return;
+                    if(hoverCard.contains(qs(".tet"))) return;
                     await elmFN(hoverCard);
                     handleButton(hoverCard.lastElementChild,"auto",content,"after");
-                    // tet.log("Injected into hover card");
-                    tet.log(hoverCard.childNodes);
                   };
-                };
-              });
-            };
-            TETConfig.delay !== "none" ? tet.delay(TETConfig.delay).then(() => hoverFN()) : hoverFN();
+                  TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => hoverFN()) : hoverFN();
+                }
+              }
+            });
           });
         });
       };
-      if(find.twitlonger) {
-        tet.query("#postcontent").then(this.twitlonger())
-      };
-      if(find.nitter) {
+      if(find.twitlonger) {tet.query("#postcontent").then(this.twitlonger())};
+      if(qs("#tetNT")) {
         tet.query(".container").then((c) => {
-          tet.ael(c,"mouseover",() => {
+          ael(c,"mouseover",() => {
             this.nitter();
           });
           this.nitter();
@@ -1800,72 +1715,98 @@ nitterCSS = `#tetNT .r-demo,#tetNT .tet-help-container,#tetNT #apifield,#tetNT #
       };
     },
   };
-  //#endregion
-
-//#region Menu
 async function Menu() {
   try {
-    tetMenuButton.id = "tetMenuButton";
-    tetMenuButton.title = languages.en.menu;
-    btNav.id = "tetTW";
-    btNav.role = "dialog";
-    btNav.style = "z-index: -1 !important;";
-    tetMenuButton.innerHTML = `<svg viewBox="0 0 24 24" id="tetSVG" class="tetTextColor" width="15"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm8.472 9.442c-.242.19-.472.368-.63.486-.68-1.265-1.002-1.78-1.256-2.007-.163-.145-.37-.223-.78-.375-.367-.136-1.482-.55-1.65-.85-.087-.153.136-.602.23-.793.088-.177.164-.33.196-.497.123-.646-.33-1.146-.728-1.59-.066-.072-.153-.17-.23-.26.335-.12.862-.26 1.42-.384 1.95 1.448 3.26 3.704 3.428 6.272zm-9.788-7.83c.076.25.145.5.182.678-.255.15-.663.363-.96.52-.262.136-.522.273-.738.392-.247.137-.442.234-.6.313-.347.174-.598.3-.833.553-.068.073-.26.278-1.02 1.886l-1.79-.656c1.293-1.94 3.362-3.31 5.76-3.685zM12 20.5c-4.687 0-8.5-3.813-8.5-8.5 0-1.197.25-2.335.7-3.37.47.182 1.713.66 2.75 1.035-.107.336-.245.854-.26 1.333-.03.855.502 1.7.562 1.792.053.08.12.15.2.207.303.21.687.5.827.616.063.343.166 1.26.23 1.833.144 1.266.175 1.48.24 1.65.005.012.514 1.188 1.315 1.188.576-.003.673-.206 1.855-2.688.244-.512.45-.95.513-1.058.1-.144.597-.61.87-.83.55-.442.76-1.82.413-2.682-.335-.83-1.92-2.08-2.5-2.195-.17-.033-.43-.04-.953-.053-.497-.01-1.25-.028-1.536-.09-.098-.024-.314-.094-.605-.196.32-.668.627-1.28.71-1.4.05-.052.168-.112.408-.234.17-.086.383-.192.653-.34.208-.116.458-.247.71-.38 1.168-.612 1.484-.8 1.658-1.082.11-.177.263-.44-.04-1.544 1.042.027 2.038.24 2.955.61-.89.32-1.024.595-1.106.77-.367.784.256 1.475.667 1.93.096.107.24.268.32.38l-.017.036c-.234.472-.67 1.35-.196 2.194.406.72 1.384 1.13 2.437 1.52.134.05.25.092.33.126.16.208.496.79 1 1.735l.154.285c.078.14.33.505.842.505.167 0 .363-.04.59-.137.032-.013.083-.035.18-.094C19.72 17.405 16.22 20.5 12 20.5zm-3.812-9.45c.01-.285.102-.646.184-.907l.027.006c.397.09 1.037.11 1.83.13.32.006.59.008.615 0 .326.143 1.355 1 1.483 1.31.113.28.05.812-.034 1.01-.233.197-.845.735-1.085 1.078-.093.13-.212.373-.64 1.274-.133.276-.313.654-.488 1.013-.026-.225-.054-.472-.08-.686-.225-2.003-.273-2.22-.42-2.445-.05-.078-.202-.31-1.135-.973-.117-.213-.268-.564-.26-.813z"></path></g></svg><span class="css-901oao">${languages.en.menu}</span>`
-    btNav.innerHTML = menu;
     document.body.appendChild(btNav);
     document.body.appendChild(tetMenuButton);
     let nav = qs('.navbackground'),
     menuBtn = qs('#tetMenuButton'),
     tetAlert = qs('.tetAlert'),
-    tetSel = qs('div#tetSelector',true),
     selLG = qs('select#languages'),
     selCS = qs('select#colorselect'),
     selTH = qs('select#theme'),
     selTR = qs('select#translator'),
     selDS = qs('select#display'),
     selDI = qs('select#delayInject'),
-    libre = qs('input.libre',true),
+    libre = qsA('input.libre'),
     lingva = qs('input.lingva'),
     dlAPI = qs('input.deepl'),
     goAPI = qs('input.google'),
     selAPI = qs('select#api-version'),
-    dColor = qs(".tetDisplayColor",true),
-    tColor = qs(".tetTextColor",true),
-    tDemo = qs('#tetDemo',true),
-    tHeader = qs('.tethelper-header',true),
-    tBG = qs(".tetBackground",true);
-    // autoColor = async () => {
-    //   return new Promise(async (resolve) =>  {
-    //     if(find.twitter) {
-    //       await qs('a[href="/compose/tweet"]');
-    //       tet.log(qs('a[href="/compose/tweet"]'));
-    //       resolve(qs('a[href="/compose/tweet"]').style.backgroundColor);
-    //     } else if(find.tweetdeck) {
-    //       resolve("tweetdeck");
-    //     } else if(find.twitlonger) {
-    //       resolve("r-urgr8i");
-    //     } else {
-    //       resolve("nitter");
-    //     };
-    //   })
-    // };
-    dlAPI.value = TETConfig.api.deepl ?? tet.defaultcfg.api.deepl;
-    libre[0].value = TETConfig.api.libre ?? tet.defaultcfg.api.libre;
-    libre[1].value = TETConfig.url.libre ?? tet.defaultcfg.url.libre;
-    lingva.value = TETConfig.url.lingva ?? tet.defaultcfg.url.lingva;
-    goAPI.value = TETConfig.api.google ?? tet.defaultcfg.api.google;
-    selAPI.value = TETConfig.api.version;
-    selLG.value = TETConfig.lang ?? "en";
-    let v = languages[selLG.value ?? TETConfig.lang ?? "en"].fn();
-    selCS.value = /auto/.test(TETConfig.colors) ? "auto" : TETConfig.colors;
-    selTH.value = /auto/.test(TETConfig.theme) ? "auto" : TETConfig.theme;
-    selTR.value = TETConfig.translator;
-    selDS.value = TETConfig.display;
-    selDI.value = TETConfig.delay;
-    qs("input#debug").checked = TETConfig.debug;
-    qs(".tet-url").value = TETConfig.url[selTR.value];
+    autoTheme = async () => {
+      return await new Promise((resolve) =>  {
+        if(find.twitter) {
+          tet.query('body').then((sb) => {
+            let bgColor = getComputedStyle(sb).getPropertyValue("background-color");
+            resolve(bgColor);
+          });
+        } else if(find.tweetdeck) {
+          cBG = "rgba(0, 0, 0, 0.4)";
+          cText = "r-jwli3a";
+          cHover = "r-hoverTD";
+          cColor = "Button--primary";
+          cSub = "tet-td";
+          cTheme = "r-tetTD";
+          resolve("tweetdeck");
+        } else if(find.twitlonger) {
+          resolve("rgb(255, 255, 255)");
+        } else {
+          cBG = "rgba(0, 0, 0, 0.4)";
+          cTheme = "nitter";
+          cText = "tetNTextColor";
+          resolve("nitter");
+        };
+      })
+    },
+    autoColor = async () => {
+      return await new Promise((resolve) =>  {
+        if(find.twitter) {
+          if(find.logout) {
+            resolve("rgb(29, 155, 240)");
+          } else {
+            tet.query('a[href="/compose/tweet"]').then((sb) => {
+              let bgColor = getComputedStyle(sb).getPropertyValue("background-color");
+              (bgColor == "rgb(29, 155, 240)") ? resolve("tet-29u") :
+              (bgColor == "rgb(255, 212, 0)") ? resolve("tet-255u") :
+              (bgColor == "rgb(249, 24, 128)") ? resolve("tet-249u") :
+              (bgColor == "rgb(120, 86, 255)") ? resolve("tet-120u") :
+              (bgColor == "rgb(255, 122, 0)") ? resolve("tet-122u") :
+              (bgColor == "rgb(0, 186, 124)") ? resolve("tet-186u") : resolve(bgColor);
+            });
+          };
+        } else if(find.tweetdeck) {
+          cHover = "r-hoverTD";
+          cColor = "Button--primary";
+          cSub = "tet-td";
+          resolve("tweetdeck");
+        } else if(find.twitlonger) {
+          resolve("tet-29u");
+        } else {
+          cHover = "tetNitterHover";
+          cColor = "tetNitter";
+          cSub = "tetNText";
+          resolve("nitter");
+        };
+      })
+    };
+    dlAPI.value = TETConfig["api"]["deepl"] ?? tet["defaultcfg"]["api"]["deepl"];
+    libre[0].value = TETConfig["api"]["libre"] ?? tet["defaultcfg"]["api"]["libre"];
+    libre[1].value = TETConfig["url"]["libre"] ?? tet["defaultcfg"]["url"]["libre"];
+    lingva.value = TETConfig["url"]["lingva"] ?? tet["defaultcfg"]["lingva"];
+    goAPI.value = TETConfig["api"]["google"] ?? tet["defaultcfg"]["api"]["google"];
+    selAPI.value = TETConfig["api"]["version"];
+    selLG.value = TETConfig["lang"] ?? "en";
+    let v = lng[selLG.value ?? TETConfig["lang"] ?? "en"];
+    selCS.value = /auto/.test(TETConfig["colors"]) ? "auto" : TETConfig["colors"];
+    selTH.value = /auto/.test(TETConfig["theme"]) ? "auto" : TETConfig["theme"];
+    selTR.value = TETConfig["translator"];
+    selDS.value = TETConfig["display"];
+    selDI.value = TETConfig["delay"];
+    qs("input#debug").checked = TETConfig["debug"];
+    qs("input#sitetheme").checked = TETConfig["sitetheme"];
+    qs(".tet-url").value = TETConfig["url"][selTR.value];
     const TETLanguageChange = (m) => {
-      v = languages[m ?? TETConfig.lang ?? "en"].fn();
+      v = lng[m] ?? v;
       menuBtn.setAttribute('title', v.menu);
       menuBtn.children[1].innerText = v.menu;
       qs('select#languages').previousElementSibling.children[0].innerText = v.lg;
@@ -1876,118 +1817,168 @@ async function Menu() {
       qs('option[value="rgb(255, 255, 255)"]').innerText = v.df;
       qs('option[value="rgb(21, 32, 43)"]').innerText = v.di;
       qs('option[value="rgb(0, 0, 0)"]').innerText = v.lo;
-      qs('option[value="auto"]').innerText = v.ao;
-      qs('option[value="r-urgr8i"]').innerText = v.cb;
-      qs('option[value="r-1vkxrha"]').innerText = v.cy;
-      qs('option[value="r-1dgebii"]').innerText = v.cr;
-      qs('option[value="r-168457u"]').innerText = v.cp;
-      qs('option[value="r-18z3xeu"]').innerText = v.co;
-      qs('option[value="r-b5skir"]').innerText = v.cg;
+      for(let o of qsA('option[value="auto"]')) {
+        o.innerText = v.ao;
+      };
+      qs('option[value="tet-29u"]').innerText = v.cb;
+      qs('option[value="tet-255u"]').innerText = v.cy;
+      qs('option[value="tet-249u"]').innerText = v.cr;
+      qs('option[value="tet-120u"]').innerText = v.cp;
+      qs('option[value="tet-122u"]').innerText = v.co;
+      qs('option[value="tet-186u"]').innerText = v.cg;
       qs('option[value="text + icon"]').innerText = v.ti;
       qs('option[value="text"]').innerText = v.t;
       qs('option[value="icon"]').innerText = v.i;
       qs('#tetReset').innerText = v.res;
-      qs('.tet-alert-head').innerText = v.head;
-      qs('.tet-alert-span').innerText = v.body;
-      qs('.tet-confirm').innerText = v.yes;
-      qs('.tet-deny').innerText = v.no;
-      qs('.tethelper-header.tetlg').innerText = v.lg;
-      qs('.tethelper-header.tettr').innerText = v.tr;
-      qs('.tethelper-header.tetds').innerText = v.ds;
-      qs('.tethelper-header.tetcol').innerText = v.col;
-      qs('.tethelper-header.tetth').innerText = v.th;
-      qs('.tethelper-info.tetlg').innerText = v.language;
-      qs('.tethelper-info.tetds').innerText = v.display;
-      qs('.tethelper-info.tetcol').innerText = v.color;
-      qs('.tethelper-info.tetth').innerText = v.theme;
+      qs('.tet-alert-head').innerText = v.quest.head;
+      qs('.tet-alert-span').innerText = v.quest.body;
+      qs('.tet-confirm').innerText = v.quest.yes;
+      qs('.tet-deny').innerText = v.quest.no;
       qs('#delayInject > option[value="none"]').innerText = `0ms (${v.df})`;
       configDisplay();
-      tet.log("Language:", TETConfig.lang);
     },
     demoUpdate = txt => qs(".tet-demotext").innerText = txt,
     translatorSwap = (element) => {
-      qs(".tetFields",true).forEach((i) => {
-        if(!i.classList.contains(element)) {
-          i.setAttribute("style", "display: none;");
-        } else {
+      for(let i of qsA(".tetFields")) {
+        if(i.classList.contains(element)) {
           i.setAttribute("style", "display: inline;");
+        } else {
+          i.setAttribute("style", "display: none;");
         };
-      })
+      };
     },
     TETMenuUpdate = async (cSel,type) => {
-      if(type === "theme") {
-        cText = "";
-        cBG = "rgba(91, 112, 131, 0.4)";
-        (cSel == "rgb(255, 255, 255)") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-14lw9ot",cText = "r-18jsvk2") :
-        (cSel == "rgb(21, 32, 43)") ? (cTheme = "r-yfoy6g",cText = "r-jwli3a") :
-        (cSel == "nitter") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "nitter",cText = "tetNTextColor") :
-        (cSel == "tweetdeck") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-tetTD",cText = "r-jwli3a") : (
-          cText = "r-jwli3a",
-          cTheme = "r-kemksi");
-      }
-      else if(type === "colors") {
-        (cSel == "r-urgr8i" || cSel == "rgb(29, 155, 240)") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
-        (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
-        (cSel == "tweetdeck") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-td") :
-        (cSel == "r-1vkxrha") ? (cHover = "r-1kplyi6",cColor = "r-v6khid r-cdj8wb",cSub = "r-61mi1v") :
-        (cSel == "r-1dgebii") ? (cHover = "r-1ucxkr8",cColor = "r-1iofnty r-jd07pc",cSub = "r-daml9f") :
-        (cSel == "r-168457u") ? (cHover = "r-njt2r9",cColor = "r-hy56xe r-11mmphe",cSub = "r-xfsgu1") :
-        (cSel == "r-18z3xeu") ? (cHover = "r-1kplyi6",cColor = "r-1xl5njo r-b8m25f",cSub = "r-1qkqhnw") :
-        (cSel == "r-b5skir") ? (cHover = "r-zx61xx",cColor = "r-5ctkeg r-1cqwhho",cSub = "r-nw8l94") : (
-          cHover = "r-1q3imqu",
-          cColor = "r-p1n3y5 r-1bih22f",
-          cSub = "r-13gxpu9");
-      }
-      else if (type == "translator") {
-        qs('.tet-url').setAttribute("style", "display: inline;");
-        return (cSel == "bingIT") ? translatorSwap("bing") :
-        (cSel == "googleIT") ? translatorSwap("google") :
-        (cSel == "deeplIT") ? translatorSwap("deepl") :
-        (cSel == "libre") ? (translatorSwap("libre"),qs('.tet-url').setAttribute("style", "display: none;")) :
-        (cSel == "lingva" || cSel == "lingvaIT") ? (translatorSwap("lingva"),qs('.tet-url').setAttribute("style", "display: none;")) : translatorSwap("all");
-      }
+      return await new Promise((resolve) =>  {
+        if(type === "theme") {
+          cText = "";
+          cBG = "rgba(91, 112, 131, 0.4)";
+          resolve((cSel == "rgb(255, 255, 255)") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-14lw9ot",cText = "r-18jsvk2") :
+          (cSel == "rgb(21, 32, 43)") ? (cTheme = "r-yfoy6g",cText = "r-jwli3a") :
+          (cSel == "nitter") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "nitter",cText = "tetNTextColor") :
+          (cSel == "btd") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-tetBTD",cText = "r-jwli3a") :
+          (cSel == "tweetdeck") ? (cBG = "rgba(0, 0, 0, 0.4)",cTheme = "r-tetTD",cText = "r-jwli3a") : (
+            cText = "r-jwli3a",
+            cTheme = "r-kemksi"));
+        } else if(type === "colors") {
+          cHover = "";
+          cColor = "";
+          cSub = "";
+          resolve((cSel == "tet-29u") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
+          (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
+          (cSel == "btd") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-btd") :
+          (cSel == "tweetdeck") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-td") :
+          (cSel == "tet-255u") ? (cHover = "r-1kplyi6",cColor = "r-v6khid r-cdj8wb",cSub = "r-61mi1v") :
+          (cSel == "tet-249u") ? (cHover = "r-1ucxkr8",cColor = "r-1iofnty r-jd07pc",cSub = "r-daml9f") :
+          (cSel == "tet-120u") ? (cHover = "r-njt2r9",cColor = "r-hy56xe r-11mmphe",cSub = "r-xfsgu1") :
+          (cSel == "tet-122u") ? (cHover = "tet-122hu",cColor = "r-1xl5njo r-b8m25f",cSub = "r-1qkqhnw") :
+          (cSel == "tet-186u") ? (cHover = "r-zx61xx",cColor = "r-5ctkeg r-1cqwhho",cSub = "r-nw8l94") : (
+            cHover = "r-1q3imqu",
+            cColor = "r-p1n3y5 r-1bih22f",
+            cSub = "r-13gxpu9"));
+        } else if (type == "translator") {
+          qs('.tet-url').setAttribute("style", "display: inline;");
+          resolve((cSel == "bingIT") ? translatorSwap("bing") :
+          (cSel == "googleIT") ? translatorSwap("google") :
+          (cSel == "deeplIT") ? translatorSwap("deepl") :
+          (cSel == "translateIT") ? (translatorSwap("translate"),qs('.tet-url').setAttribute("style", "display: none;")) :
+          (cSel == "yandexIT") ? (translatorSwap("yandex"),qs('.tet-url').setAttribute("style", "display: none;")) :
+          (cSel == "libre") ? (translatorSwap("libre"),qs('.tet-url').setAttribute("style", "display: none;")) :
+          (cSel == "lingva" || cSel == "lingvaIT") ? (translatorSwap("lingva"),qs('.tet-url').setAttribute("style", "display: none;")) : translatorSwap("all"));
+        };
+      });
     };
-    //#region Nitter/TweetDeck/Twitlonger
-    if(!find.twitter) {
+    if(find.twitter) {
+      let link = "https://abs.twimg.com/favicons/twitter.ico";
+      qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${link}) !important;"></div>`;
+    } else {
       tet.loadCSS(twCSS, "foreign");
-    }
-    if(find.nitter) {
-      tet.loadCSS(nitterCSS, "nitter");
-      qs('.btNav').setAttribute("id", "tetNT");
-      qs('#tetAvatar').setAttribute('style', `background-image: url(${qs('link[rel="icon"]').href}) !important;`);
-    }
-    if(find.tweetdeck) {
-      menuBtn.classList.add("tetTD");
-      qs('#tetAvatar').setAttribute('style', `background-image: url(${qs('link[rel="shortcut icon"]').href}) !important;`);
-    }
-    if(find.twitlonger) {
-      qs('#tetAvatar').setAttribute('style', `background-image: url(${qs('link[rel="shortcut icon"]').href}) !important;`);
+      qs(".tetst").classList.remove("rm");
+      if(TETConfig["nitterInstances"].length > 0) {
+        tet.log("Finding Nitter instance...",TETConfig["nitterInstances"]);
+        for (let key of TETConfig["nitterInstances"]) {
+          let instance = key.url.slice(8);
+          if(lh === instance) {
+            tet.loadCSS(nitterCSS, "nitter");
+            qs('.btNav').setAttribute("id", "tetNT");
+            tet.query('link[rel="icon"]').then((l) => {
+              qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+            });
+            break;
+          };
+        }
+      } else if(find.nitter) {
+        tet.loadCSS(nitterCSS, "nitter");
+        qs('.btNav').setAttribute("id", "tetNT");
+        tet.query('link[rel="icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+      };
+      if(find.twitlonger) {
+        tet.query('link[rel="shortcut icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+      };
+      if(find.tweetdeck) {
+        menuBtn.classList.add("tetTD");
+        tet.query('link[rel="shortcut icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+        if(TETConfig["sitetheme"]) tet.query("body.btd-loaded").then(() => tet.loadCSS(nitterCSS, "nitter"));
+      };
     };
-    //#endregion
     nav.setAttribute("style",`background-color:${cBG}`);
     TETMenuUpdate(selTR.value,"translator");
     if(/auto/.test(selTH.value)) {
-      TETMenuUpdate(await autoTheme(),"theme");
+      autoTheme().then((theme) => {
+        TETMenuUpdate(theme,"theme");
+      });
     } else {
       TETMenuUpdate(selTH.value,"theme");
     };
-    // if(/auto/.test(selCS.value)) {
-    //   TETMenuUpdate(await autoColor(),"colors");
-    // } else {
-    //   TETMenuUpdate(selCS.value,"colors");
-    // };
-    TETMenuUpdate(selCS.value,"colors");
-    qs(".tet") ? tet.forEach(qs(".tet",true),"reload",cSub) : false;
-    tet.forEach(tBG,"reload",cTheme);
-    tet.forEach(tColor,"reload",cText);
-    tet.forEach(tHeader,"reload",cSub);
-    tet.forEach(tDemo,"reload",cSub);
-    tet.forEach(dColor,"reload",TETConfig.colors);
-    tet.ael(nav,"click",(e) => {
+    if(/auto/.test(selCS.value)) {
+      autoColor().then((color) => {
+        TETMenuUpdate(color,"colors");
+        tet.query(".tetDisplayColor").then(() => {
+          for(let i of qsA(".tetDisplayColor")) {
+            i.classList.remove(color);
+            i.classList.add(color);
+          };
+          for(let i of qsA(".tetSub")) {
+            i.classList.remove(cSub);
+            i.classList.add(cSub);
+          };
+        });
+      });
+    } else {
+      TETMenuUpdate(selCS.value,"colors");
+      for(let i of qsA(".tetDisplayColor")) {
+        i.classList.remove(TETConfig["colors"]);
+        i.classList.add(TETConfig["colors"]);
+      };
+      for(let i of qsA(".tetSub")) {
+        i.classList.remove(cSub);
+        i.classList.add(cSub);
+      };
+    };
+    for(let i of qsA(".tetBackground")) {
+      i.classList.remove(cTheme);
+      i.classList.add(cTheme);
+    };
+    for(let i of qsA(".tetTextColor")) {
+      i.classList.remove(cText);
+      i.classList.add(cText);
+    };
+    if(qs(".tet")) {
+      for(let i of qsA(".tet")) {
+        i.classList.remove(cSub);
+        i.classList.add(cSub);
+      };
+    };
+    ael(nav,"click",(e) => {
       !tetAlert.classList.contains("rm") ? tetAlert.classList.add("rm") : false;
-      !qs("#tethelper").classList.contains("rm") ? (qs(".tet-help-container").classList.add("rm"),qs("#tethelper").classList.add("rm")) : false;
       !qs("#tetadvanced").classList.contains("rm") ? qs("#tetadvanced").classList.add("rm") : false;
       document.documentElement.classList.remove("tetFreeze");
+      qs(".tet-help-container").classList.add("rm");
       qs('#tetForm').classList.add("rm");
       qs('.tet-icon-container').classList.add("rm");
       qs('.tetadvanced-icon-container').classList.add("rm");
@@ -1997,17 +1988,20 @@ async function Menu() {
       menuBtn.classList.add("mini");
       nav.classList.remove("warn");
       nav.classList.add("rm");
-      (selLG.value !== "en" ?? defaultLang !== "en" ?? defaultLang !== "en-US") ? demoUpdate("Hey look I'm a foreign language.") : demoUpdate(defaultDesc);
-      TETConfig.api.google = goAPI.value;
-      TETConfig.api.deepl = dlAPI.value;
-      TETConfig.api.libre = libre[0].value;
-      TETConfig.url.libre = libre[1].value;
-      TETConfig.url.lingva = lingva.value;
-      TETConfig.url[selTR.value] = qs(".tet-url").value;
+      (selLG.value !== "en" ?? dLng !== "en") ? demoUpdate("Hey look I'm a foreign language.") : demoUpdate(defaultDesc);
+      TETConfig["api"]["google"] = goAPI.value;
+      TETConfig["api"]["deepl"] = dlAPI.value;
+      TETConfig["api"]["libre"] = libre[0].value;
+      TETConfig["api"]["yandex"] = qs('input[type="password"].yandex').value;
+      TETConfig["url"]["libre"] = libre[1].value;
+      TETConfig["url"]["lingva"] = lingva.value;
+      TETConfig["url"][selTR.value] = qs(".tet-url").value;
+      TETConfig["colors"] = selCS.value;
+      TETConfig["theme"] = selTH.value;
       tet.save();
-      tet.delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
+      delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
     });
-    tet.ael(menuBtn,"click", () => {
+    ael(menuBtn,"click", () => {
       nav.classList.remove("rm");
       qs('#tetForm').classList.remove("rm");
       qs('.tet-icon-container').classList.remove("rm");
@@ -2017,178 +2011,221 @@ async function Menu() {
       menuBtn.classList.toggle("mini");
       document.documentElement.classList.add("tetFreeze");
     });
-    tet.mouseEvents(tetSel,(e) => {
+    await tet.mouseEvents('div#tetSelector',(e) => {
       tet.halt(e);
       let finalC = [...cColor.split(" ")];
       let finalS = [...cSub.split(" ")];
       e.target.classList.contains(...finalC) ? e.target.classList.remove(...finalC) : e.target.classList.add(...finalC);
       e.target.children[0].classList.contains(...finalS) ? e.target.children[0].classList.remove(...finalS) : e.target.children[0].classList.add(...finalS);
     });
-    tet.ael(menuBtn,"mouseenter", () => {
-      menuBtn.classList.toggle(cHover,TETConfig.colors);
+    ael(menuBtn,"mouseenter", () => {
+      menuBtn.classList.toggle(cHover,TETConfig["colors"]);
       qs('svg#tetSVG').setAttribute("style", "display: none;")
       menuBtn.classList.toggle("mini");
     });
-    tet.ael(menuBtn,"mouseleave", () => {
-      menuBtn.classList.toggle(cHover,TETConfig.colors);
+    ael(menuBtn,"mouseleave", () => {
+      menuBtn.classList.toggle(cHover,TETConfig["colors"]);
       qs('svg#tetSVG').setAttribute("style", "display: inline;");
       menuBtn.classList.toggle("mini");
-      tet.delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
+      delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
     });
-    tet.ael(selTH,"change", async (e) => {
+    ael(selTH,"change", (e) => {
       let cSel = e.target.value;
-      tet.forEach(tBG,"remove",cTheme);
-      tet.forEach(dColor,"remove",TETConfig.colors);
-      tet.forEach(tColor,"remove",cText);
+      for(let i of qsA(".tetDisplayColor")) i.classList.remove(TETConfig["colors"]);
+      for(let i of qsA(".tetBackground")) i.classList.remove(cTheme);
+      for(let i of qsA(".tetTextColor")) i.classList.remove(cText);
       if(/auto/.test(cSel)) {
-        TETMenuUpdate(await autoTheme(),"theme");
+        autoTheme().then(theme => TETMenuUpdate(theme,"theme"));
       } else {
         TETMenuUpdate(cSel,"theme");
       };
-      TETConfig.theme = cSel;
-      tet.forEach(tBG,"add",cTheme);
-      tet.forEach(dColor,"add",TETConfig.colors);
-      tet.forEach(tColor,"add",cText);
-      tet.log(cText)
+      for(let i of qsA(".tetBackground")) i.classList.add(cTheme);
+      for(let i of qsA(".tetTextColor")) i.classList.add(cText);
+      for(let i of qsA(".tetDisplayColor")) i.classList.add(TETConfig["colors"]);
     });
-    tet.ael(selCS,"change", async (e) => {
+    ael(selCS,"change", (e) => {
       let cSel = e.target.value;
-      tet.forEach(dColor,"remove",TETConfig.colors);
-      tet.forEach(tDemo,"remove",cSub);
-      tet.forEach(tHeader,"remove",cSub);
-      qs(".tet") ? tet.forEach(qs(".tet",true),"remove",cSub) : false;
-      // if(/auto/.test(cSel)) {
-      //   TETMenuUpdate(await autoColor(),"colors");
-      // } else {
-      //   TETMenuUpdate(cSel,"colors");
-      // };
-      TETMenuUpdate(cSel,"colors");
-      TETConfig.colors = cSel;
-      qs(".tet") ? tet.forEach(qs(".tet",true),"add",cSub) : false;
-      tet.forEach(tHeader,"add",cSub);
-      tet.forEach(tDemo,"add",cSub);
-      tet.forEach(dColor,"add",cSel);
-      TETConfig.colors = /auto/.test(cSel) ? "auto" : cSel;
+      for(let i of qsA(".tetDisplayColor")) {
+        i.classList.remove(TETConfig["colors"]);
+        i.classList.remove(selCS.value);
+      };
+      for(let i of qsA(".tetSub")) i.classList.remove(cSub);
+      if(qs(".tet")) for(let i of qsA(".tet")) i.classList.remove(cSub);
+      if(/auto/.test(cSel)) {
+        autoColor().then((color) => {
+          TETMenuUpdate(color,"colors");
+          TETConfig["colors"] = color;
+          for(let i of qsA(".tetDisplayColor")) {
+            i.classList.add(color);
+          };
+          for(let i of qsA(".tetSub")) {
+            i.classList.add(cSub);
+          };
+          if(qs(".tet")) for(let i of qsA(".tet")) i.classList.add(cSub);
+        });
+      } else {
+        TETMenuUpdate(cSel,"colors");
+        TETConfig["colors"] = cSel;
+        for(let i of qsA(".tetDisplayColor")) {
+          i.classList.add(cSel);
+        };
+        for(let i of qsA(".tetSub")) {
+          i.classList.add(cSub);
+        };
+        if(qs(".tet")) for(let i of qsA(".tet")) i.classList.add(cSub);
+      };
+      TETConfig["colors"] = /auto/.test(cSel) ? "auto" : cSel;
     });
-    tet.ael(selLG,"change", (e) => {
-      TETConfig.lang = e.target.value;
+    ael(selLG,"change", (e) => {
+      TETConfig["lang"] = e.target.value;
+      langChange(e.target.value);
       TETLanguageChange(e.target.value);
     });
-    tet.ael(selTR,"change", (e) => {
+    ael(selTR,"change", (e) => {
       let cSel = e.target.value;
-      TETConfig.translator = cSel;
+      TETConfig["translator"] = cSel;
       if(cSel === "deeplIT") {
         qs(".tet-url").value = `https://${(selAPI.value == "api-pro") ? 'api' : 'api-free'}.deepl.com`;
       } else {
-        qs(".tet-url").value = TETConfig.url[cSel];
+        qs(".tet-url").value = TETConfig["url"][cSel];
       };
       TETMenuUpdate(cSel,"translator");
       configDisplay();
     });
-    tet.ael(selDS,"change", (e) => {
-      TETConfig.display = e.target.value;
+    ael(selDS,"change", (e) => {
+      TETConfig["display"] = e.target.value;
       configDisplay();
     });
-    tet.ael(selAPI,"change", (e) => {
-      TETConfig.api.google = goAPI.value;
-      TETConfig.api.deepl = dlAPI.value;
-      TETConfig.api.version = e.target.value;
+    ael(selAPI,"change", (e) => {
+      TETConfig["api"]["google"] = goAPI.value;
+      TETConfig["api"]["deepl"] = dlAPI.value;
+      TETConfig["api"]["libre"] = libre[0].value;
+      TETConfig["api"]["yandex"] = qs('input[type="password"].yandex').value;
+      TETConfig["url"]["libre"] = libre[1].value;
+      TETConfig["url"]["lingva"] = lingva.value;
+      TETConfig["api"]["version"] = e.target.value;
       if(selTR.value === "deeplIT") {
         qs(".tet-url").value = `https://${(e.target.value == "api-pro") ? 'api' : 'api-free'}.deepl.com`;
       } else {
-        qs(".tet-url").value = TETConfig.url[selTR.value];
+        qs(".tet-url").value = TETConfig["url"][selTR.value];
       };
     });
-    tet.ael(selDI,"change", (e) => {
-      TETConfig.delay = e.target.value;
-    });
-    tet.ael(qs("input#debug"),"change", (e) => {
-      TETConfig.debug = e.target.value;
-    });
-    tet.ael(qs('#tetReset'),"click", () => {
+    ael(selDI,"change", e => TETConfig["delay"] = e.target.value);
+    ael(qs("input#debug"),"change", e => TETConfig["debug"] = e.target.checked);
+    ael(qs("input#sitetheme"),"change", e => TETConfig["sitetheme"] = e.target.checked);
+    ael(qs('#tetReset'),"click", () => {
       tetAlert.classList.remove("rm");
       nav.classList.add("warn");
     });
-    tet.ael(qs('.tetAlertBtns.confirm'),"click", () => {
+    ael(qs('.tetAlertBtns.confirm'),"click", () => {
       localStorage.removeItem("TETConfig");
       TETConfig = tet.defaultcfg;
       tet.save();
-      tet.delay(200).then(() => window.location.reload());
+      delay(250).then(() => doc.location.reload());
     });
-    tet.ael(qs('.tetAlertBtns.deny'),"click", () => {
+    ael(qs('.tetAlertBtns.deny'),"click", () => {
       tetAlert.classList.add("rm");
       nav.classList.remove("warn");
     });
-    tet.ael(qs(".tet-icon-info"),"click", () => {
+    ael(qs(".tet-icon-info"),"click", () => {
       !qs("#tetadvanced").classList.contains("rm") ? qs("#tetadvanced").classList.add("rm") : false;
       qs(".tet-help-container").classList.toggle("rm");
-      qs("#tethelper").classList.toggle("rm");
     });
-    tet.ael(qs(".tetadvanced-icon-container"),"click", () => {
-      !qs("#tethelper").classList.contains("rm") ? (qs(".tet-help-container").classList.add("rm"),qs("#tethelper").classList.add("rm")) : false;
+    ael(qs(".tetadvanced-icon-container"),"click", () => {
+      qs(".tet-help-container").classList.add("rm");
       qs("#tetadvanced").classList.toggle("rm");
     });
+    ael(qs("#tetNI"),"click", (e) => {
+      let pretxt = e.target.innerHTML;
+      TETConfig["nitterInstances"] = [];
+      e.target.innerHTML = `[TET] ${lng[TETConfig["lang"]].l}...`;
+      fetchURL("https://raw.githubusercontent.com/xnaas/nitter-instances/master/.upptimerc.yml","GET","text").then((str) => {
+        let nURL = str.match(/ url: https:\/\/[a-zA-Z0-9].+/gi);
+        if(nURL) {
+          for(let i of nURL) {
+            for(let n of i.split("url: ")) {
+              let url = n.match(/https:\/\/[a-zA-Z0-9].+/gi);
+              if(!url) continue;
+              TETConfig["nitterInstances"].push({url},);
+            };
+          };
+        };
+        console.groupCollapsed('[%cTET%c] %cINF', 'color: rgb(29, 155, 240);', '', 'color: rgb(255, 108, 96);', "Nitter Instances");
+        for(let i of TETConfig["nitterInstances"]) {
+          let n = i.url;
+          console.log(`// @match        ${n}`);
+        };
+        console.groupEnd();
+        e.target.innerHTML = "Open browsers dev tools to view list";
+        tet.save();
+        delay(5000).then(() => {
+          e.target.innerHTML = pretxt;
+        });
+
+      });
+    });
     TETLanguageChange();
-    tet.delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
+    delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
     tet.info("Menu injection complete");
   } catch (e) {
-    tet.err(e);
-    /** [Common Error] Reloads page when TETConfig.api.deepl is not found */
-    if(e instanceof TypeError) {
-      handleError();
-      tet.delay(200).then(() => window.location.reload());
-    };
+    err(e);
   }
+};
+if(win.frameElement) {
+  err("In iFrame canceling...");
+  return false;
+};
+if(find.twitter) {
+  if(doc.location.pathname === "/" && find.logout || find.remover) {
+    err("Canceling...");
+    return false;
   };
-  //#endregion
-  if(find.twitter) {
-    if(window.location.pathname === "/" && find.logout || find.remover) {
-      tet.err("Canceling...");
-      return;
-    };
-  };
-  if(find.tweetdeck && find.logout) {
-    tet.err("Must be login!!! Canceling...");
-    return;
-  };
-  //#region Initialize Userscript
-  // Section from `AC-baidu-重定向优化百度搜狗谷歌必应搜索_favicon_双列`
-  // Link: https://greasyfork.org/scripts/14178/code
-  // Version: 25.01
-  // Line: 674.
+};
+if(find.tweetdeck && find.logout) {
+  err("Must be login!!! Canceling...");
+  return;
+};
+async function setupConfig() {
   await Promise.all([GM_getValue("Config")]).then((data) => {
     tet.loadCSS(tetCSS,"core");
     let res = data[0];
-    (res || TETConfig === tet.defaultcfg) ? () => {
-      try {
-        TETConfig = JSON.parse(res);
-      } catch (e) {
-        tet.err(e);
-        TETConfig = res;
-      }
-    } : (TETConfig = tet.defaultcfg,tet.info("First time initialize"));
-    (localStorage.TETConfig) ? TETConfig = JSON.parse(localStorage.TETConfig) : false;
-    for (let key in tet.defaultcfg) {
-      (typeof TETConfig[key]) ?? (TETConfig[key] = tet.defaultcfg[key]);
+    if(res || TETConfig === tet.defaultcfg) {
+      TETConfig = JSON.parse(res);
+    } else {
+      TETConfig = tet.defaultcfg;
+      tet.info("First time initialize");
+    };
+    if(localStorage.getItem("TETConfig")) {
+      TETConfig = JSON.parse(localStorage.getItem("TETConfig"));
+    };
+    for (const key in tet.defaultcfg) {
+      if(!Object.prototype.hasOwnProperty.call(TETConfig, key)) {
+        TETConfig[key] = tet.defaultcfg[key];
+      } else if (key === "api") {
+        for (const key2 in tet.defaultcfg[key]) {
+          if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key2)) {
+            TETConfig[key][key2] = tet.defaultcfg[key][key2];
+          };
+        };
+      } else if (key === "url") {
+        for (const key3 in tet.defaultcfg[key]) {
+          if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key3)) {
+            TETConfig[key][key3] = tet.defaultcfg[key][key3];
+          };
+        };
+      };
     };
     tet.info("Configuration loaded");
     tet.log("Config:",TETConfig);
-  }).then(() => {
+    lngFN();
+    langChange();
     tet.info("Starting Menu injection");
     Menu();
     tet.info("Starting content script injection");
     site.inject();
   }).catch(e => {
-    tet.err(e);
-    /** [Common Error] Reloads page when TETConfig.api.deepl is not found */
-    if(e instanceof TypeError) {
-      handleError();
-      tet.delay(200).then(() => window.location.reload());
-    };
-  })
-
-
-  //#endregion
-
-  })();
-
+    err(e);
+  });
+};
+setupConfig();
+})();

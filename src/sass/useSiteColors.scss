@@ -12,10 +12,12 @@
     background-color: var(--fg_dark);
   };
   .tetNitter {
-    border-color: var(--accent_border) !important;
-    box-shadow: var(--accent_border) !important;
-    #tetName {
-      color: var(--fg_dark);
+    &#tetSelector:hover {
+      border-color: var(--accent_border) !important;
+      box-shadow: var(--accent_border) !important;
+      #tetName span {
+        color: var(--fg_dark);
+      }
     };
   };
   .tetBtn.nitter {
@@ -25,7 +27,7 @@
   h1.tetNTextColor {
     color: var(--grey);
   };
-  .nitter {
+  .nitter:not(.tetswitch,.tetBtn) {
     background-color: var(--bg_color);
     div#tetName {
       color: var(--fg_dark);
@@ -47,12 +49,19 @@
   };
 };
 
-.tweetdeck {
+.tweetdeck:not(.tetswitch) {
   background-color: var(--btd-accent-color);
 };
 
 .r-tetTD {
   background-color: var(--btd-theme-background) !important;
+  &#tetSelector.Button--primary:hover {
+    border-color: #1da1f2;
+    box-shadow: #1da1f2 0px 0px 0px 1px;
+    #tetName span {
+      color: #1da1f2;
+    }
+  }
 };
 
 .r-tetBTD {

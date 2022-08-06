@@ -42,6 +42,7 @@
 .tet-at,
 .tetAlertTxt,
 .tet-info,
+.btNav label,
 .tetAlertBtns>div,
 #tetSelector > select {
   font-size: 15px !important;
@@ -199,7 +200,6 @@ div.tetAlertTxt {
   left: 0px;
   bottom: 0px;
   #tetAvatar {
-    // background-image: url("//abs.twimg.com/favicons/twitter.ico");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -452,6 +452,9 @@ div.mini>span {
   left: 0px;
   &.tetTD {
     left: 90% !important;
+    top: 0% !important;
+  };
+  &.mobile {
     top: 0% !important;
   };
   > svg {

@@ -41,7 +41,16 @@
   */
   ael = (elm,event,callback) => {
     elm = elm ?? doc;
-    return elm.addEventListener(event,callback);
+    if(typeof screen.orientation === 'undefined' || (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement)) {
+      if(event === "click") {
+        elm.addEventListener("mouseup", callback);
+        elm.addEventListener("touchstart", callback);
+        elm.addEventListener("touchend", callback);
+      };
+    } else {
+      return elm.addEventListener(event, callback);
+    };
+    // return elm.addEventListener(event,callback);
   },
   openPage = (url) => {
     if(typeof GM_openInTab !== 'undefined') {
@@ -857,6 +866,7 @@
       colors: "auto",
       theme: "auto",
       delay: "none",
+      sitetheme: true,
       api: {
         deepl: "",
         google: "",
@@ -1197,6 +1207,15 @@
             <option class="tetBackground" value="5000">5000ms</option>
           </select>
         </div>
+        <section class="tetcheckbox tetst rm">
+          <label class="tetTextColor">
+            <span>Use website theme</span>
+            <div class="tetswitch tetDisplayColor">
+              <input type="checkbox" name="sitetheme" id="sitetheme" />
+              <label for="sitetheme"></label>
+            </div>
+          </label>
+        </section>
         <section class="tetcheckbox">
           <label class="tetTextColor">
             <span>Console log</span>
@@ -1218,7 +1237,8 @@
   <div class="rm tetBackground tet-help-container">
     <a class="tet-help-info tetTextColor" href="${tetHelper}" target="_blank">Visit GitHub ⤴</a>
   </div>
-</div>`,
+</div>
+`,
   tetMenuButton = make("div","mini tetDisplayColor css-901oao tetBtn", {
     id: "tetMenuButton",
     title: languages.en.menu,
@@ -1779,6 +1799,7 @@ async function Menu() {
     selDS.value = TETConfig["display"];
     selDI.value = TETConfig["delay"];
     qs("input#debug").checked = TETConfig["debug"];
+    qs("input#sitetheme").checked = TETConfig["sitetheme"];
     qs(".tet-url").value = TETConfig["url"][selTR.value];
     const TETLanguageChange = (m) => {
       v = lng[m] ?? v;
@@ -1862,51 +1883,49 @@ async function Menu() {
         };
       });
     };
+    if(typeof screen.orientation === 'undefined' || (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement)) {
+      tetMenuButton.classList.add("mobile");
+      btNav.classList.add("mobile");
+    };
     //#region Nitter/TweetDeck/Twitlonger
     if(find.twitter) {
       let link = "https://abs.twimg.com/favicons/twitter.ico";
       qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${link}) !important;"></div>`;
     } else {
       tet.loadCSS(twCSS, "foreign");
-    };
-    if(TETConfig["nitterInstances"].length > 0) {
-      tet.log("Finding Nitter instance...",TETConfig["nitterInstances"]);
-      for (let key of TETConfig["nitterInstances"]) {
-        let instance = key.url.slice(8);
-        if(lh === instance) {
-          tet.loadCSS(nitterCSS, "nitter");
-          qs('.btNav').setAttribute("id", "tetNT");
-          tet.query('link[rel="icon"]').then((l) => {
-            qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
-          });
-          break;
-        };
-      }
-    } else if(find.nitter) {
-      tet.loadCSS(nitterCSS, "nitter");
-      qs('.btNav').setAttribute("id", "tetNT");
-      tet.query('link[rel="icon"]').then((l) => {
-        qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
-      });
-    };
-    if(find.twitlonger) {
-      tet.query('link[rel="shortcut icon"]').then((l) => {
-        qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
-      });
-    };
-    if(find.tweetdeck) {
-      menuBtn.classList.add("tetTD");
-      tet.query('link[rel="shortcut icon"]').then((l) => {
-        qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
-      });
-      tet.query("body").then((b) => {
-        let bgColor = getComputedStyle(b).getPropertyValue("--btd-theme-background"),
-        acColor = getComputedStyle(b).getPropertyValue("--btd-accent-color");
-        if(bgColor !== "" || acColor !== "" ) {
-          tet.loadCSS(nitterCSS, "nitter");
-          tet.log(bgColor,acColor);
-        };
-      });
+      qs(".tetst").classList.remove("rm");
+      if(TETConfig["nitterInstances"].length > 0) {
+        tet.log("Finding Nitter instance...",TETConfig["nitterInstances"]);
+        for (let key of TETConfig["nitterInstances"]) {
+          let instance = key.url.slice(8);
+          if(lh === instance) {
+            tet.loadCSS(nitterCSS, "nitter");
+            qs('.btNav').setAttribute("id", "tetNT");
+            tet.query('link[rel="icon"]').then((l) => {
+              qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+            });
+            break;
+          };
+        }
+      } else if(find.nitter) {
+        tet.loadCSS(nitterCSS, "nitter");
+        qs('.btNav').setAttribute("id", "tetNT");
+        tet.query('link[rel="icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+      };
+      if(find.twitlonger) {
+        tet.query('link[rel="shortcut icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+      };
+      if(find.tweetdeck) {
+        menuBtn.classList.add("tetTD");
+        tet.query('link[rel="shortcut icon"]').then((l) => {
+          qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
+        });
+        if(TETConfig["sitetheme"]) tet.query("body.btd-loaded").then(() => tet.loadCSS(nitterCSS, "nitter"));
+      };
     };
     //#endregion
     nav.setAttribute("style",`background-color:${cBG}`);
@@ -2050,7 +2069,7 @@ async function Menu() {
         TETMenuUpdate(cSel,"colors");
         TETConfig["colors"] = cSel;
         for(let i of qsA(".tetDisplayColor")) {
-          i.classList.add(TETConfig["colors"]);
+          i.classList.add(cSel);
         };
         for(let i of qsA(".tetSub")) {
           i.classList.add(cSub);
@@ -2094,7 +2113,8 @@ async function Menu() {
       };
     });
     ael(selDI,"change", e => TETConfig["delay"] = e.target.value);
-    ael(qs("input#debug"),"change", e => TETConfig["debug"] = e.target.value);
+    ael(qs("input#debug"),"change", e => TETConfig["debug"] = e.target.checked);
+    ael(qs("input#sitetheme"),"change", e => TETConfig["sitetheme"] = e.target.checked);
     ael(qs('#tetReset'),"click", () => {
       tetAlert.classList.remove("rm");
       nav.classList.add("warn");

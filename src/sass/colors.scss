@@ -55,14 +55,17 @@ $tetBShadows:
     }
   };
 
-
+  // border-color: $fg_dark;
+  // background-color: $bg_color;
 $tetColors:
   "tet-29u" rgb(29, 155, 240) rgb(26, 145, 218,.384),
   "tet-186u" rgb(0, 186, 124) rgb(21, 172, 89,.384),
   "tet-122u" rgb(255, 122, 0) rgb(220, 84, 31,.384),
   "tet-120u" rgb(120, 86, 255) rgb(134, 93, 202,.384),
   "tet-249u" rgb(249, 24, 128) rgb(202, 32, 85,.384),
-  "tet-255u" rgb(255, 212, 0) rgb(230, 156, 28,.384);
+  "tet-255u" rgb(255, 212, 0) rgb(230, 156, 28,.384),
+  "nitter" rgb(255, 108, 96) rgb(255, 108, 96,.384),
+  "tweetdeck" rgb(29, 161, 242) rgb(29, 161, 242,.384);
 
   @each $name, $color, $hightlight in $tetColors {
     .tetswitch.#{$name} > input:checked+label {
@@ -140,9 +143,16 @@ $tetColors:
 .r-tetTD {
   border-radius: 14px;
   background-color: #15202b;
+  &#tetSelector.Button--primary:hover {
+    border-color: $td_blue;
+    box-shadow: $td_blue 0px 0px 0px 1px;
+    #tetName span {
+      color: $td_blue;
+    }
+  };
   #tetName span {
     color: $td_color;
-  }
+  };
 };
 
 .prf-header > div > .tet.tet-td {
@@ -294,7 +304,7 @@ $tetColors:
   color: rgb(15, 20, 25) !important;
 };
 
-.tweetdeck {
+.tweetdeck:not(.tetswitch) {
   background-color: $td_blue;
   color: #fff;
   &#tetName {
@@ -329,7 +339,7 @@ $tetColors:
 h1.tetNTextColor {
   color: $grey;
 };
-.nitter {
+.nitter:not(.tetswitch,.tetBtn) {
   border-color: $fg_dark;
   background-color: $bg_color;
   div#tetName span {
