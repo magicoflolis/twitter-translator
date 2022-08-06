@@ -1,7 +1,6 @@
 # Twitter External Translator
 
 > Adds "Translate with ..." to Tweet and User Bio on various sites.
-
 *This originally was a fork of [DeepL Twitter translation](https://greasyfork.org/scripts/411976)*
 
 ***
@@ -29,8 +28,7 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 * Multi language Config menu!
 * Multi language Translator support!
 * Colors and themes can be customized.
-* Automatically match websites Theme
-* Automatically match websites Language
+* Automatically match websites color, theme and language.
 * Supports mobile [Twitter](https://mobile.twitter.com/)
 * Supports [TwitLonger](https://www.twitlonger.com)
 * Supports [TweetDeck](https://tweetdeck.twitter.com)
@@ -39,6 +37,32 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 * Support for Twitter hover cards.
 * Works while logged out!
 * "Restore to Defaults" button.
+* document.location.search commands:
+
+**Supported Commands:**
+
+> Using commands is optional.
+
+* "tetopen" -- Will force open config menu on page load.
+* "tetrestore" -- Will restore config to defaults.
+* "tetdebug" -- Force enable scripts console.log
+
+```js
+https://<site>/?<command>
+```
+
+**Examples:**
+
+> Be sure to remove command(s) from url afterwards!
+
+```js
+// Will force open config menu on page load.
+https://twitter.com/messages/?tetopen
+
+// Can be chanined
+https://twitter.com/?tetrestore&tetopen&tetdebug
+
+```
 
 ### Supported
 
@@ -57,11 +81,30 @@ Yandex Translate | ✅ |[link](https://translate.yandex.com/)| UNTESTED |
 
 * [(GitHub) Wiki](https://github.com/magicoflolis/twitter-translator/wiki)
 
+**FAQ:**
+
+While logged out, UserScript does not work on homepage?
+
+* UserScript does not run on login / sign up page, example: [https://twitter.com/](https://twitter.com/).
+* In addition, UserScript will search document.cookie for "twid" on Twitter and TweetDeck to determine if the user is logged in / out.
+
+On mobile, how do you open the config menu?
+
+* "Menu" button is disabled / hidden on mobile, you can add '?tetopen' at the end of the url to force open config menu.
+* Be sure to close the menu to save your changes and remove '?tetopen' from the url to prevent menu from reopening.
+
+Where does the UserScript store my API key?
+
+* API keys are storing in the webpages localStorage (localStorage.getItem("TETConfig")) and UserScripts storage.
+* NOTE: API keys are stored in plain text and not protected by any encryption!
+
 ## Bugs / Issues
 
-* [ User Script ] *May* conflict with [Magic Userscript+ : Show Site All UserJS](https://greasyfork.org/scripts/421603).
-* [ Translator ] MyMemory API doesn't work in Bios.
-* [ Menu ] Cannot be moved or disabled. ( WIP )
+* Auto Theme + Auto Color may not work on Chromium based browsers.
+* [Logged out] Duplicate "Translate with..." injections may occur while on a users profile page.
+* [Translators] Azure Cognitive Services is not implemented.
+* [Translators] Translation API is UNTESTED.
+* [Translators] Yandex API is UNTESTED.
 
 **Footnotes:**
 
@@ -82,7 +125,6 @@ Yandex Translate | ✅ |[link](https://translate.yandex.com/)| UNTESTED |
 ## Roadmap
 
 * Fix any bugs along the way.
-* Automatically match Twitter colors.
 * Show multiple translators at once.
 * Support for direct messages.
 * Support more translators.

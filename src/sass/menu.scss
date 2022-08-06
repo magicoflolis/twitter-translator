@@ -212,22 +212,18 @@ div.tetAlertTxt {
 
 .tet-main {
   padding: 0px 32px 32px 32px !important;
-  flex-shrink: 1;
   flex-grow: 1;
-  margin-left: auto;
-  margin-right: auto;
-}
-
+};
 .tet-options {
   display: inline-grid;
   grid-template-rows: 1fr 1fr 1fr;
-}
-
+};
 .tet-header {
   min-width: 0px;
   white-space: normal;
   display: grid;
-  margin: 32px 0px 12px 0px !important;
+  padding: 0px 32px 0px 32px;
+  margin: 32px 0px 12px 0px;
   .tet-info-name {
     line-height: 28px;
     font-size: 23px;
@@ -238,9 +234,8 @@ div.tetAlertTxt {
   };
 }
 .tetAlert {
-  right: 0px;
   left: 0px;
-  bottom: 0px;
+  top: 0px;
   position: fixed !important;
   z-index: 10000 !important;
   h1.tetAlertTxt {
@@ -251,22 +246,21 @@ div.tetAlertTxt {
       font-family: inherit;
     };
   };
-  .tetAlertTxt span {
-    white-space: normal;
-    overflow-wrap: break-word;
-  };
   div.tetAlertTxt {
     min-width: 0px;
   };
   .tetConfirmation {
-    width: 20%;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
     border-radius: 16px;
-    left: 40%;
-    top: 40%;
+    padding: 5px 32px 5px 32px;
+    left: 50rem;
+    top: 25rem;
     position: fixed;
   };
   .tetAlertBtns {
-    margin: 2% 25% 2% 25%;
+    margin: 2% 0px 2% 0px;
     white-space: nowrap;
     transition-property: background-color, box-shadow;
     transition-duration: 0.2s;
@@ -280,11 +274,7 @@ div.tetAlertTxt {
     border-width: 1px;
     border-style: solid;
     cursor: pointer;
-    &:nth-child(2) {
-      margin: 0px 25% 4% 25%;
-    }
     > div {
-      overflow-wrap: break-word;
       min-width: 0px;
       justify-content: center;
       flex-grow: 1;
@@ -292,7 +282,6 @@ div.tetAlertTxt {
       display: flex;
       > span {
         line-height: inherit !important;
-        overflow-wrap: break-word;
         min-width: 0px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -322,21 +311,13 @@ div.tetAlertTxt {
     flex-grow: 1;
     flex-shrink: 1;
   };
-  .tetBackground {
-    .tetTextColor {
-      overflow-wrap: break-word;
-      span {
-        overflow-wrap: break-word;
-      }
-    }
-  };
 };
 
+.btNav:not(.mobile) #tetForm {
+  min-width: 600px !important;
+};
 
 #tetForm {
-  max-width: 80vw;
-  max-height: 90vh;
-  min-width: 600px !important;
   flex-shrink: 1;
   overflow: hidden;
   .tet-containter {
@@ -416,12 +397,7 @@ div.tetAlertTxt {
   };
 }
 
-.tet-head,
-.tet-dc span,
-.tet-demotext,
-.tetTextColor span,
-.tetConfirmation span,
-#tetName span,
+.btNav span,
 #tweet-text span,
 #tetMenuButton span {
   color: inherit;
@@ -431,6 +407,7 @@ div.tetAlertTxt {
   overflow-wrap: break-word;
 }
 .rm,
+#tetMenuButton.mobile,
 option[disabled=""],
 div:not(.mini)>#tetSVG,
 div.mini>span {
@@ -454,9 +431,6 @@ div.mini>span {
     left: 90% !important;
     top: 0% !important;
   };
-  &.mobile {
-    top: 0% !important;
-  };
   > svg {
     position: relative;
     height: 1.25em;
@@ -475,6 +449,7 @@ div.mini>span {
   text-decoration: none;
   border-radius: 15px;
   justify-content: center;
+  text-align: center;
   display: flex !important;
   font-family: inherit !important;
   font-size: 20px !important;
@@ -558,7 +533,6 @@ div.mini>span {
       .tet-at {
         display: flex;
         margin-left: 4px;
-        overflow-wrap: break-word;
         min-width: 0px;
       }
     }
@@ -679,10 +653,6 @@ div.mini>span {
 
 .tet-help-info {
   color: unset;
-}
-
-#tetNI {
-  color: rgb(255, 255, 255);
 }
 
 div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0 {

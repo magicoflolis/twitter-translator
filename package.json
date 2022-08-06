@@ -3,7 +3,7 @@
   "productName": "Twitter External Translator",
   "description": "Adds external & internal translators to various sites.",
   "author": "Magic <magicoflolis@tuta.io>",
-  "version": "0.39",
+  "version": "0.40",
   "license": "GPL-3.0-only",
   "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
   "bugs": {
@@ -21,18 +21,16 @@
     "lint:Beautify": "js-beautify -r ./dist/twittertranslator.user.js --config .jsbeautifyrc.json"
   },
   "devDependencies": {
-    "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.220",
     "@types/sass": "^1.43.1",
     "autoprefixer": "^10.4.8",
     "concurrently": "^7.3.0",
-    "eslint": "^8.20.0",
+    "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "http-server": "^14.1.1",
     "js-beautify": "^1.14.4",
     "node-watch": "^0.7.3",
     "dotenv": "^16.0.1",
-    "sass": "^1.54.0"
+    "sass": "^1.54.3"
   },
   "repository": {
     "type": "git",

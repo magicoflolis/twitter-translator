@@ -1,15 +1,6 @@
 #tetNT {
-  .r-demo,
-  .tet-help-container,
-  #apifield,
-  #tetSelector {
+  .tetBackground {
     border-color: var(--border_grey);
-    &.nitter {
-      border-color: var(--border_grey);
-    };
-  };
-  .tetNitterHover {
-    background-color: var(--fg_dark);
   };
   .tetNitter {
     &#tetSelector:hover {
@@ -20,10 +11,6 @@
       }
     };
   };
-  .tetBtn.nitter {
-    color: var(--fg_color);
-    background-color: var(--fg_dark);
-  };
   h1.tetNTextColor {
     color: var(--grey);
   };
@@ -32,6 +19,10 @@
     div#tetName {
       color: var(--fg_dark);
     };
+  };
+  .tetBtn.nitter:not(.tet-29u,.tet-186u,.tet-122u,.tet-120u,.tet-249u,.tet-255u) {
+    color: var(--fg_color);
+    background-color: var(--fg_dark);
   };
   input.tetNTextColor,
   select.tetNTextColor,
@@ -49,24 +40,29 @@
   };
 };
 
-.tweetdeck:not(.tetswitch) {
-  background-color: var(--btd-accent-color);
+.tetNitterHover {
+  background-color: var(--fg_dark);
 };
 
-.r-tetTD {
-  background-color: var(--btd-theme-background) !important;
-  &#tetSelector.Button--primary:hover {
-    border-color: #1da1f2;
-    box-shadow: #1da1f2 0px 0px 0px 1px;
-    #tetName span {
-      color: #1da1f2;
+#tetBTD {
+  .tweetdeck:not(.tetswitch) {
+    background-color: var(--btd-accent-color);
+  };
+
+  .r-tetTD {
+    background-color: var(--btd-theme-background) !important;
+    &#tetSelector.Button--primary:hover {
+      border-color: #1da1f2;
+      box-shadow: #1da1f2 0px 0px 0px 1px;
+      #tetName span {
+        color: #1da1f2;
+      }
     }
-  }
-};
-
-.r-tetBTD {
-  background-color: var(--btd-theme-background) !important;
-  #tetName span {
-    color: var(--btd-accent-color);
-  }
+  };
+  .r-tetBTD {
+    background-color: var(--btd-theme-background) !important;
+    #tetName span {
+      color: var(--btd-accent-color);
+    }
+  };
 };

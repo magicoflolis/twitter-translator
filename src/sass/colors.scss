@@ -54,9 +54,6 @@ $tetBShadows:
       #{$type}: #{$color};
     }
   };
-
-  // border-color: $fg_dark;
-  // background-color: $bg_color;
 $tetColors:
   "tet-29u" rgb(29, 155, 240) rgb(26, 145, 218,.384),
   "tet-186u" rgb(0, 186, 124) rgb(21, 172, 89,.384),
@@ -277,7 +274,6 @@ $tetColors:
 .r-5ctkeg {
   border-color: $tetGreen !important;
 }
-
 .r-nw8l94 {
   color: $tetGreen;
   &#tetName {
@@ -287,15 +283,15 @@ $tetColors:
     };
   };
 };
-
+/* Twitter Dim */
 .r-yfoy6g {
   background-color: rgb(21, 32, 43);
 };
-/* white */
+/* Twitter Default / White */
 .r-14lw9ot {
   background-color: $twWhite;
 };
-
+/* Twitter Dark / Black */
 .r-kemksi {
   background-color: $twBlack;
 };
@@ -331,10 +327,12 @@ $tetColors:
   border-color: $accent_light !important;
   box-shadow: $accent_lightB !important;
 };
-.tet-icon-info.nitter,
-.tetBtn.nitter {
-  color: $twWhite;
-  background-color: $fg_dark;
+.btNav:not(#tetNT) {
+  .tet-icon-info.nitter,
+  .tetBtn.nitter {
+    color: $twWhite;
+    background-color: $fg_dark;
+  };
 };
 h1.tetNTextColor {
   color: $grey;
@@ -359,4 +357,7 @@ label.tetNTextColor>span {
 };
 .tetNBackground {
   background-color: $bg_panel;
+};
+#tetNI {
+  color: rgb(255, 255, 255);
 };

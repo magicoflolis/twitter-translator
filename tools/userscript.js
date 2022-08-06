@@ -30,6 +30,7 @@ let header = readFileSync("./src/header.js").toString(),
 foreign = readFileSync("./dist/css/foreign.css").toString(),
 nitterCSS = readFileSync("./dist/css/useSiteColors.css").toString(),
 tetCSS = readFileSync("./dist/css/twittertranslator.css").toString(),
+lngList = readFileSync("./src/languages.js").toString(),
 code = readFileSync("./src/main.js").toString(),
 // code = transformFileSync("./src/main.js").code,
 renderOut = (outFile, jshead) => {
@@ -39,6 +40,7 @@ renderOut = (outFile, jshead) => {
     tetCSS: tetCSS,
     nitterCSS: nitterCSS,
     debugToggle: debugToggle,
+    languages: lngList,
     code: code,
     time: +new Date(),
   });
@@ -150,7 +152,7 @@ ${langDesc}
 // @grant        GM_info
 // @grant        GM_xmlhttpRequest
 // @grant        GM_openInTab
-// @connect      *
+// @noframes
 // @compatible   Chrome
 // @compatible   Firefox
 // ==/UserScript==`;
