@@ -85,10 +85,6 @@ $tetColors:
     box-shadow: none !important;
   }
 };
-
-.tet-at span {
-  color: #6e767d;
-};
 .navbackground {
   &.d1tet {
     background-color:rgba(91, 112, 131, 0.4);
@@ -100,6 +96,13 @@ $tetColors:
     background-color:rgba(91, 112, 131, 0.4);
   };
 };
+
+.tet-header,
+.tet-at {
+  > span:last-child {
+    color: #6e767d;
+  };
+}
 
 .r-demo,
 .tet-help-container,
@@ -360,4 +363,8 @@ label.tetNTextColor>span {
 };
 #tetNI {
   color: rgb(255, 255, 255);
+};
+
+#tetAvatar {
+  background-color: rgba(0, 0, 0, 0);
 };

@@ -100,6 +100,7 @@ Where does the UserScript store my API key?
 
 ## Bugs / Issues
 
+* Internal Translations for User Bios may not load on TweetDeck.
 * Auto Theme + Auto Color may not work on Chromium based browsers.
 * [Logged out] Duplicate "Translate with..." injections may occur while on a users profile page.
 * [Translators] Azure Cognitive Services is not implemented.

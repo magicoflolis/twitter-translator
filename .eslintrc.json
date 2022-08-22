@@ -2,6 +2,7 @@
   "root": true,
   "globals": {
     "GM": "writable",
+		"ghCDN": "readonly",
 		"debugToggle": "readonly",
     "languages": "readonly",
 		"nitterCSS": "readonly",

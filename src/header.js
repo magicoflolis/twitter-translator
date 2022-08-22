@@ -7,7 +7,8 @@
   const twCSS = `{foreign}`,
   tetCSS = `{tetCSS}`,
   nitterCSS = `{nitterCSS}`,
-  debugToggle = {debugToggle};
+  debugToggle = {debugToggle},
+  ghCDN = 'https://cdn.jsdelivr.net/gh';
   {languages}
   {code}
 })();

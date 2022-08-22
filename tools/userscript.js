@@ -1,55 +1,49 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-useless-escape */
 /* eslint-env node */
-import { readFileSync, writeFile } from "fs";
+import { readFileSync, writeFile } from 'fs';
 import watch from 'node-watch';
 
-const log = (...message) => {
-  console.log(`[NodeJS] DBG ${[...message]} ${performance.now()}ms`)
-},
-delay = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-},
+const log = (...msg) => console.log(`[NodeJS] DBG ${[...msg]} ${performance.now()}ms`),
+delay = (ms) => new Promise(resolve => setTimeout(resolve, ms)),
 nano = (template, data) => {
   return template.replace(/\{([\w\.]*)\}/g, (str, key) => {
-    let keys = key.split("."),
+    let keys = key.split('.'),
     v = data[keys.shift()];
-    for (let i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
-    return typeof v !== "undefined" && v !== null ? v : "";
+    for(let i in keys.length) v = v[keys[i]];
+    // for (let i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+    return typeof v !== 'undefined' && v !== null ? v : '';
   });
 },
 p = {
-  dev: "./dist/twittertranslator.dev.user.js",
-  pub: "./dist/twittertranslator.user.js",
+  dev: './dist/twittertranslator.dev.user.js',
+  pub: './dist/twittertranslator.user.js',
 },
 js_env = process.env.JS_ENV === 'development',
-debugToggle = js_env ? true : false,
 jsonData = JSON.parse(readFileSync('./package.json', 'utf-8')),
-watcher = watch('./src/main.js', { recursive: true }, (evt, name) => {
-let header = readFileSync("./src/header.js").toString(),
-foreign = readFileSync("./dist/css/foreign.css").toString(),
-nitterCSS = readFileSync("./dist/css/useSiteColors.css").toString(),
-tetCSS = readFileSync("./dist/css/twittertranslator.css").toString(),
-lngList = readFileSync("./src/languages.js").toString(),
-code = readFileSync("./src/main.js").toString(),
-// code = transformFileSync("./src/main.js").code,
-renderOut = (outFile, jshead) => {
-  let ujs = nano(header, {
-    jshead: jshead,
-    foreign: foreign,
-    tetCSS: tetCSS,
-    nitterCSS: nitterCSS,
-    debugToggle: debugToggle,
-    languages: lngList,
-    code: code,
-    time: +new Date(),
-  });
-  writeFile(outFile, ujs, (err) => {
-    return (err) ? log(err) : log(`Build-path: ${outFile}`);
-  });
-},
-time = +new Date(),
-langName = `// @name:bg      Външен преводач на Twitter
+buildUserJS = (evt, name) => {
+  let header = readFileSync('./src/header.js').toString(),
+  foreign = readFileSync('./dist/css/foreign.css').toString(),
+  nitterCSS = readFileSync('./dist/css/useSiteColors.css').toString(),
+  tetCSS = readFileSync('./dist/css/twittertranslator.css').toString(),
+  lngList = readFileSync('./src/languages.js').toString(),
+  code = readFileSync('./src/main.js').toString(),
+  // code = transformFileSync('./src/main.js').code,
+  renderOut = (outFile, jshead) => {
+    let ujs = nano(header, {
+      jshead: jshead,
+      foreign: foreign,
+      tetCSS: tetCSS,
+      nitterCSS: nitterCSS,
+      debugToggle: js_env ? true : false,
+      languages: lngList,
+      code: code
+    });
+    writeFile(outFile, ujs, (e) => {
+      return (e) ? log(e) : log(`Build-path: ${outFile}`);
+    });
+  },
+  time = +new Date(),
+  langND = `// @name         ${js_env ? `[Dev] ${jsonData.productName}` : jsonData.productName}
+// @name:bg      Външен преводач на Twitter
 // @name:zh      Twitter外部翻译器
 // @name:zh-CN   Twitter外部翻译器
 // @name:zh-TW   Twitter外部翻译器
@@ -60,7 +54,7 @@ langName = `// @name:bg      Външен преводач на Twitter
 // @name:el      Εξωτερικός μεταφραστής Twitter
 // @name:hu      Twitter külső fordító
 // @name:lv      Twitter Ārējais tulkotājs
-// @name:lt      "Twitter" išorinis vertėjas
+// @name:lt      'Twitter' išorinis vertėjas
 // @name:ro      Twitter Traducător extern
 // @name:sk      Externý prekladateľ Twitter
 // @name:sl      Twitter Zunanji prevajalec
@@ -75,8 +69,9 @@ langName = `// @name:bg      Външен преводач на Twitter
 // @name:pt-BR   Tradutor externo do Twitter
 // @name:ru-RU   Twitter Внешний переводчик
 // @name:ru      Twitter Внешний переводчик
-// @name:es      Traductor externo de Twitter`,
-langDesc = `// @description:zh      将第三方翻译添加到推特
+// @name:es      Traductor externo de Twitter
+// @description  ${jsonData.description}
+// @description:zh      将第三方翻译添加到推特
 // @description:zh-CN   将第三方翻译添加到推特
 // @description:zh-TW   將第三方翻譯添加到推特
 // @description:bg      Добавя преводачи на трети страни в Twitter
@@ -87,7 +82,7 @@ langDesc = `// @description:zh      将第三方翻译添加到推特
 // @description:el      Προσθέτει μεταφραστές 3ου μέρους στο Twitter
 // @description:hu      Hozzáadja a 3. féltől származó fordítókat a Twitterhez
 // @description:lv      Pievieno trešās puses tulkotājus Twitter
-// @description:lt      Prideda trečiųjų šalių vertėjus į "Twitter
+// @description:lt      Prideda trečiųjų šalių vertėjus į 'Twitter
 // @description:ro      Adaugă traducători de la terțe părți la Twitter
 // @description:sk      Pridáva prekladateľov tretích strán na Twitter
 // @description:sl      Dodaja prevajalce tretjih oseb na Twitterju
@@ -103,17 +98,14 @@ langDesc = `// @description:zh      将第三方翻译添加到推特
 // @description:ru-RU   Добавляет сторонних переводчиков в Twitter
 // @description:ru      Добавляет сторонних переводчиков в Twitter
 // @description:es      Añade traductores de terceros a Twitter`,
-buildScript = `// ==UserScript==
-// @name         ${js_env ? `[Dev] ${jsonData.productName}` : jsonData.productName}
-${langName}
-// @description  ${jsonData.description}
-${langDesc}
+  buildScript = `// ==UserScript==
+${langND}
 // @author       ${jsonData.author}
 // @version      ${js_env ? time : jsonData.version}
-// @icon         https://abs.twimg.com/favicons/twitter.ico
-// @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
-// @updateURL    https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
-// @supportURL   https://github.com/magicoflolis/twitter-translator/issues/new
+// @icon         ${jsonData.userJS.icon}
+// @downloadURL  ${jsonData.userJS.url}
+// @updateURL    ${jsonData.userJS.url}
+// @supportURL   ${jsonData.bugs.url}
 // @namespace    ${jsonData.homepage}
 // @homepageURL  ${jsonData.homepage}
 // @license      GPL-3.0
@@ -147,39 +139,41 @@ ${langDesc}
 // @exclude      https://nitter.com
 // @grant        document.cookie
 // @grant        GM_getValue
+// @grant        GM.getValue
 // @grant        GM_setValue
-// @grant        GM_deleteValue
+// @grant        GM.setValue
 // @grant        GM_info
+// @grant        GM.info
 // @grant        GM_xmlhttpRequest
+// @grant        GM.xmlhttpRequest
 // @grant        GM_openInTab
-// @noframes
+// @grant        GM.openInTab
 // @compatible   Chrome
 // @compatible   Firefox
+// @noframes
+// @run-at       document-body
 // ==/UserScript==`;
-if(js_env){
-  // Development version
-  renderOut(p.dev, buildScript);
-} else {
-  // Release version
-  renderOut(p.pub, buildScript);
-}
-});
+  if(js_env) {
+    // Development version
+    renderOut(p.dev, buildScript);
+  } else {
+    // Release version
+    renderOut(p.pub, buildScript);
+  }
+},
+watcher = watch(['./src/'], { delay: 2500, filter: /\.js$/ });
 
 log(`ENV: ${process.env.JS_ENV}`);
 
-watcher.on('error', (err) => {
-  log(err);
+watcher.on('change', buildUserJS);
+
+watcher.on('error', (e) => {
+  log('ERROR',e);
   watcher.close();
-  delay(5000).then(() => watcher);
+  delay(5000).then(() => {buildUserJS()});
 });
 
-// @grant        GM.deleteValue
-// @grant        GM_deleteValue
-// @grant        GM.getValue
-// @grant        GM_getValue
-// @grant        GM.info
-// @grant        GM_info
-// @grant        GM.setValue
-// @grant        GM_setValue
-// @grant        GM.xmlHttpRequest
-// @grant        GM_xmlhttpRequest
+watcher.on('ready', buildUserJS);
+// @grant        GM_getResourceText
+// @grant        GM.getResourceText
+// https://raw.githubusercontent.com/magicoflolis/twitter-translator/main/dist/icons
