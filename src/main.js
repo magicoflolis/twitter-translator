@@ -1414,9 +1414,9 @@ async function Menu() {
 //#region Initialize Userscript
 
 async function setupConfig() {
-  await Promise.all([TM.getValue("Config")]).then((data) => {
+  await Promise.all([TM.getValue('Config',JSON.stringify(tet.defaultcfg))]).then((data) => {
     tet.loadCSS(tetCSS,'core');
-    TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0] ?? tet.defaultcfg);
+    TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0]);
     for (const key in tet.defaultcfg) {
       if(!Object.prototype.hasOwnProperty.call(TETConfig, key)) {
         TETConfig[key] = tet.defaultcfg[key];

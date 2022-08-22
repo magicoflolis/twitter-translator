@@ -56,7 +56,7 @@
 // @description:ru      Добавляет сторонних переводчиков в Twitter
 // @description:es      Añade traductores de terceros a Twitter
 // @author       Magic <magicoflolis@tuta.io>
-// @version      1661127442694
+// @version      1661209711921
 // @icon         https://abs.twimg.com/favicons/twitter.ico
 // @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
 // @updateURL    https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
@@ -1548,7 +1548,6 @@ function handleButton(source,src,content,mode) {
     findTR().then(r => {
       let find = () => {
         for (let k in r) {
-          // tet.log(k,r);
           return k.includes("translation") ? r.translation :
           k.includes("responseData") ? r.responseData.translatedText :
           k.includes("data") ? (r.data.translations[0].translatedText ?? r.data.translation) :
@@ -1591,7 +1590,6 @@ const site = {
     let twtFN = () => {
       for(let tc of qsA(".tweet-content")) {
         if(!tc.parentElement.parentElement.nextElementSibling || !tc.parentElement.parentElement.nextElementSibling.className.includes("tet")) {
-          // handleButton(tc.parentElement.parentElement,"auto",tc.innerText,"nitter");
           elmFN(tc).then(c => handleButton(tc.parentElement.parentElement,"auto",c,"nitter"));
         };
       };
@@ -1752,9 +1750,6 @@ const site = {
         tet.query("#postcontent").then(this.twitlonger())
     };
     let nitterObserver = () => {
-      // .container .conversation .main-thread div.main-tweet
-      // .container .conversation .replies .reply.thread.thread-line
-      // .container .profile-tabs .timeline-container .timeline
       let bioFN = () => {
         if(!qs(".profile-bio").contains(qs(".tet"))) {
           elmFN(qs('div.profile-bio > p')).then(c => handleButton(qs('div.profile-bio > p').parentElement,"auto",c));
@@ -1863,10 +1858,6 @@ async function Menu() {
           cHover = "tetNitterHover";
           cColor = "tetNitter";
           cSub = "tetNText";
-          // tet.query('body').then((b) => {
-          //   let bgColor = getComputedStyle(b).getPropertyValue("--fg_dark");
-          //   (bgColor == "#1da1f2") ? resolve("tetTWDeck") : resolve("tweetdeck");
-          // });
           resolve("nitter");
         };
       })
@@ -2269,9 +2260,9 @@ async function Menu() {
 //#region Initialize Userscript
 
 async function setupConfig() {
-  await Promise.all([TM.getValue("Config")]).then((data) => {
+  await Promise.all([TM.getValue('Config',JSON.stringify(tet.defaultcfg))]).then((data) => {
     tet.loadCSS(tetCSS,'core');
-    TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0] ?? tet.defaultcfg);
+    TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0]);
     for (const key in tet.defaultcfg) {
       if(!Object.prototype.hasOwnProperty.call(TETConfig, key)) {
         TETConfig[key] = tet.defaultcfg[key];
@@ -2316,7 +2307,6 @@ async function setupConfig() {
 
 async function preSetup() {
   return await new Promise((resolve) => {
-    // if(win.frameElement) throw new Error("In iframe container, canceling...");
     if(find.twitter) {
       if(doc.location.pathname === "/" && find.logout) throw new Error("Must be login, canceling...");
       if(find.remover) throw new Error("In blacklisted page, canceling...");
