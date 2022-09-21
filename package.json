@@ -1,36 +1,33 @@
 {
   "name": "twitter-translator",
-  "productName": "Twitter External Translator",
   "description": "Adds external & internal translators to various sites.",
   "author": "Magic <magicoflolis@tuta.io>",
-  "version": "1.5.2",
-  "license": "GPL-3.0-only",
-  "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
-  "bugs": {
-    "url": "https://github.com/magicoflolis/twitter-translator/issues/new"
-  },
+  "version": "2.5.1",
+  "license": "GPL-3.0",
   "userJS": {
+    "name": "Twitter External Translator",
+    "bugs": "https://github.com/magicoflolis/twitter-translator/issues/new",
+    "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
     "icon": "https://abs.twimg.com/favicons/twitter.ico",
     "url": "https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js"
   },
   "type": "module",
   "scripts": {
-    "dev:Main": "concurrently \"npm run dev:UserJSMain\" \"npm run dev:Server\" \"npm run dev:SassMain\"",
-    "dev:UserJSMain": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./src/.env",
-    "dev:SassMain": "sass -w --no-source-map ./src/sass/twittertranslator.scss:./dist/css/twittertranslator.css ./src/sass/useSiteColors.scss:./dist/css/useSiteColors.css ./src/sass/foreign.scss:./dist/css/foreign.css -s compressed",
+    "dev": "concurrently \"npm run dev:UserJS\" \"npm run dev:Server\" \"npm run dev:Sass\"",
+    "dev:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./src/.env",
+    "dev:Sass": "sass -w --no-source-map ./src/sass/twittertranslator.scss:./dist/css/twittertranslator.css ./src/sass/useSiteColors.scss:./dist/css/useSiteColors.css ./src/sass/foreign.scss:./dist/css/foreign.css -s compressed",
     "dev:Server": "http-server ./dist -s --no-dotfiles -c-1",
     "pub:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/.env"
   },
   "devDependencies": {
     "@types/sass": "^1.43.1",
-    "autoprefixer": "^10.4.8",
     "concurrently": "^7.3.0",
-    "eslint": "^8.22.0",
+    "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
     "http-server": "^14.1.1",
     "node-watch": "^0.7.3",
-    "dotenv": "^16.0.1",
-    "sass": "^1.54.5"
+    "dotenv": "^16.0.2",
+    "sass": "^1.54.8"
   },
   "repository": {
     "type": "git",

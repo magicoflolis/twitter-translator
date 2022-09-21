@@ -73,6 +73,10 @@ $tetColors:
     }
   };
 
+// .tet-svg {
+//   fill: inherit;
+// }
+
 #tetReset,
 #tetMenuButton > span {
   color: $twWhite !important;
@@ -166,6 +170,9 @@ $tetColors:
       color: inherit !important;
     };
   };
+  .tet-svg {
+    fill: $td_blue;
+  };
 };
 .tet-border-black {
   border-color: $twBlack;
@@ -192,6 +199,9 @@ $tetColors:
       color: inherit !important;
     };
   };
+  .tet-svg {
+    fill: $tetBlue;
+  };
 };
 
 /* yellow */
@@ -206,6 +216,9 @@ $tetColors:
     span {
       color: inherit !important;
     };
+  };
+  .tet-svg {
+    fill: $tetYellow;
   };
 };
 
@@ -225,6 +238,9 @@ $tetColors:
     span {
       color: inherit !important;
     };
+  };
+  .tet-svg {
+    fill: $tetRed;
   };
 };
 
@@ -249,6 +265,9 @@ $tetColors:
       color: inherit !important;
     };
   };
+  .tet-svg {
+    fill: $tetPurple;
+  };
 };
 
 /* orange */
@@ -267,6 +286,9 @@ $tetColors:
       color: inherit !important;
     };
   };
+  .tet-svg {
+    fill: $tetOrange;
+  };
 };
 
 /* green */
@@ -284,6 +306,9 @@ $tetColors:
     span {
       color: inherit !important;
     };
+  };
+  .tet-svg {
+    fill: $tetGreen;
   };
 };
 /* Twitter Dim */
@@ -311,6 +336,9 @@ $tetColors:
     span {
       color: inherit !important;
     };
+  };
+  .tet-svg {
+    fill: $td_blue;
   };
 };
 
@@ -368,3 +396,16 @@ label.tetNTextColor>span {
 #tetAvatar {
   background-color: rgba(0, 0, 0, 0);
 };
+
+.tet-st0 {
+  fill:#EA4335;
+}
+.tet-st1 {
+  fill:#4285F4;
+}
+.tet-st2 {
+  fill:#34A853;
+}
+.tet-st3 {
+  fill:#FBBC05;
+}

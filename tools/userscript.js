@@ -9,7 +9,6 @@ nano = (template, data) => {
     let keys = key.split('.'),
     v = data[keys.shift()];
     for(let i in keys.length) v = v[keys[i]];
-    // for (let i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
     return typeof v !== 'undefined' && v !== null ? v : '';
   });
 },
@@ -42,7 +41,7 @@ buildUserJS = (evt, name) => {
     });
   },
   time = +new Date(),
-  langND = `// @name         ${js_env ? `[Dev] ${jsonData.productName}` : jsonData.productName}
+  langND = `// @name         ${js_env ? `[Dev] ${jsonData.userJS.name}` : jsonData.userJS.name}
 // @name:bg      Външен преводач на Twitter
 // @name:zh      Twitter外部翻译器
 // @name:zh-CN   Twitter外部翻译器
@@ -105,10 +104,10 @@ ${langND}
 // @icon         ${jsonData.userJS.icon}
 // @downloadURL  ${jsonData.userJS.url}
 // @updateURL    ${jsonData.userJS.url}
-// @supportURL   ${jsonData.bugs.url}
-// @namespace    ${jsonData.homepage}
-// @homepageURL  ${jsonData.homepage}
-// @license      GPL-3.0
+// @supportURL   ${jsonData.userJS.bugs}
+// @namespace    ${jsonData.userJS.homepage}
+// @homepageURL  ${jsonData.userJS.homepage}
+// @license      ${jsonData.license}
 // @connect      *
 // @match        https://mobile.twitter.com/*
 // @match        https://twitter.com/*
@@ -174,6 +173,5 @@ watcher.on('error', (e) => {
 });
 
 watcher.on('ready', buildUserJS);
-// @grant        GM_getResourceText
-// @grant        GM.getResourceText
+
 // https://raw.githubusercontent.com/magicoflolis/twitter-translator/main/dist/icons

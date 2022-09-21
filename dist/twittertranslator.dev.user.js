@@ -56,7 +56,7 @@
 // @description:ru      Добавляет сторонних переводчиков в Twitter
 // @description:es      Añade traductores de terceros a Twitter
 // @author       Magic <magicoflolis@tuta.io>
-// @version      1661209711921
+// @version      1662257154781
 // @icon         https://abs.twimg.com/favicons/twitter.ico
 // @downloadURL  https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
 // @updateURL    https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js
@@ -113,11 +113,9 @@
 // https://github.com/magicoflolis/twitter-translator/src
 'use strict';
 (() => {
-  const twCSS = `.prf-header>div>.tet{display:inline-block !important;width:100% !important}select.tetTextColor{height:auto !important}
+  const tetCSS = `.r-1bih22f{box-shadow:rgb(29, 161, 242) 0px 0px 0px 1px}.r-1cqwhho{box-shadow:rgb(23, 191, 99) 0px 0px 0px 1px}.r-b8m25f{box-shadow:rgb(244, 93, 34) 0px 0px 0px 1px}.r-11mmphe{box-shadow:rgb(121, 75, 196) 0px 0px 0px 1px}.r-jd07pc{box-shadow:rgb(224, 36, 94) 0px 0px 0px 1px}.r-cdj8wb{box-shadow:rgb(255, 173, 31) 0px 0px 0px 1px}.tet-29u:not(.tetswitch){background-color:rgb(29, 155, 240)}.tet-186u:not(.tetswitch){background-color:rgb(0, 186, 124)}.tet-122u:not(.tetswitch){background-color:rgb(255, 122, 0)}.tet-120u:not(.tetswitch){background-color:rgb(120, 86, 255)}.tet-249u:not(.tetswitch){background-color:rgb(249, 24, 128)}.tet-255u:not(.tetswitch){background-color:rgb(255, 212, 0)}.tetswitch.tet-29u>input:checked+label{background-color:rgba(26,145,218,.384)}.tetswitch.tet-29u>input:checked+label:before{background-color:#1d9bf0}.tetswitch.tet-186u>input:checked+label{background-color:rgba(21,172,89,.384)}.tetswitch.tet-186u>input:checked+label:before{background-color:#00ba7c}.tetswitch.tet-122u>input:checked+label{background-color:rgba(220,84,31,.384)}.tetswitch.tet-122u>input:checked+label:before{background-color:#ff7a00}.tetswitch.tet-120u>input:checked+label{background-color:rgba(134,93,202,.384)}.tetswitch.tet-120u>input:checked+label:before{background-color:#7856ff}.tetswitch.tet-249u>input:checked+label{background-color:rgba(202,32,85,.384)}.tetswitch.tet-249u>input:checked+label:before{background-color:#f91880}.tetswitch.tet-255u>input:checked+label{background-color:rgba(230,156,28,.384)}.tetswitch.tet-255u>input:checked+label:before{background-color:#ffd400}.tetswitch.nitter>input:checked+label{background-color:rgba(255,108,96,.384)}.tetswitch.nitter>input:checked+label:before{background-color:#ff6c60}.tetswitch.tweetdeck>input:checked+label{background-color:rgba(29,161,242,.384)}.tetswitch.tweetdeck>input:checked+label:before{background-color:#1da1f2}#tetReset,#tetMenuButton>span{color:#fff !important}#tetSelector>select{background-color:rgba(0,0,0,0);border:rgba(0,0,0,0)}#tetSelector>select:focus{box-shadow:none !important}.navbackground.d1tet{background-color:rgba(91,112,131,.4)}.navbackground.d2tet{background-color:rgba(0,0,0,.4)}.navbackground.d3tet{background-color:rgba(91,112,131,.4)}.tet-header>span:last-child,.tet-at>span:last-child{color:#6e767d}.r-demo,.tet-help-container,#apifield,#tetSelector{border-color:rgba(0,0,0,0)}.r-demo.r-14lw9ot,.tet-help-container.r-14lw9ot,#apifield.r-14lw9ot,#tetSelector.r-14lw9ot{border-color:#536471}.r-demo.r-yfoy6g,.tet-help-container.r-yfoy6g,#apifield.r-yfoy6g,#tetSelector.r-yfoy6g{border-color:#38444d}.r-demo.nitter,.r-demo.r-tetTD,.r-demo.r-kemksi,.tet-help-container.nitter,.tet-help-container.r-tetTD,.tet-help-container.r-kemksi,#apifield.nitter,#apifield.r-tetTD,#apifield.r-kemksi,#tetSelector.nitter,#tetSelector.r-tetTD,#tetSelector.r-kemksi{border-color:#2f3336}.r-14lw9ot>div#tetName span{color:#536471}.r-kemksi>div#tetName span,.r-yfoy6g>div#tetName span{color:#6e767d}.tetBtn.nitter{border:rgba(0,0,0,0)}.Button--primary{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD{border-radius:14px;background-color:#15202b}.r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}.r-tetTD #tetName span{color:#8899a6}.prf-header>div>.tet.tet-td{color:#fff !important}.tet-td{color:#8899a6}.tet-td#tetName{color:#1da1f2 !important}.tet-td#tetName span{color:inherit !important}.tet-td .tet-svg{fill:#1da1f2}.tet-border-black{border-color:#000}.r-9ilb82{color:#6e767d}.r-1kqtdi0{border-color:#2f3336}.r-p1n3y5{border-color:#1d9bf0 !important}.r-1q3imqu{background-color:#1a91da}.r-13gxpu9{color:#1d9bf0}.r-13gxpu9#tetName{color:#1d9bf0 !important}.r-13gxpu9#tetName span{color:inherit !important}.r-13gxpu9 .tet-svg{fill:#1d9bf0}.r-v6khid{border-color:#ffd400 !important}.r-61mi1v{color:#ffd400}.r-61mi1v#tetName{color:#ffd400 !important}.r-61mi1v#tetName span{color:inherit !important}.r-61mi1v .tet-svg{fill:#ffd400}.r-1kplyi6{background-color:#e69c1c}.r-1iofnty{border-color:#f91880 !important}.r-daml9f{color:#f91880}.r-daml9f#tetName{color:#f91880 !important}.r-daml9f#tetName span{color:inherit !important}.r-daml9f .tet-svg{fill:#f91880}.r-1ucxkr8{background-color:#ca2055}.r-njt2r9{background-color:#865dca}.r-hy56xe{border-color:#7856ff !important}.r-xfsgu1{color:#7856ff}.r-xfsgu1#tetName{color:#7856ff !important}.r-xfsgu1#tetName span{color:inherit !important}.r-xfsgu1 .tet-svg{fill:#7856ff}.tet-122hu{background-color:#dc541f}.r-1xl5njo{border-color:#ff7a00 !important}.r-1qkqhnw{color:#ff7a00}.r-1qkqhnw#tetName{color:#ff7a00 !important}.r-1qkqhnw#tetName span{color:inherit !important}.r-1qkqhnw .tet-svg{fill:#ff7a00}.r-zx61xx{background-color:#15ac59}.r-5ctkeg{border-color:#00ba7c !important}.r-nw8l94{color:#00ba7c}.r-nw8l94#tetName{color:#00ba7c !important}.r-nw8l94#tetName span{color:inherit !important}.r-nw8l94 .tet-svg{fill:#00ba7c}.r-yfoy6g{background-color:#15202b}.r-14lw9ot{background-color:#fff}.r-kemksi{background-color:#000}.r-18jsvk2{color:#0f1419 !important}.tweetdeck:not(.tetswitch){background-color:#1da1f2;color:#fff}.tweetdeck:not(.tetswitch)#tetName{color:#1da1f2}.tweetdeck:not(.tetswitch)#tetName span{color:inherit !important}.tweetdeck:not(.tetswitch) .tet-svg{fill:#1da1f2}.r-demo{border-style:solid !important;border-radius:16px !important;border-width:1px !important}.r-jwli3a{color:#fff !important}.tetNitterHover{background-color:#ff6c60}.tetNitter{border-color:#ffaca0 !important;box-shadow:#ffaca0 0px 0px 0px 1px !important}.btNav:not(#tetNT) .tet-icon-info.nitter,.btNav:not(#tetNT) .tetBtn.nitter{color:#fff;background-color:#ff6c60}h1.tetNTextColor{color:#888889}.nitter:not(.tetswitch,.tetBtn){border-color:#ff6c60;background-color:#0f0f0f}.nitter:not(.tetswitch,.tetBtn) div#tetName span{color:#ff6c60}input.tetNTextColor,select.tetNTextColor,div.tetNTextColor,svg.tetNTextColor,label.tetNTextColor>span{color:#f8f8f2}.tetNText,.tetNText span{color:#ff6c60 !important}.tetNBackground{background-color:#161616}#tetNI{color:#fff}#tetAvatar{background-color:rgba(0,0,0,0)}.tet-st0{fill:#ea4335}.tet-st1{fill:#4285f4}.tet-st2{fill:#34a853}.tet-st3{fill:#fbbc05}.tet-flex,.btNav,#tetadvanced,#tetadvanced>.tetBackground,.tet-txt,.r-demo,.tet-main{position:relative;display:flex;align-items:stretch;box-sizing:border-box;flex-direction:column}.btNav,.txt-header,.tet-av,.tetAlertBtns>div{align-items:center !important}#tetName,.r-demo,#tetadvanced,.tetAlertTxt,.tet-header{cursor:default}.txt-header,.tetAlertBtns,.r-demo,.tet-av,.r-hover,#apifield{outline-style:none !important}.tet-dc,.tet-at,div.tetAlertTxt,.tet-info,.btNav label,.tetAlertBtns>div,#tetSelector>select{font-size:15px !important}.tet-at>span:first-child,h1.tetAlertTxt,.tetAlertBtns>div{font-weight:700 !important}.tet,#tetDemo,.tet-dc,.tet-at,.tethelper-info,div.tetAlertTxt,.tet-info,.tet-icon-info,#tweet-text,#tetSelector>#tetName{font-weight:400}.tet,#tetDemo,.tetswitch>label,#tetSelector>#tetName{line-height:16px}.tetAlertBtns>div>span,#tetMenuButton>svg,.txt-header,.tetadvanced-icon,.tet-at{max-width:100%}.tet-at{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tet-dc,.tet-at,.tet-header,#tetSelector>#tetName,#tetSelector>select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.tet,#tweet-text,.tetAlertBtns>div,.tet-main{font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}div.tetAlertTxt,.tet-info,.tet-dc,.tet-at,.tethelper-info,.tetAlertBtns>div,#tetSelector>select{line-height:20px}.tetAvatarFrame,#tetAvatar,.tet-main,.tet-containter,.tet-av,div.tetAlertTxt{width:100%}.tetAvatarFrame,#tetAvatar{align-items:stretch;border:0px solid #000;box-sizing:border-box;display:flex;flex-direction:column;margin:0px;min-height:0px;min-width:0px;padding:0px}#tetSelector{min-width:0px;overflow-wrap:break-word}#tetSelector #tetName{position:absolute;min-width:inherit;overflow-wrap:inherit}.tet,.tet-info,#tweet-text{margin-top:1% !important}#tweet-text,.tet-demoframe{position:relative}.tet-header,.tet-icon-container,.tetadvanced-icon-container,.tetAlertBtns>div,.tetAlertTxt{text-align:center}.tet-help-container a,.tet-icon-container,#tetDemo,.tet{width:fit-content}.tet{flex-wrap:wrap;font-size:13px;overflow-wrap:break-word;height:min-content;display:flex;user-select:none !important}.tetAvatarFrame{padding-bottom:100%;position:absolute;top:0px;right:0px;left:0px;bottom:0px}.tetAvatarFrame #tetAvatar{background-size:cover;background-repeat:no-repeat;background-position:center center;z-index:-1;height:100%;position:absolute}.tet-main{padding:0px 32px 32px 32px !important;display:grid;grid-template-rows:minmax(auto, 50%)}.tet-header{min-width:0px;white-space:normal;display:grid;padding:0px 32px 0px 32px;margin:32px 0px 12px 0px}.tet-header .tet-info-name{line-height:28px;font-size:23px;font-weight:800}.tetConfirmation{padding:8px 32px 16px 32px !important;border-radius:16px;top:50%;left:50%;transform:translate(-50%, -50%);position:fixed !important;z-index:10000 !important}.tetConfirmation .tetAlertTxt{align-content:center;display:grid;margin:0px !important}.tetConfirmation h1.tetAlertTxt{line-height:24px;font-size:20px;min-width:0px}.tetConfirmation div.tetAlertTxt{min-width:0px}.tetConfirmation .tetAlertBtns{margin:2% 0px 2% 0px;white-space:nowrap;transition-property:background-color,box-shadow;transition-duration:.2s;user-select:none;border-color:rgba(0,0,0,0);overflow:hidden;border-width:1px;border-style:solid}.tetConfirmation .tetAlertBtns span{line-height:inherit !important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}.tetConfirmation .tetAlertBtns span>span{border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}#tetadvanced{border-radius:16px}#tetadvanced>div{border-radius:16px;flex-grow:1;flex-shrink:1}.btNav:not(.mobile) #tetForm{min-width:600px !important}#tetForm{border-radius:16px;flex-shrink:1;position:relative;overflow:hidden}#tetForm .tet-containter.tet-fg{margin-left:auto;margin-right:auto}#tetadvanced{max-width:90vw;max-height:90vh;min-width:500px;min-height:100px;flex-shrink:1;margin-left:1%;margin-right:1%}.tet-container{overflow:auto !important}.tetadvanced-container section.tetcheckbox>label,.tetadvanced-container section.tetselect{display:flex;justify-content:space-between;padding:.5em}.tetadvanced-container section.tetcheckbox>label{cursor:pointer}.tetadvanced-container .tetswitch{position:relative;width:38px;border-radius:20px;user-select:none !important;margin:5px}.tetadvanced-container .tetswitch>input{display:none}.tetadvanced-container .tetswitch>label{display:block;overflow:hidden;cursor:pointer;height:16px;padding:0;border-radius:20px;border:1px solid #000;background-color:#464646}.tetadvanced-container .tetswitch>label:before{content:"";display:block;width:20px;height:20px;margin:-2px;background:#dadce0;position:absolute;top:0;right:20px;border-radius:20px}.tetadvanced-container .tetswitch>input:checked+label{margin-left:0}.tetadvanced-container .tetswitch>input:checked+label:before{right:0px}.btNav span,#tweet-text span,#tetMenuButton span{color:inherit;font:inherit;font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;white-space:inherit;overflow-wrap:break-word}.rm,#tetMenuButton.mobile,option[disabled=""],div:not(.mini)>#tetSVG,div.mini>span{display:none !important;visibility:hidden !important}.tetFreeze{overflow:hidden !important;overscroll-behavior:none !important}#tetMenuButton{z-index:10;width:8vw;height:auto;position:fixed;top:65%;left:0px}#tetMenuButton.tetTD{left:90% !important;top:0% !important}#tetMenuButton>svg{position:relative;height:1.25em;fill:currentcolor;margin-right:12px;user-select:none;right:35% !important}.tetBtn{list-style:none;text-align:inherit;text-decoration:none;border-radius:15px;justify-content:center;text-align:center;display:flex !important;font-family:inherit !important;font-size:20px !important;font-weight:bold !important;padding:0px !important;outline:none !important}.tetBtn.mini{border:rgba(0,0,0,0) !important;background:rgba(0,0,0,0) !important}.tetBtn,#tet,.tet{cursor:pointer !important}.tet.tet-td{display:inherit;font-size:inherit !important;font-weight:inherit !important;line-height:inherit !important;padding-bottom:4px !important}#tet{justify-items:center}#apifield{width:initial}#apifield,#tetName,#tetSelector>select{padding-left:2% !important}#apifield,#tetSelector{align-items:stretch;display:grid;border-style:solid;border-radius:4px;border-width:1px}#apifield,.tet-main #tetSelector,section.tetcheckbox{margin:2% 6% 0px 6%}#tetSelector>select{text-align:left;padding-top:12px;padding-right:0px;padding-bottom:0px;cursor:pointer;border-radius:0px;margin:0px;appearance:none}#tetReset{margin:2% 25% 0px 25%}.r-demo{margin:0px 32px 0px 32px !important;padding:12px 0px 12px 0px !important;overflow:hidden;flex-direction:row !important}.r-demo .tet-av{position:relative;margin:2px 12px 0px 12px !important;flex-basis:48px;height:48px;overflow:hidden;display:block;z-index:0}.r-demo .tet-txt{flex-basis:0px;flex-grow:1;justify-content:center}.r-demo .tet-txt .txt-header{display:flex;margin-bottom:2px;justify-content:space-between;flex-direction:row;flex-shrink:1}.r-demo .tet-txt .txt-header .tet-at{display:flex;min-width:0px;max-width:inherit !important;white-space:normal !important}.r-demo .tet-txt .txt-header .tet-at>span:last-child{margin-left:4px}#tetDemo{margin:4px 0px 0px 0px;font-size:13px;flex-wrap:wrap;min-width:0px;display:flex !important}.btNav{user-select:none !important;justify-content:center !important;flex-direction:row !important;top:0px !important}.btNav a,.btNav :link{text-decoration:none !important}.btNav a:hover,.btNav :link:hover{text-decoration:none !important}.btNav,.navbackground{position:fixed !important;width:100vw;height:100vh}.navbackground{top:0;left:0}.navbackground.warn{z-index:10 !important}.tet-icon-container,.tetadvanced-icon-container{cursor:pointer;display:inline-flex;position:absolute;bottom:10px;border-radius:9999px;z-index:1}.tet-icon-container{height:35px;right:25px}.tet-icon-container .tet-icon-info{color:#fff;display:inline;width:35px;height:35px;line-height:35px;border-radius:inherit;font-family:"fontello";font-size:23px}.tet-icon-container .tet-icon-info:hover{color:unset !important}.tet-icon-container .tet-help-container{position:static;border-style:solid;border-width:2px;border-radius:inherit;line-height:35px;font-size:16px;font-weight:normal;text-decoration:none;margin-left:10px}.tet-icon-container .tet-help-container a{display:inline-block;margin-left:10px;margin-right:10px}.tetadvanced-icon-container{left:10px;width:28px;height:28px}.tetadvanced-icon-container .tetadvanced-icon{height:1.75rem;cursor:pointer;user-select:none;position:relative;fill:currentcolor;border-radius:inherit;display:inline-block}.mini{min-height:3% !important;overflow:hidden;background:rgba(0,0,0,0);border-color:rgba(0,0,0,0)}.r-hover{text-decoration-line:underline !important}#tweet-text{font-size:23px !important;line-height:28px !important}.tet-help-info{color:unset}#tetNI{margin:0px 10% 0px 10%}div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0{width:fit-content !important}.prf-header>div>.tet{display:inline-block !important;width:100% !important}select.tetTextColor{height:auto !important}.tet-favicon{width:16px;padding-left:.2rem}#tet-ltg,#tet-ltgl,#tet-ltglg{font-style:normal;font-family:inherit}#tet-ltg,#tet-ltglg{font-weight:normal}#tet-ltg{font-size:10.5833px;line-height:1.25;letter-spacing:0px;word-spacing:0px;white-space:pre;fill-opacity:1;stroke:none}#tet-ltgl{font-variant:normal;font-weight:bold;font-stretch:normal}#tet-ltglg{font-size:43.3964px;line-height:1.25;letter-spacing:0px;word-spacing:0px;fill-opacity:1;stroke:none;stroke-width:1.08492}#tet-ltglgp{stroke-width:1.08492}
 `,
-  tetCSS = `.r-1bih22f{box-shadow:rgb(29, 161, 242) 0px 0px 0px 1px}.r-1cqwhho{box-shadow:rgb(23, 191, 99) 0px 0px 0px 1px}.r-b8m25f{box-shadow:rgb(244, 93, 34) 0px 0px 0px 1px}.r-11mmphe{box-shadow:rgb(121, 75, 196) 0px 0px 0px 1px}.r-jd07pc{box-shadow:rgb(224, 36, 94) 0px 0px 0px 1px}.r-cdj8wb{box-shadow:rgb(255, 173, 31) 0px 0px 0px 1px}.tet-29u:not(.tetswitch){background-color:rgb(29, 155, 240)}.tet-186u:not(.tetswitch){background-color:rgb(0, 186, 124)}.tet-122u:not(.tetswitch){background-color:rgb(255, 122, 0)}.tet-120u:not(.tetswitch){background-color:rgb(120, 86, 255)}.tet-249u:not(.tetswitch){background-color:rgb(249, 24, 128)}.tet-255u:not(.tetswitch){background-color:rgb(255, 212, 0)}.tetswitch.tet-29u>input:checked+label{background-color:rgba(26,145,218,.384)}.tetswitch.tet-29u>input:checked+label:before{background-color:#1d9bf0}.tetswitch.tet-186u>input:checked+label{background-color:rgba(21,172,89,.384)}.tetswitch.tet-186u>input:checked+label:before{background-color:#00ba7c}.tetswitch.tet-122u>input:checked+label{background-color:rgba(220,84,31,.384)}.tetswitch.tet-122u>input:checked+label:before{background-color:#ff7a00}.tetswitch.tet-120u>input:checked+label{background-color:rgba(134,93,202,.384)}.tetswitch.tet-120u>input:checked+label:before{background-color:#7856ff}.tetswitch.tet-249u>input:checked+label{background-color:rgba(202,32,85,.384)}.tetswitch.tet-249u>input:checked+label:before{background-color:#f91880}.tetswitch.tet-255u>input:checked+label{background-color:rgba(230,156,28,.384)}.tetswitch.tet-255u>input:checked+label:before{background-color:#ffd400}.tetswitch.nitter>input:checked+label{background-color:rgba(255,108,96,.384)}.tetswitch.nitter>input:checked+label:before{background-color:#ff6c60}.tetswitch.tweetdeck>input:checked+label{background-color:rgba(29,161,242,.384)}.tetswitch.tweetdeck>input:checked+label:before{background-color:#1da1f2}#tetReset,#tetMenuButton>span{color:#fff !important}#tetSelector>select{background-color:rgba(0,0,0,0);border:rgba(0,0,0,0)}#tetSelector>select:focus{box-shadow:none !important}.navbackground.d1tet{background-color:rgba(91,112,131,.4)}.navbackground.d2tet{background-color:rgba(0,0,0,.4)}.navbackground.d3tet{background-color:rgba(91,112,131,.4)}.tet-header>span:last-child,.tet-at>span:last-child{color:#6e767d}.r-demo,.tet-help-container,#apifield,#tetSelector{border-color:rgba(0,0,0,0)}.r-demo.r-14lw9ot,.tet-help-container.r-14lw9ot,#apifield.r-14lw9ot,#tetSelector.r-14lw9ot{border-color:#536471}.r-demo.r-yfoy6g,.tet-help-container.r-yfoy6g,#apifield.r-yfoy6g,#tetSelector.r-yfoy6g{border-color:#38444d}.r-demo.nitter,.r-demo.r-tetTD,.r-demo.r-kemksi,.tet-help-container.nitter,.tet-help-container.r-tetTD,.tet-help-container.r-kemksi,#apifield.nitter,#apifield.r-tetTD,#apifield.r-kemksi,#tetSelector.nitter,#tetSelector.r-tetTD,#tetSelector.r-kemksi{border-color:#2f3336}.r-14lw9ot>div#tetName span{color:#536471}.r-kemksi>div#tetName span,.r-yfoy6g>div#tetName span{color:#6e767d}.tetBtn.nitter{border:rgba(0,0,0,0)}.Button--primary{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD{border-radius:14px;background-color:#15202b}.r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}.r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}.r-tetTD #tetName span{color:#8899a6}.prf-header>div>.tet.tet-td{color:#fff !important}.tet-td{color:#8899a6}.tet-td#tetName{color:#1da1f2 !important}.tet-td#tetName span{color:inherit !important}.tet-border-black{border-color:#000}.r-9ilb82{color:#6e767d}.r-1kqtdi0{border-color:#2f3336}.r-p1n3y5{border-color:#1d9bf0 !important}.r-1q3imqu{background-color:#1a91da}.r-13gxpu9{color:#1d9bf0}.r-13gxpu9#tetName{color:#1d9bf0 !important}.r-13gxpu9#tetName span{color:inherit !important}.r-v6khid{border-color:#ffd400 !important}.r-61mi1v{color:#ffd400}.r-61mi1v#tetName{color:#ffd400 !important}.r-61mi1v#tetName span{color:inherit !important}.r-1kplyi6{background-color:#e69c1c}.r-1iofnty{border-color:#f91880 !important}.r-daml9f{color:#f91880}.r-daml9f#tetName{color:#f91880 !important}.r-daml9f#tetName span{color:inherit !important}.r-1ucxkr8{background-color:#ca2055}.r-njt2r9{background-color:#865dca}.r-hy56xe{border-color:#7856ff !important}.r-xfsgu1{color:#7856ff}.r-xfsgu1#tetName{color:#7856ff !important}.r-xfsgu1#tetName span{color:inherit !important}.tet-122hu{background-color:#dc541f}.r-1xl5njo{border-color:#ff7a00 !important}.r-1qkqhnw{color:#ff7a00}.r-1qkqhnw#tetName{color:#ff7a00 !important}.r-1qkqhnw#tetName span{color:inherit !important}.r-zx61xx{background-color:#15ac59}.r-5ctkeg{border-color:#00ba7c !important}.r-nw8l94{color:#00ba7c}.r-nw8l94#tetName{color:#00ba7c !important}.r-nw8l94#tetName span{color:inherit !important}.r-yfoy6g{background-color:#15202b}.r-14lw9ot{background-color:#fff}.r-kemksi{background-color:#000}.r-18jsvk2{color:#0f1419 !important}.tweetdeck:not(.tetswitch){background-color:#1da1f2;color:#fff}.tweetdeck:not(.tetswitch)#tetName{color:#1da1f2}.tweetdeck:not(.tetswitch)#tetName span{color:inherit !important}.r-demo{border-style:solid !important;border-radius:16px !important;border-width:1px !important}.r-jwli3a{color:#fff !important}.tetNitterHover{background-color:#ff6c60}.tetNitter{border-color:#ffaca0 !important;box-shadow:#ffaca0 0px 0px 0px 1px !important}.btNav:not(#tetNT) .tet-icon-info.nitter,.btNav:not(#tetNT) .tetBtn.nitter{color:#fff;background-color:#ff6c60}h1.tetNTextColor{color:#888889}.nitter:not(.tetswitch,.tetBtn){border-color:#ff6c60;background-color:#0f0f0f}.nitter:not(.tetswitch,.tetBtn) div#tetName span{color:#ff6c60}input.tetNTextColor,select.tetNTextColor,div.tetNTextColor,svg.tetNTextColor,label.tetNTextColor>span{color:#f8f8f2}.tetNText,.tetNText span{color:#ff6c60 !important}.tetNBackground{background-color:#161616}#tetNI{color:#fff}#tetAvatar{background-color:rgba(0,0,0,0)}.tet-flex,.btNav,#tetadvanced,#tetadvanced>.tetBackground,.tet-txt,.r-demo,.tet-main{position:relative;display:flex;align-items:stretch;box-sizing:border-box;flex-direction:column}.btNav,.txt-header,.tet-av,.tetAlertBtns>div{align-items:center !important}#tetName,.r-demo,#tetadvanced,.tetAlertTxt,.tet-header{cursor:default}.txt-header,.tetAlertBtns,.r-demo,.tet-av,.r-hover,#apifield{outline-style:none !important}.tet-dc,.tet-at,div.tetAlertTxt,.tet-info,.btNav label,.tetAlertBtns>div,#tetSelector>select{font-size:15px !important}.tet-at>span:first-child,h1.tetAlertTxt,.tetAlertBtns>div{font-weight:700 !important}.tet,#tetDemo,.tet-dc,.tet-at,.tethelper-info,div.tetAlertTxt,.tet-info,.tet-icon-info,#tweet-text,#tetSelector>#tetName{font-weight:400}.tet,#tetDemo,.tetswitch>label,#tetSelector>#tetName{line-height:16px}.tetAlertBtns>div>span,#tetMenuButton>svg,.txt-header,.tetadvanced-icon,.tet-at{max-width:100%}.tet-at{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tet-dc,.tet-at,.tet-header,#tetSelector>#tetName,#tetSelector>select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.tet,#tweet-text,.tetAlertBtns>div,.tet-main{font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}div.tetAlertTxt,.tet-info,.tet-dc,.tet-at,.tethelper-info,.tetAlertBtns>div,#tetSelector>select{line-height:20px}.tetAvatarFrame,#tetAvatar,.tet-main,.tet-containter,.tet-av,div.tetAlertTxt{width:100%}.tetAvatarFrame,#tetAvatar{align-items:stretch;border:0px solid #000;box-sizing:border-box;display:flex;flex-direction:column;margin:0px;min-height:0px;min-width:0px;padding:0px}#tetSelector{min-width:0px;overflow-wrap:break-word}#tetSelector #tetName{position:absolute;min-width:inherit;overflow-wrap:inherit}.tet,.tet-info,#tweet-text{margin-top:1% !important}#tweet-text,.tet-demoframe{position:relative}.tet-header,.tet-icon-container,.tetadvanced-icon-container,.tetAlertBtns>div,.tetAlertTxt{text-align:center}.tet-help-container a,.tet-icon-container,#tetDemo,.tet{width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}.tet{flex-wrap:wrap;font-size:13px;overflow-wrap:break-word;height:-webkit-min-content;height:-moz-min-content;height:min-content;display:flex;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important}.tetAvatarFrame{padding-bottom:100%;position:absolute;top:0px;right:0px;left:0px;bottom:0px}.tetAvatarFrame #tetAvatar{background-size:cover;background-repeat:no-repeat;background-position:center center;z-index:-1;height:100%;position:absolute}.tet-main{padding:0px 32px 32px 32px !important;display:grid;grid-template-rows:minmax(auto, 50%)}.tet-header{min-width:0px;white-space:normal;display:grid;padding:0px 32px 0px 32px;margin:32px 0px 12px 0px}.tet-header .tet-info-name{line-height:28px;font-size:23px;font-weight:800}.tetConfirmation{padding:8px 32px 16px 32px !important;border-radius:16px;top:50%;left:50%;transform:translate(-50%, -50%);position:fixed !important;z-index:10000 !important}.tetConfirmation .tetAlertTxt{align-content:center;display:grid;margin:0px !important}.tetConfirmation h1.tetAlertTxt{line-height:24px;font-size:20px;min-width:0px}.tetConfirmation div.tetAlertTxt{min-width:0px}.tetConfirmation .tetAlertBtns{margin:2% 0px 2% 0px;white-space:nowrap;transition-property:background-color,box-shadow;transition-duration:.2s;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-color:rgba(0,0,0,0);overflow:hidden;border-width:1px;border-style:solid}.tetConfirmation .tetAlertBtns span{line-height:inherit !important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}.tetConfirmation .tetAlertBtns span>span{border:0px solid #000;box-sizing:border-box;display:inline;margin:0px;padding:0px}#tetadvanced{border-radius:16px}#tetadvanced>div{border-radius:16px;flex-grow:1;flex-shrink:1}.btNav:not(.mobile) #tetForm{min-width:600px !important}#tetForm{border-radius:16px;flex-shrink:1;position:relative;overflow:hidden}#tetForm .tet-containter.tet-fg{margin-left:auto;margin-right:auto}#tetadvanced{max-width:90vw;max-height:90vh;min-width:500px;min-height:100px;flex-shrink:1;margin-left:1%;margin-right:1%}.tet-container{overflow:auto !important}.tetadvanced-container section.tetcheckbox>label,.tetadvanced-container section.tetselect{display:flex;justify-content:space-between;padding:.5em}.tetadvanced-container section.tetcheckbox>label{cursor:pointer}.tetadvanced-container .tetswitch{position:relative;width:38px;border-radius:20px;-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;margin:5px}.tetadvanced-container .tetswitch>input{display:none}.tetadvanced-container .tetswitch>label{display:block;overflow:hidden;cursor:pointer;height:16px;padding:0;border-radius:20px;border:1px solid #000;background-color:#464646}.tetadvanced-container .tetswitch>label:before{content:"";display:block;width:20px;height:20px;margin:-2px;background:#dadce0;position:absolute;top:0;right:20px;border-radius:20px}.tetadvanced-container .tetswitch>input:checked+label{margin-left:0}.tetadvanced-container .tetswitch>input:checked+label:before{right:0px}.btNav span,#tweet-text span,#tetMenuButton span{color:inherit;font:inherit;font-family:"TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;white-space:inherit;overflow-wrap:break-word}.rm,#tetMenuButton.mobile,option[disabled=""],div:not(.mini)>#tetSVG,div.mini>span{display:none !important;visibility:hidden !important}.tetFreeze{overflow:hidden !important;-ms-scroll-chaining:none !important;overscroll-behavior:none !important}#tetMenuButton{z-index:10;width:8vw;height:auto;position:fixed;top:65%;left:0px}#tetMenuButton.tetTD{left:90% !important;top:0% !important}#tetMenuButton>svg{position:relative;height:1.25em;fill:currentcolor;margin-right:12px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;right:35% !important}.tetBtn{list-style:none;text-align:inherit;text-decoration:none;border-radius:15px;justify-content:center;text-align:center;display:flex !important;font-family:inherit !important;font-size:20px !important;font-weight:bold !important;padding:0px !important;outline:none !important}.tetBtn.mini{border:rgba(0,0,0,0) !important;background:rgba(0,0,0,0) !important}.tetBtn,#tet,.tet{cursor:pointer !important}.tet.tet-td{display:inherit}#tet{justify-items:center}#apifield{width:initial}#apifield,#tetName,#tetSelector>select{padding-left:2% !important}#apifield,#tetSelector{align-items:stretch;display:grid;border-style:solid;border-radius:4px;border-width:1px}#apifield,.tet-main #tetSelector,section.tetcheckbox{margin:2% 6% 0px 6%}#tetSelector>select{text-align:left;padding-top:12px;padding-right:0px;padding-bottom:0px;cursor:pointer;border-radius:0px;margin:0px;-webkit-appearance:none;-moz-appearance:none;appearance:none}#tetReset{margin:2% 25% 0px 25%}.r-demo{margin:0px 32px 0px 32px !important;padding:12px 0px 12px 0px !important;overflow:hidden;flex-direction:row !important}.r-demo .tet-av{position:relative;margin:2px 12px 0px 12px !important;flex-basis:48px;height:48px;overflow:hidden;display:block;z-index:0}.r-demo .tet-txt{flex-basis:0px;flex-grow:1;justify-content:center}.r-demo .tet-txt .txt-header{display:flex;margin-bottom:2px;justify-content:space-between;flex-direction:row;flex-shrink:1}.r-demo .tet-txt .txt-header .tet-at{display:flex;min-width:0px;max-width:inherit !important;white-space:normal !important}.r-demo .tet-txt .txt-header .tet-at>span:last-child{margin-left:4px}#tetDemo{margin:4px 0px 0px 0px;font-size:13px;flex-wrap:wrap;min-width:0px;display:flex !important}.btNav{-webkit-user-select:none !important;-moz-user-select:none !important;-ms-user-select:none !important;user-select:none !important;justify-content:center !important;flex-direction:row !important;top:0px !important}.btNav a,.btNav :link{text-decoration:none !important}.btNav a:hover,.btNav :link:hover{text-decoration:none !important}.btNav,.navbackground{position:fixed !important;width:100vw;height:100vh}.navbackground{top:0;left:0}.navbackground.warn{z-index:10 !important}.tet-icon-container,.tetadvanced-icon-container{cursor:pointer;display:inline-flex;position:absolute;bottom:10px;border-radius:9999px;z-index:1}.tet-icon-container{height:35px;right:25px}.tet-icon-container .tet-icon-info{color:#fff;display:inline;width:35px;height:35px;line-height:35px;border-radius:inherit;font-family:"fontello";font-size:23px}.tet-icon-container .tet-icon-info:hover{color:unset !important}.tet-icon-container .tet-help-container{position:static;border-style:solid;border-width:2px;border-radius:inherit;line-height:35px;font-size:16px;font-weight:normal;text-decoration:none;margin-left:10px}.tet-icon-container .tet-help-container a{display:inline-block;margin-left:10px;margin-right:10px}.tetadvanced-icon-container{left:10px;width:28px;height:28px}.tetadvanced-icon-container .tetadvanced-icon{height:1.75rem;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;fill:currentcolor;border-radius:inherit;display:inline-block}.mini{min-height:3% !important;overflow:hidden;background:rgba(0,0,0,0);border-color:rgba(0,0,0,0)}.r-hover{-webkit-text-decoration-line:underline !important;text-decoration-line:underline !important}#tweet-text{font-size:23px !important;line-height:28px !important}.tet-help-info{color:unset}#tetNI{margin:0px 10% 0px 10%}div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0{width:-webkit-fit-content !important;width:-moz-fit-content !important;width:fit-content !important}
-`,
-  nitterCSS = `#tetNT .tetBackground{border-color:var(--border_grey)}#tetNT .tetNitter#tetSelector:hover{border-color:var(--accent_border) !important;box-shadow:var(--accent_border) !important}#tetNT .tetNitter#tetSelector:hover #tetName span{color:var(--fg_dark)}#tetNT h1.tetNTextColor{color:var(--grey)}#tetNT .nitter:not(.tetswitch,.tetBtn){background-color:var(--bg_color)}#tetNT .nitter:not(.tetswitch,.tetBtn) div#tetName{color:var(--fg_dark)}#tetNT .tetBtn.nitter:not(.tet-29u,.tet-186u,.tet-122u,.tet-120u,.tet-249u,.tet-255u){color:var(--fg_color);background-color:var(--fg_dark)}#tetNT input.tetNTextColor,#tetNT select.tetNTextColor,#tetNT div.tetNTextColor,#tetNT svg.tetNTextColor,#tetNT label.tetNTextColor>span{color:var(--fg_color)}#tetNT .tetNText,#tetNT .tetNText span{color:var(--fg_dark) !important}#tetNT .tetNBackground{background-color:var(--bg_panel)}.tetNitterHover{background-color:var(--fg_dark)}#tetBTD .tweetdeck:not(.tetswitch){background-color:var(--btd-accent-color)}#tetBTD .r-tetTD{background-color:var(--btd-theme-background) !important}#tetBTD .r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}#tetBTD .r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}#tetBTD .r-tetBTD{background-color:var(--btd-theme-background) !important}#tetBTD .r-tetBTD #tetName span{color:var(--btd-accent-color)}
+  nitterCSS = `#tetNT .tetBackground{border-color:var(--border_grey)}#tetNT .tetNitter#tetSelector:hover{border-color:var(--accent_border) !important;box-shadow:var(--accent_border) !important}#tetNT .tetNitter#tetSelector:hover #tetName span{color:var(--fg_dark)}#tetNT h1.tetNTextColor{color:var(--grey)}#tetNT .nitter:not(.tetswitch,.tetBtn){background-color:var(--bg_color)}#tetNT .nitter:not(.tetswitch,.tetBtn) div#tetName{color:var(--fg_dark)}#tetNT .tetBtn.nitter:not(.tet-29u,.tet-186u,.tet-122u,.tet-120u,.tet-249u,.tet-255u){color:var(--fg_color);background-color:var(--fg_dark)}#tetNT input.tetNTextColor,#tetNT select.tetNTextColor,#tetNT div.tetNTextColor,#tetNT svg.tetNTextColor,#tetNT label.tetNTextColor>span{color:var(--fg_color)}#tetNT .tetNText,#tetNT .tetNText span{color:var(--fg_dark) !important}#tetNT .tetNBackground{background-color:var(--bg_panel)}.tetNitterHover{background-color:var(--fg_dark)}#tetBTD .tweetdeck:not(.tetswitch){background-color:var(--btd-accent-color)}#tetBTD .r-tetTD{background-color:var(--btd-theme-background) !important}#tetBTD .r-tetTD#tetSelector.Button--primary:hover{border-color:#1da1f2;box-shadow:#1da1f2 0px 0px 0px 1px}#tetBTD .r-tetTD#tetSelector.Button--primary:hover #tetName span{color:#1da1f2}#tetBTD .r-tetBTD{background-color:var(--btd-theme-background) !important}#tetBTD .r-tetBTD #tetName span{color:var(--btd-accent-color)}.tetNText .tet-svg{fill:var(--fg_dark)}
 `,
   debugToggle = true,
   ghCDN = 'https://cdn.jsdelivr.net/gh';
@@ -888,12 +886,12 @@ make = (element,cname,attrs = {}) => {
 ael = (elm,event,callback) => {
   elm = elm ?? doc;
   if(mobile) {
-    if(event === "click") {
+    if(event === 'click') {
       elm.addEventListener('mouseup', callback);
       elm.addEventListener('touchend', callback);
-    } else if(event === "mouseenter") {
+    } else if(event === 'mouseenter') {
       elm.addEventListener('touchenter', callback);
-    } else if(event === "mouseleave") {
+    } else if(event === 'mouseleave') {
       elm.addEventListener('touchleave', callback);
     };
   };
@@ -917,7 +915,7 @@ qa = async (selector,root) => {
 /** element, mouseenterFn, mouseleaveFn */
 mouseEvents = (elms,enter,leave) => {
   leave = leave ?? enter;
-  if(typeof elms === "string") {
+  if(typeof elms === 'string') {
     qa(elms).then((elements) => {
       for(let e of elements) {
         ael(e,'mouseenter',enter);
@@ -931,16 +929,16 @@ mouseEvents = (elms,enter,leave) => {
     };
   };
 },
-defaultDesc = "Pretend I'm a foreign language.",
+defaultDesc = `Pretend I'm a foreign language.`,
 lh = doc.location.host,
-lr = doc.location.href,
+// lr = doc.location.href,
 find = {
-  logout: !getCookie("twid"),
-  nitter: (/nitter|nittr|twitr|bird|hyper/.test(lr) || lh === "twitter.076.ne.jp" || lh === "nttr.stream" || lh === "twitter.censors.us"),
-  twitter: (lh === "twitter.com" || lh === "mobile.twitter.com"),
-  tweetdeck: (lh === "tweetdeck.twitter.com"),
-  twitlonger: (lh === "www.twitlonger.com"),
-  remover: (/begin_password_reset|account|logout|login|signin|signout/.test(lr)),
+  logout: !getCookie('twid'),
+  nitter: (/nitter|nittr|nttr|twitr|bird|hyper/.test(lh) || lh === 'twitter.076.ne.jp' || lh === 'twitter.censors.us'),
+  twitter: (lh === 'twitter.com' || lh === 'mobile.twitter.com'),
+  tweetdeck: (lh === 'tweetdeck.twitter.com'),
+  twitlonger: (/twitlonger/.test(lh)),
+  remover: (/begin_password_reset|account|logout|login|signin|signout/.test(doc.location.pathname)),
 },
 lngFN = () => {
   for(const key in languages) {
@@ -951,7 +949,7 @@ lngFN = () => {
         break;
       };
     } else {
-      dLng = win.navigator.language ?? qs("html").lang;
+      dLng = win.navigator.language ?? qs('html').lang;
       break;
     };
   };
@@ -960,40 +958,40 @@ toDataURL = (src) => fetchURL(src, 'GET', 'blob'),
 /** Favicons
 * Each converted to "Data URI" as to prevent blocking.
 * Direct Links
-* azure: "https://azurecomcdn.azureedge.net/cvt-a8c88a5179d0dccbd8e4f14c3cca7706721477d322eb184796320391845f73d9/images/icon/favicon.ico",
-* bing: "https://www.bing.com/th?id=OTT.7A274AA188550691D09FA80F322A58D2&pid=Trans",
-* deepl: "https://static.deepl.com/img/favicon/favicon_16.png",
-* gCloud: "https://www.gstatic.com/devrel-devsite/prod/v48d5b7fe78425d6a73163cf28706f05fb6b7cff97bdc98bbcd2f38818604a511/cloud/images/favicons/onecloud/favicon.ico",
-* google: "https://ssl.gstatic.com/translate/favicon.ico",
-* libre: "https://libretranslate.com/static/favicon.ico",
-* lingva: "https://lingva.ml/favicon-16x16.png",
-* mymemory: "https://mymemory.translated.net/public/img/favicon-16x16.png",
-* translate: "https://www.translate.com/next/images/favicon/favicon.svg",
-* yandex: "https://translate.yandex.com/icons/favicon.ico",
+* azure: 'https://azurecomcdn.azureedge.net/cvt-a8c88a5179d0dccbd8e4f14c3cca7706721477d322eb184796320391845f73d9/images/icon/favicon.ico',
+* bing: 'https://www.bing.com/th?id=OTT.7A274AA188550691D09FA80F322A58D2&pid=Trans',
+* deepl: 'https://static.deepl.com/img/favicon/favicon_16.png',
+* gCloud: 'https://www.gstatic.com/devrel-devsite/prod/v48d5b7fe78425d6a73163cf28706f05fb6b7cff97bdc98bbcd2f38818604a511/cloud/images/favicons/onecloud/favicon.ico',
+* google: 'https://ssl.gstatic.com/translate/favicon.ico',
+* libre: 'https://github.com/LibreTranslate/LibreTranslate/tree/main/app/static',
+* lingva: 'https://github.com/thedaviddelta/lingva-translate/tree/main/public',
+* mymemory: 'https://mymemory.translated.net/public/img/favicon-16x16.png',
+* translate: 'https://www.translate.com/next/images/favicon/favicon.svg',
+* yandex: 'https://translate.yandex.com/icons/favicon.ico',
 */
 iconData = {
   azure: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/azure.ico`,
-  bing: '<svg class="exIcon" width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_ii_303_1254)"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.8461 10.0758C18.9256 9.12311 18.7462 7.55996 17.4833 7.23245C16.9836 7.10291 17.1762 6.49342 17.8179 6.6309C18.8394 6.84976 21.1381 7.42045 21.4505 10.0816C22.8741 10.1747 24 11.3589 24 12.8063V20.5614C24 22.0694 22.7777 23.2919 21.2697 23.2919H12.3597C10.8516 23.2919 9.62915 22.0694 9.62915 20.5614V12.8063C9.62915 11.2983 10.8516 10.0758 12.3597 10.0758H18.8461Z" fill="url(#paint0_linear_303_1254)"/></g><path d="M16.9721 13.1131L15.8383 13.0869C15.847 13.2353 15.8296 13.4446 15.8209 13.6101C15.8034 13.7585 15.786 13.9155 15.7685 14.0812C15.6552 14.0812 15.5418 14.0812 15.4197 14.0812C14.8878 14.0812 14.1203 14.0114 13.8151 13.9591L13.8412 14.9706C14.2511 14.9882 14.9314 15.0231 15.3847 15.0231C15.4808 15.0231 15.568 15.0231 15.6639 15.0231C15.629 15.3806 15.6029 15.7469 15.5854 16.1218C14.3645 16.6974 13.4401 17.866 13.4401 18.9911C13.4401 19.872 13.9806 20.2557 14.6173 20.2557C15.0795 20.2557 15.5418 20.116 15.9691 19.9067C16.004 20.0288 16.0476 20.1509 16.0825 20.2644L17.0853 19.9592C17.0157 19.7499 16.9459 19.5318 16.8849 19.3137C17.5476 18.7644 18.2454 17.8486 18.7163 16.6625C19.318 16.8981 19.6232 17.3603 19.6232 17.8835C19.6232 18.7382 18.943 19.5928 17.2599 19.7759L17.8354 20.6917C19.9807 20.369 20.7046 19.1742 20.7046 17.9358C20.7046 16.9241 20.0332 16.1306 19.0215 15.7992C19.0738 15.6335 19.1436 15.4504 19.1785 15.3543L18.1146 15.1016C18.1057 15.2324 18.071 15.4504 18.0361 15.6248C17.9838 15.6248 17.9313 15.6248 17.879 15.6248C17.4517 15.6248 16.9981 15.6858 16.5797 15.7817C16.5884 15.5201 16.6144 15.2498 16.6407 14.9882C17.7133 14.9446 18.882 14.8398 19.7367 14.6829L19.7278 13.6713C18.7686 13.898 17.8267 14.0114 16.7628 14.055C16.7888 13.8806 16.8237 13.7236 16.85 13.5754C16.8849 13.4446 16.9198 13.2875 16.9721 13.1131ZM14.4691 18.7644C14.4691 18.2673 14.9051 17.6044 15.5593 17.1597C15.5767 17.7614 15.6465 18.3631 15.7424 18.9039C15.4283 19.087 15.1144 19.1917 14.8702 19.1917C14.5912 19.1917 14.4691 19.0434 14.4691 18.7644ZM16.5448 16.7324V16.7061C16.8849 16.6016 17.286 16.523 17.7482 16.5144C17.4517 17.2207 17.0593 17.7527 16.6493 18.18C16.5797 17.744 16.5448 17.2643 16.5448 16.7324Z" fill="white"/><g filter="url(#filter1_iii_303_1254)"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.73048 0C1.22248 0 0 1.22248 0 2.73048V11.1329C0 12.5763 1.11978 13.758 2.53795 13.8568C3.08413 16.2072 5.2571 16.7445 6.25894 16.9591C6.93205 17.1033 7.13404 16.464 6.61 16.3282C5.49604 16.0391 5.18562 14.8339 5.16464 13.8634H12.3443C13.8523 13.8634 15.0748 12.6409 15.0748 11.1329V2.73048C15.0748 1.22248 13.8523 0 12.3443 0H2.73048Z" fill="white" fill-opacity="0.55"/></g><path d="M11.1457 11.222H9.7463L9.0546 9.2648H6.03037L5.36546 11.222H3.97131L6.85077 3.53271H8.28782L11.1457 11.222ZM8.71678 8.22456L7.64972 5.15743C7.61755 5.05733 7.58359 4.89648 7.54784 4.67484H7.52639C7.49421 4.8786 7.45848 5.03946 7.41916 5.15743L6.36282 8.22456H8.71678Z" fill="url(#paint1_linear_303_1254)"/><defs><filter id="filter0_ii_303_1254" x="9.62915" y="6.61084" width="14.3708" height="20.1222" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="3.44103"/><feGaussianBlur stdDeviation="3.44103"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="shape" result="effect1_innerShadow_303_1254"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="3.42649"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0"/><feBlend mode="normal" in2="effect1_innerShadow_303_1254" result="effect2_innerShadow_303_1254"/></filter><filter id="filter1_iii_303_1254" x="-0.860258" y="0" width="15.9351" height="19.561" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dx="-0.860258" dy="2.58077"/><feGaussianBlur stdDeviation="2.58077"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 0.0447222 0 0 0 0 0.2576 0 0 0 0 0.670833 0 0 0 0.23 0"/><feBlend mode="normal" in2="shape" result="effect1_innerShadow_303_1254"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="6.45193"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="effect1_innerShadow_303_1254" result="effect2_innerShadow_303_1254"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset/><feGaussianBlur stdDeviation="3.0109"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.75 0"/><feBlend mode="normal" in2="effect2_innerShadow_303_1254" result="effect3_innerShadow_303_1254"/></filter><linearGradient id="paint0_linear_303_1254" x1="15.0182" y1="8.7922" x2="24.6019" y2="23.4972" gradientUnits="userSpaceOnUse"><stop stop-color="#81D1FF"/><stop offset="1" stop-color="#4667DD"/></linearGradient><linearGradient id="paint1_linear_303_1254" x1="9.74939" y1="12.2128" x2="3.10203" y2="0.247467" gradientUnits="userSpaceOnUse"><stop stop-color="#66BAF7"/><stop offset="1" stop-color="#2B39BB"/></linearGradient></defs></svg>',
+  bing: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/bing.svg`,
   deepl: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/deepl.png`,
   gCloud: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/googlecloud.ico`,
   google: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/google.ico`,
   libre: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/libre.ico`,
   lingva: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/lingva.png`,
   mymemory: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/mymemory.png`,
-  translate: '<svg class="exIcon" width="16" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M64.6006 22.3721V129.65H37.4665V22.3721H0V0H102.157V22.3721H64.6006ZM131.504 95.3904C141.14 85.6492 148.472 73.6038 153.814 58.835H108.984C114.116 72.8706 121.553 85.2303 131.504 95.3904ZM178.952 51.1887V58.835H162.822C156.642 76.0129 148.367 89.839 137.474 100.837C148.891 110.473 163.031 117.596 180 121.576C178.114 123.357 175.601 126.918 174.448 129.118C156.956 124.614 142.711 117.072 131.19 106.703C119.668 116.548 105.527 123.776 88.6638 129.222C87.9306 127.337 85.4168 123.566 83.7409 121.786C100.395 116.967 114.116 110.264 125.324 101.046C114.535 89.6295 106.365 75.4891 100.395 58.835H84.9978V51.1887H127.628V33.4871H135.484V51.1887H178.952Z" fill="#27A2F8"/></svg>',
+  translate: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/translate.svg`,
   yandex: `${ghCDN}/magicoflolis/twitter-translator/dist/icons/yandex.ico`,
   async fn() {
     return {
-      azure: `<img class="exIcon" width="16" src="${await toDataURL(this.azure)}"/>`,
-      bing: this.bing,
-      deepl: `<img class="exIcon" width="16" src="${await toDataURL(this.deepl)}"/>`,
-      gCloud: `<img class="exIcon" width="16" src="${await toDataURL(this.gCloud)}"/>`,
-      google: `<img class="exIcon" width="16" src="${await toDataURL(this.google)}"/>`,
-      libre: `<img class="exIcon" width="16" src="${await toDataURL(this.libre)}"/>`,
-      lingva: `<img class="exIcon" width="16" src="${await toDataURL(this.lingva)}"/>`,
-      mymemory: `<img class="exIcon" width="16" src="${await toDataURL(this.mymemory)}"/>`,
-      translate: this.translate,
-      yandex: `<img class="exIcon" width="16" src="${await toDataURL(this.yandex)}"/>`,
+      azure: `<img class="tet-favicon" src="${await toDataURL(this.azure)}"/>`,
+      bing: `<img class="tet-favicon" src="${await toDataURL(this.bing)}"/>`,
+      deepl: `<img class="tet-favicon" src="${await toDataURL(this.deepl)}"/>`,
+      gCloud: `<img class="tet-favicon" src="${await toDataURL(this.gCloud)}"/>`,
+      google: `<img class="tet-favicon" src="${await toDataURL(this.google)}"/>`,
+      libre: `<img class="tet-favicon" src="${await toDataURL(this.libre)}"/>`,
+      lingva: `<img class="tet-favicon" src="${await toDataURL(this.lingva)}"/>`,
+      mymemory: `<img class="tet-favicon" src="${await toDataURL(this.mymemory)}"/>`,
+      translate: `<img class="tet-favicon" src="${await toDataURL(this.translate)}"/>`,
+      yandex: `<img class="tet-favicon" src="${await toDataURL(this.yandex)}"/>`,
     }
   }
 };
@@ -1016,17 +1014,20 @@ tet = {
     theme: "auto",
     delay: "none",
     sitetheme: true,
+    dms: true,
+    tweets: true,
+    bios: true,
     api: {
-      deepl: "",
-      google: "",
-      libre: "",
-      translate: "",
-      yandex: "",
+      deepl: '',
+      google: '',
+      libre: '',
+      translate: '',
+      yandex: '',
       version: "api-free",
     },
     url: {
       bing: "https://www.bing.com",
-      bingIT: "",
+      bingIT: '',
       deepl: "https://www.deepl.com",
       deeplIT: "https://api.deepl.com",
       google: "https://translate.google.com",
@@ -1312,21 +1313,48 @@ menu = `<div class="navbackground rm"></div>
           <option class="tetBackground" value="5000">5000ms</option>
         </select>
       </div>
-      <section class="tetcheckbox tetst rm">
-        <label class="tetTextColor">
-          <span>Use website theme</span>
-          <div class="tetswitch tetDisplayColor">
-            <input type="checkbox" name="sitetheme" id="sitetheme" />
-            <label for="sitetheme"></label>
-          </div>
-        </label>
-      </section>
       <section class="tetcheckbox">
         <label class="tetTextColor">
-          <span>Console log</span>
+          <span>Debug</span>
           <div class="tetswitch tetDisplayColor">
             <input type="checkbox" name="debug" id="debug" />
             <label for="debug"></label>
+          </div>
+        </label>
+      </section>
+      <section class="tetcheckbox tet-ac">
+        <label class="tetTextColor">
+          <span>Bios</span>
+          <div class="tetswitch tetDisplayColor">
+            <input type="checkbox" name="tetbio" id="tetbio" />
+            <label for="tetbio"></label>
+          </div>
+        </label>
+      </section>
+      <section class="tetcheckbox tet-ac tetmsg">
+        <label class="tetTextColor">
+          <span>Direct Messages</span>
+          <div class="tetswitch tetDisplayColor">
+            <input type="checkbox" name="dmsg" id="dmsg" />
+            <label for="dmsg"></label>
+          </div>
+        </label>
+      </section>
+      <section class="tetcheckbox tet-ac">
+        <label class="tetTextColor">
+          <span>Tweets + Replies</span>
+          <div class="tetswitch tetDisplayColor">
+            <input type="checkbox" name="tetctw" id="tetctw" />
+            <label for="tetctw"></label>
+          </div>
+        </label>
+      </section>
+      <section class="tetcheckbox tetst">
+        <label class="tetTextColor">
+          <span>Website Theme</span>
+          <div class="tetswitch tetDisplayColor">
+            <input type="checkbox" name="sitetheme" id="sitetheme" />
+            <label for="sitetheme"></label>
           </div>
         </label>
       </section>
@@ -1359,14 +1387,16 @@ content = '',
 // invalid_chars from https://greasyfork.org/scripts/423001
 invalid_chars = {'\\': '＼', '/': '／', '|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
 elmFN = (sel) => {
-  return new Promise((resolve) => {
-    let txtFilter = sel.textContent.match(/[\p{Alpha}\p{M}\p{Nd}\p{Pc}\p{Join_C}\p{Po}\p{So}\p{Sc}\d]/gu) || [];
-    content = '';
-    for(let key of txtFilter) {
-      content += key.replace(/[\\/|<>*?:#"]/g, v => invalid_chars[v]);
-    };
-    resolve(encodeURIComponent(content));
-  });
+  try {
+    return new Promise((resolve) => {
+      let txtFilter = sel.textContent.match(/[\p{Alpha}\p{M}\p{Nd}\p{Pc}\p{Join_C}\p{Po}\p{So}\p{Sc}\d]/gu) || [];
+      content = '';
+      for(let key of txtFilter) {
+        content += key.replace(/[\\/|<>*?:#"]/g, v => invalid_chars[v]);
+      };
+      resolve(encodeURIComponent(content));
+    });
+  } catch(error) {err(error)}
 };
 //#endregion
 //#region Site n Menu Fn
@@ -1451,19 +1481,18 @@ async function configDisplay() {
 };
 /** Src Element, Src Language, Src Content, Inject Mode */
 function handleButton(source,src,content,mode) {
-  mode = mode ?? "append";
-  src = src ?? "auto";
-  let tdStyle = 'align-items: end !important;font-size: inherit !important;font-weight: inherit !important;line-height: inherit !important;',
-  ntStyle = 'margin: 0px 0px 0px 58px !important; padding: .75em;',
+  mode = mode ?? 'append';
+  src = src ?? 'auto';
+  let ntStyle = 'margin: 0px 0px 0px 58px !important; padding: .75em;',
   tetBtn = make("div",`tet ${cSub}`),
   btnDiv = make("div",`tetTextColor ${cText}`, {
     id: "tweet-text",
   }),
   btnSpan = make("span");
   btnDiv.append(btnSpan);
-  ael(tetBtn,"mouseenter",e => e.target.classList.add("r-hover"));
-  ael(tetBtn,"mouseleave",e => e.target.classList.remove("r-hover"));
-  ael(tetBtn,"click", (e) => {
+  ael(tetBtn,'mouseenter',e => e.target.classList.add("r-hover"));
+  ael(tetBtn,'mouseleave',e => e.target.classList.remove("r-hover"));
+  ael(tetBtn,'click', (e) => {
     tet.halt(e);
     let pretxt = e.target.innerHTML,
     tr = TETConfig["translator"],
@@ -1578,11 +1607,12 @@ function handleButton(source,src,content,mode) {
   (mode === "afterend") ? source.insertAdjacentHTML("afterend",tetBtn) :
   (mode === "before") ? source.before(tetBtn) :
   (mode === "prepend") ? source.prepend(tetBtn) :
-  (mode === "tdTweet") ? (source.after(tetBtn),tetBtn.setAttribute("style",tdStyle)) :
-  (mode === "tdBio") ? (source.after(tetBtn),tetBtn.setAttribute("style",`${tdStyle} padding-bottom: 4px !important;`)) :
+  (mode === "tdTweet") ? (source.after(tetBtn)) :
+  (mode === "tdBio") ? (source.after(tetBtn)) :
   (mode === "nitter") ? (source.after(tetBtn),tetBtn.setAttribute("style",ntStyle),btnDiv.setAttribute("style",ntStyle)) : mode.prepend(tetBtn);
   configDisplay();
 };
+//#endregion
 
 //#region Sites
 const site = {
@@ -1599,13 +1629,23 @@ const site = {
   tweetdeck() {
     try {
       let twtFN = () => {
-        for (let item of qsA("p.js-tweet-text")) {
-          if(item.lang.includes(languages[TETConfig["lang"] ?? "en"]) && !item.nextElementSibling) continue;
-          if(!item.nextElementSibling) continue;
-          if(!item.nextElementSibling.className.includes("js-translate-call-to-action")) continue;
-          if(!item.nextElementSibling.nextElementSibling) continue;
-          if(item.nextElementSibling.nextElementSibling.className.includes("tet")) continue;
-          handleButton(item.nextElementSibling,item.lang,item.innerText,"tdTweet");
+        for (let item of qsA('p.js-tweet-text')) {
+          if(item.lang) {
+            if(item.lang.includes(languages[TETConfig['lang'] ?? 'en']) && !item.nextElementSibling) continue;
+            if(!item.nextElementSibling) continue;
+            if(!item.nextElementSibling.className.includes("js-translate-call-to-action")) continue;
+            if(!item.nextElementSibling.nextElementSibling) continue;
+            if(item.nextElementSibling.nextElementSibling.className.includes("tet")) continue;
+            elmFN(item).then((c) => {
+              handleButton(item.nextElementSibling,item.lang,c,'tdTweet')
+            });
+          } else {
+            if(!item.nextElementSibling) continue;
+            if(item.nextElementSibling.className.includes('tet')) continue;
+            elmFN(item).then((c) => {
+              handleButton(item,'auto',c,'tdTweet')
+            });
+          };
         }
       };
       TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(()=>twtFN()) : twtFN();
@@ -1616,31 +1656,45 @@ const site = {
     source = qs('.actions.text-right'),
     twtFN = () => {
       if(source && !qs('.tet')) {
-        handleButton(source,"auto",content,"prepend");
+        handleButton(source,'auto',content,'prepend');
       };
     };
     TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
   },
-  twitter() {
+  twitter(elem) {
     let twtFN = () => {
-      for(let e of qsA("div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0")) { // "Translate Tweet/Bio"
-        let tweetContainer = e.previousElementSibling;
-        if(!e.nextElementSibling || !e.nextElementSibling.className.includes("tet")) {
-          elmFN(tweetContainer).then((c) => {
-            (!tweetContainer.lang || tweetContainer.lang === "") ? handleButton(tweetContainer.parentElement,"auto",c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
-          });
-        };
-      }
+      if(typeof elem === 'string') {
+        for(let e of qsA(elem)) {
+          let tweetContainer = e;
+          if(e.nextElementSibling) {
+            if(e.nextElementSibling.className.includes('css-901oao') && !e.nextElementSibling.nextElementSibling) {
+              elmFN(tweetContainer).then((c) => {
+                (!tweetContainer.lang || tweetContainer.lang === '') ? handleButton(tweetContainer.parentElement,'auto',c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
+              });
+            };
+            if(e.nextElementSibling.className.includes('tet')) {
+              elmFN(tweetContainer).then((c) => {
+                (!tweetContainer.lang || tweetContainer.lang === '') ? handleButton(tweetContainer.parentElement,'auto',c) : handleButton(tweetContainer.parentElement,tweetContainer.lang,c);
+              });
+            };
+          };
+        }
+      } else {
+        elmFN(elem).then((c) => {
+          (!elem.lang || elem.lang === '') ? handleButton(elem.parentElement,"auto",c) : handleButton(elem.parentElement,elem.lang,c);
+        });
+      };
     };
-    TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
+    TETConfig['delay'] !== 'none' ? delay(TETConfig['delay']).then(() => twtFN()) : twtFN();
   },
   async inject() {
     tet.info("Site:",lh);
     if(find.tweetdeck) {
-      tet.query("section.js-column > div").then(()=>{
-        tet.observe(qs(".js-modals-container"), (mutations) => {
-          for(let mutation of mutations) {
-            for(let node of mutation.addedNodes) {
+      await tet.query('section.js-column > div');
+      tet.observe(qs('.js-modals-container'), (mutations) => {
+        for(let mutation of mutations) {
+          for(let node of mutation.addedNodes) {
+            if(TETConfig['bios']) {
               for(let elem of node.querySelectorAll('p[class*="prf-bio"]')) {
                 let twtFN = () => {
                   if(elem && !elem.nextElementSibling.className.includes("tet")) {
@@ -1650,121 +1704,129 @@ const site = {
                 TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(()=>twtFN()) : twtFN();
                 break;
               }
-            }
+            };
+
           }
-        });
-        let preElem = qs(".application").className;
-        tet.observe(qs(".application"), (mutations) => {
-          for(let mutation of mutations) {
-            for(let node of mutation.addedNodes) {
-              if (!(node instanceof HTMLElement)) continue;
-              for(let elem of node.querySelectorAll('div[class*="tweet-detail"]')) {
-                if(elem.className === preElem) continue;
-                preElem = elem.className;
-                delay(250).then(()=>this.tweetdeck());
-                break;
-              }
-            }
+        }
+      });
+      let preElem = qs('.application').className;
+      tet.observe(qs('.application'), (mutations) => {
+        for(let mutation of mutations) {
+          for(let node of mutation.addedNodes) {
+            if (!(node instanceof HTMLElement)) continue;
+            for(let elem of node.querySelectorAll('div[class*="tweet-detail"]')) {
+              if(elem.className === preElem) continue;
+              preElem = elem.className;
+              delay(250).then(()=>this.tweetdeck());
+              break;
+            };
+            // eslint-disable-next-line no-unused-vars
+            for(let msg of node.querySelectorAll('div[class*="message-detail"]')) {
+              delay(250).then(()=>this.tweetdeck())
+            };
           }
-        });
+        }
       });
     };
     if(find.twitter) {
-      tet.query("#react-root > div > div").then(() => {
-        tet.query("main").then(() => {
-          let preElement = qs("body"),
-          preBio = qs("body"),
-          prePath = doc.location.pathname,
-          loTwitter = (elem) => {
-            let twtFN = () => {
-              elmFN(elem).then((c) => {
-                (!elem.lang || elem.lang === "") ? handleButton(elem.parentElement,"auto",c) : handleButton(elem.parentElement,elem.lang,c);
-              });
-            };
-            TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
-          };
-          tet.observe(qs("body"), (mutations) => {
-            for(let mutation of mutations) {
-              for(let node of mutation.addedNodes) {
-                if(!(node instanceof HTMLElement)) continue;
-                if(find.logout) {
-                  for(let elem of node.querySelectorAll('div.css-901oao')) {
-                    if(!elem.dataset.testid) continue;
-                    if(elem.dataset.testid.match(/tweetText/gi)) {
-                      if(elem === preElement) continue;
-                      preElement = elem;
-                      loTwitter(elem);
-                    };
-                    if(elem.dataset.testid.match(/UserDescription/gi)) {
-                      if(elem === preBio) continue;
-                      preBio = elem;
-                      loTwitter(elem);
-                    };
-                  };
-                } else {
-                  for(let elem of node.querySelectorAll('div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0')) {
-                    if(elem === preElement) continue;
-                    preElement = elem;
-                    delay(250).then(()=>this.twitter());
-                  };
-                  for(let elem of node.querySelectorAll('div[data-testid*="UserDescription"]')) {
-                    if(elem === preBio) continue;
-                    preBio = elem;
-                    delay(250).then(()=>this.twitter());
-                  };
-                  if(node.matches('div[data-testid*="UserDescription"]')) {
-                    if(node === preBio) continue;
-                    preBio = node;
-                    delay(250).then(()=>this.twitter());
-                  };
-                };
-                for(let elem of node.querySelectorAll('div.r-nsbfu8 > .r-1s2bzr4 > div.css-901oao')) {
-                  if(elem.classList.contains('tetInj')) continue;
-                  if(elem.parentElement.contains(qs(".tet"))) continue;
-                  elem.classList.add('tetInj');
-                  let hoverFN = () => {
-                    elmFN(elem).then(() => {
-                      handleButton(elem.lastElementChild,"auto",content,"after");
-                    });
-                  };
-                  delay(250).then(()=>{
-                    TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => hoverFN()) : hoverFN()
-                  });
-                };
-                let curPath = doc.location.pathname;
-                if(curPath === prePath) continue;
-                prePath = curPath;
-                if(/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(doc.location.pathname)) {
-                  tet.info("Hiding menu");
-                  qs('#tetMenuButton').setAttribute('style', 'z-index: -1 !important;');
-                } else {
-                  qs('#tetMenuButton').setAttribute('style', '');
-                };
-              }
-            }
+      win.addEventListener('popstate', () => {qs('#tetMenuButton').setAttribute('style', '')});
+      await tet.query('#react-root > div > div');
+      await tet.query('main');
+      let preElement = '',
+      preBio = '',
+      prePath = doc.location.pathname,
+      loTwitter = (elem) => {
+        let twtFN = () => {
+          elmFN(elem).then((c) => {
+            (!elem.lang || elem.lang === '') ? handleButton(elem.parentElement,"auto",c) : handleButton(elem.parentElement,elem.lang,c);
           });
-        });
-      });
-    };
-    if(find.twitlonger) {
-        tet.query("#postcontent").then(this.twitlonger())
-    };
-    let nitterObserver = () => {
-      let bioFN = () => {
-        if(!qs(".profile-bio").contains(qs(".tet"))) {
-          elmFN(qs('div.profile-bio > p')).then(c => handleButton(qs('div.profile-bio > p').parentElement,"auto",c));
         };
+        TETConfig['delay'] !== 'none' ? delay(TETConfig["delay"]).then(() => twtFN()) : twtFN();
       };
-      tet.observe(qs("body"), (mutations) => {
+      tet.observe(doc.body, (mutations) => {
         for(let mutation of mutations) {
           for(let node of mutation.addedNodes) {
             if(!(node instanceof HTMLElement)) continue;
-            node.querySelectorAll('div.tweet-body').forEach(() => delay(250).then(()=>this.nitter()));
+            if(TETConfig['bios']) {
+              for(let elem of node.querySelectorAll('div[data-testid="UserDescription"]')) {
+                if(elem.innerText === preBio) continue;
+                preBio = elem.innerText;
+                if(find.logout) {
+                  loTwitter(elem);
+                } else {
+                  delay(250).then(() => {this.twitter('div[data-testid="UserDescription"]')});
+                };
+                break;
+              };
+            };
+            for(let elem of node.querySelectorAll('div[data-testid="tweetText"]')) {
+              if(elem.innerText === preElement) continue;
+              preElement = elem.innerText;
+              let ecss = getComputedStyle(elem.parentElement),
+              elh = ecss.alignSelf;
+              if(elh === 'flex-start' && TETConfig['dms']) {
+                loTwitter(elem);
+              } else if(find.logout) {
+                loTwitter(elem);
+              } else if(elem.lang) {
+                delay(250).then(() => {this.twitter('div[data-testid="tweetText"]')});
+              };
+              break;
+            };
+            for(let elem of node.querySelectorAll('div.r-nsbfu8 > .r-1s2bzr4 > div.css-901oao')) {
+              if(elem.classList.contains('tetInj')) continue;
+              if(elem.parentElement.contains(qs('.tet'))) continue;
+              elem.classList.add('tetInj');
+              let hoverFN = () => {
+                elmFN(elem).then(() => {
+                  handleButton(elem.lastElementChild,"auto",content,"after");
+                });
+              };
+              delay(250).then(()=>{
+                TETConfig["delay"] !== "none" ? delay(TETConfig["delay"]).then(() => hoverFN()) : hoverFN()
+              });
+            };
+            let curPath = doc.location.pathname;
+            if(curPath === prePath) continue;
+            prePath = curPath;
+            if(/logout|login|signin|signout|profile|keyboard_shortcuts|display|video|photo|compose/.test(doc.location.pathname)) {
+              tet.info("Hiding menu");
+              qs('#tetMenuButton').setAttribute('style', 'z-index: -1 !important;');
+            };
+          }
+        }
+      });
+    };
+    if(find.twitlonger) {
+      await tet.query('#postcontent');
+      this.twitlonger();
+    };
+    let nitterObserver = () => {
+      let preElement = '',
+      bioFN = () => {
+        if(!qs('.profile-bio').contains(qs(".tet"))) {
+          elmFN(qs('div.profile-bio > p')).then(c => handleButton(qs('div.profile-bio > p').parentElement,"auto",c));
+        };
+      };
+      tet.observe(doc.body, (mutations) => {
+        for(let mutation of mutations) {
+          for(let node of mutation.addedNodes) {
+            if(!(node instanceof HTMLElement)) continue;
+            if(TETConfig['bios']) {
+              for(let elm of qsA('div.profile-bio > p',node)) {
+                if(elm.innerText === preElement) continue;
+                preElement = elm.innerText;
+                TETConfig['delay'] !== 'none' ? delay(TETConfig['delay']).then(() => bioFN()) : bioFN()
+                break;
+              };
+            };
+            if(TETConfig['tweets']) {
+              node.querySelectorAll('div.tweet-body').forEach(() => delay(250).then(()=>this.nitter()));
+            };
           };
         };
       });
       this.nitter();
-      if(qs('div.profile-bio > p')) {(TETConfig["delay"] !== "none") ? delay(TETConfig["delay"]).then(() => bioFN()) : bioFN()};
     };
     if(TETConfig["nitterInstances"].length > 0) {
       tet.log("Finding Nitter instance...",TETConfig["nitterInstances"]);
@@ -1871,14 +1933,17 @@ async function Menu() {
     selLG.value = TETConfig["lang"] ?? "en";
     let v = lng[selLG.value ?? TETConfig["lang"] ?? "en"],s = doc.location.search;
     selCS.value = /auto/.test(TETConfig["colors"]) ? "auto" : TETConfig["colors"];
-    if(selCS.value === "") selCS.value = "auto";
+    if(selCS.value === '') selCS.value = "auto";
     selTH.value = /auto/.test(TETConfig["theme"]) ? "auto" : TETConfig["theme"];
     selTR.value = TETConfig["translator"];
     selDS.value = TETConfig["display"];
     selDI.value = TETConfig["delay"];
-    qs("input#debug").checked = TETConfig["debug"];
-    qs("input#sitetheme").checked = TETConfig["sitetheme"];
-    qs(".tet-url").value = TETConfig["url"][selTR.value];
+    qs('input#debug').checked = TETConfig['debug'];
+    qs('input#dmsg').checked = TETConfig['dms'];
+    qs('input#tetbio').checked = TETConfig['bios'];
+    qs('input#tetctw').checked = TETConfig['tweets'];
+    qs('input#sitetheme').checked = TETConfig['sitetheme'];
+    qs('.tet-url').value = TETConfig["url"][selTR.value];
     const TETLanguageChange = (m) => {
       v = lng[m] ?? v;
       tetMenuButton.setAttribute('title', v.menu);
@@ -1922,9 +1987,9 @@ async function Menu() {
     TETMenuUpdate = async (cSel,type) => {
       return await new Promise((resolve) =>  {
         if(type === "theme") {
-          cTheme = "";
-          cText = "";
-          cBG = "";
+          cTheme = '';
+          cText = '';
+          cBG = '';
           (cSel == "twdef") ? (cTheme = "r-14lw9ot",cBG = "rgba(0, 0, 0, 0.4)",cText = "r-18jsvk2") :
           (cSel == "twdim") ? (cTheme = "r-yfoy6g",cBG = "rgba(91, 112, 131, 0.4)",cText = "r-jwli3a") :
           (cSel == "nitter") ? (cTheme = "nitter",cBG = "rgba(0, 0, 0, 0.4)",cText = "tetNTextColor") :
@@ -1935,9 +2000,9 @@ async function Menu() {
             cText = "r-jwli3a");
           resolve();
         } else if(type === "colors") {
-          cHover = "";
-          cColor = "";
-          cSub = "";
+          cHover = '';
+          cColor = '';
+          cSub = '';
           resolve((cSel == "tet-29u") ? (cHover = "r-1q3imqu",cColor = "r-p1n3y5 r-1bih22f",cSub = "r-13gxpu9") :
           (cSel == "nitter") ? (cHover = "tetNitterHover",cColor = "tetNitter",cSub = "tetNText") :
           (cSel == "btd") ? (cHover = "r-hoverTD",cColor = "Button--primary",cSub = "tet-btd") :
@@ -1977,13 +2042,13 @@ async function Menu() {
     if(s) tetAdmin();
     //#region Nitter/TweetDeck/Twitlonger
     if(find.twitter) {
+      qs('.tetst').classList.add('rm');
       let link = "https://abs.twimg.com/favicons/twitter.ico";
       qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${link}) !important;"></div>`;
     } else {
-      tet.loadCSS(twCSS, "foreign");
-      qs(".tetst").classList.remove("rm");
       if(TETConfig["nitterInstances"].length > 0) {
         tet.log("Finding Nitter instance...",TETConfig["nitterInstances"]);
+        qs('.tetmsg').classList.add('rm');
         for (let key of TETConfig["nitterInstances"]) {
           let instance = key.url.slice(8);
           if(lh === instance) {
@@ -1995,17 +2060,24 @@ async function Menu() {
           };
         }
       } else if(find.nitter) {
+        qs('.tetmsg').classList.add('rm');
         btNav.setAttribute("id","tetNT");
         tet.query('link[rel="icon"]').then((l) => {
           qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
         });
       };
       if(find.twitlonger) {
+        for(let cfg of qsA('.tet-ac')) {
+          cfg.classList.add('rm')
+        };
         tet.query('link[rel="shortcut icon"]').then((l) => {
           qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
         });
       };
       if(find.tweetdeck) {
+        for(let cfg of qsA('.tet-ac')) {
+          cfg.classList.add('rm')
+        };
         tetMenuButton.classList.add("tetTD");
         tet.query('link[rel="shortcut icon"]').then((l) => {
           qs(".tetAvatarFrame").innerHTML = `<div id="tetAvatar" style="background-image: url(${l.href}) !important;"></div>`;
@@ -2060,7 +2132,7 @@ async function Menu() {
         i.classList.add(cSub);
       };
     };
-    ael(nav,"click",(e) => {
+    ael(nav,'click',(e) => {
       !tetAlert.classList.contains("rm") ? tetAlert.classList.add("rm") : false;
       !qs("#tetadvanced").classList.contains("rm") ? qs("#tetadvanced").classList.add("rm") : false;
       document.documentElement.classList.remove("tetFreeze");
@@ -2071,7 +2143,7 @@ async function Menu() {
       btNav.setAttribute('style', 'z-index: -1 !important;');
       qs('svg#tetSVG').setAttribute("style", "display: inline;");
       if(!tetMenuButton.classList.contains("mobile")) {
-        tetMenuButton.setAttribute("style", "");
+        tetMenuButton.setAttribute("style", '');
         tetMenuButton.classList.add("mini");
       };
       e.target.classList.remove("warn");
@@ -2089,7 +2161,7 @@ async function Menu() {
       tet.save();
       delay(5000).then(() => qs('svg#tetSVG').setAttribute("style", "display: none;"));
     });
-    ael(tetMenuButton,"click", (e) => {
+    ael(tetMenuButton,'click', (e) => {
       nav.classList.remove("rm");
       qs('#tetForm').classList.remove("rm");
       qs('.tet-icon-container').classList.remove("rm");
@@ -2117,12 +2189,12 @@ async function Menu() {
         };
       };
     });
-    ael(tetMenuButton,"mouseenter", (e) => {
+    ael(tetMenuButton,'mouseenter', (e) => {
       e.target.classList.toggle(cHover,TETConfig["colors"]);
       qs('svg#tetSVG').setAttribute("style", "display: none;");
       e.target.classList.toggle("mini");
     });
-    ael(tetMenuButton,"mouseleave", (e) => {
+    ael(tetMenuButton,'mouseleave', (e) => {
       e.target.classList.toggle(cHover,TETConfig["colors"]);
       qs('svg#tetSVG').setAttribute("style", "display: inline;");
       e.target.classList.toggle("mini");
@@ -2197,31 +2269,34 @@ async function Menu() {
       };
     });
     ael(selDI,"change", e => TETConfig["delay"] = e.target.value);
-    ael(qs("input#debug"),"change", e => TETConfig["debug"] = e.target.checked);
-    ael(qs("input#sitetheme"),"change", e => TETConfig["sitetheme"] = e.target.checked);
-    ael(qs('#tetReset'),"click", () => {
+    ael(qs('input#debug'),'change', e => TETConfig['debug'] = e.target.checked);
+    ael(qs('input#dmsg'),'change', e => TETConfig['dms'] = e.target.checked);
+    ael(qs('input#tetbi'),'change', e => TETConfig['bios'] = e.target.checked);
+    ael(qs('input#tetctw'),'change', e => TETConfig['tweets'] = e.target.checked);
+    ael(qs('input#sitetheme'),'change', e => TETConfig['sitetheme'] = e.target.checked);
+    ael(qs('#tetReset'),'click', () => {
       tetAlert.classList.remove("rm");
       nav.classList.add("warn");
     });
-    ael(qs('.tetAlertBtns.confirm'),"click", () => {
+    ael(qs('.tetAlertBtns.confirm'),'click', () => {
       localStorage.removeItem("TETConfig");
       TETConfig = tet.defaultcfg;
       tet.save();
       delay(250).then(() => doc.location.reload());
     });
-    ael(qs('.tetAlertBtns.deny'),"click", () => {
+    ael(qs('.tetAlertBtns.deny'),'click', () => {
       tetAlert.classList.add("rm");
       nav.classList.remove("warn");
     });
-    ael(qs(".tet-icon-info"),"click", () => {
+    ael(qs(".tet-icon-info"),'click', () => {
       !qs("#tetadvanced").classList.contains("rm") ? qs("#tetadvanced").classList.add("rm") : false;
       qs(".tet-help-container").classList.toggle("rm");
     });
-    ael(qs(".tetadvanced-icon-container"),"click", () => {
+    ael(qs(".tetadvanced-icon-container"),'click', () => {
       qs(".tet-help-container").classList.add("rm");
       qs("#tetadvanced").classList.toggle("rm");
     });
-    ael(qs("#tetNI"),"click", (e) => {
+    ael(qs("#tetNI"),'click', (e) => {
       let pretxt = e.target.innerHTML;
       TETConfig["nitterInstances"] = [];
       e.target.innerHTML = `[TET] ${lng[TETConfig["lang"]].l}...`;
@@ -2258,60 +2333,59 @@ async function Menu() {
   }
 };
 //#region Initialize Userscript
-
+//https://libretranslate.com/?source=en&target=es&q=hello
 async function setupConfig() {
-  await Promise.all([TM.getValue('Config',JSON.stringify(tet.defaultcfg))]).then((data) => {
-    tet.loadCSS(tetCSS,'core');
-    TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0]);
-    for (const key in tet.defaultcfg) {
-      if(!Object.prototype.hasOwnProperty.call(TETConfig, key)) {
-        TETConfig[key] = tet.defaultcfg[key];
-      } else if (key === "api") {
-        for (const key2 in tet.defaultcfg[key]) {
-          if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key2)) {
-            TETConfig[key][key2] = tet.defaultcfg[key][key2];
-          };
-        };
-      } else if (key === "url") {
-        for (const key3 in tet.defaultcfg[key]) {
-          if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key3)) {
-            TETConfig[key][key3] = tet.defaultcfg[key][key3];
-          };
-        };
-      };
-    };
-    tet.info('Presetup complete + config loaded');
-    tet.log('Config:',TETConfig);
-    let s = doc.location.search;
-    if(s) {
-      if(s.match(/tetdebug/gi)) {
-        TETConfig["debug"] = true;
-        tet.save();
-      };
-      if(s.match(/tetrestore/gi)) {
-        localStorage.removeItem("TETConfig");
-        TETConfig = tet.defaultcfg;
-        tet.save();
-      };
-    };
-    lngFN();
-    langChange();
-    tet.info('Starting Menu injection');
-    Menu();
-    tet.info('Starting content script injection');
-    site.inject();
-  }).catch(e => {
+  let data = await Promise.all([TM.getValue('Config',JSON.stringify(tet.defaultcfg))]).catch(e => {
     err(e);
   });
+  tet.loadCSS(tetCSS,'core');
+  TETConfig = JSON.parse(localStorage.getItem('TETConfig') ?? data[0]);
+  for (const key in tet.defaultcfg) {
+    if(!Object.prototype.hasOwnProperty.call(TETConfig, key)) {
+      TETConfig[key] = tet.defaultcfg[key];
+    } else if (key === "api") {
+      for (const key2 in tet.defaultcfg[key]) {
+        if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key2)) {
+          TETConfig[key][key2] = tet.defaultcfg[key][key2];
+        };
+      };
+    } else if (key === "url") {
+      for (const key3 in tet.defaultcfg[key]) {
+        if(!Object.prototype.hasOwnProperty.call(TETConfig[key], key3)) {
+          TETConfig[key][key3] = tet.defaultcfg[key][key3];
+        };
+      };
+    };
+  };
+  tet.info('Presetup complete + config loaded');
+  tet.log('Config:',TETConfig);
+  let s = doc.location.search;
+  if(s) {
+    if(s.match(/tetdebug/gi)) {
+      TETConfig["debug"] = true;
+      tet.save();
+    };
+    if(s.match(/tetrestore/gi)) {
+      localStorage.removeItem('TETConfig');
+      TETConfig = tet.defaultcfg;
+      tet.save();
+    };
+  };
+  lngFN();
+  langChange();
+  tet.info('Starting Menu injection');
+  Menu();
+  tet.info('Starting content script injection');
+  site.inject();
 };
 
 async function preSetup() {
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     if(find.twitter) {
-      if(doc.location.pathname === "/" && find.logout) throw new Error("Must be login, canceling...");
-      if(find.remover) throw new Error("In blacklisted page, canceling...");
+      if(doc.location.pathname === '/' && find.logout) throw new Error('Must be login, canceling...');
+      if(find.remover) throw new Error('In blacklisted page, canceling...');
     };
-    if(find.tweetdeck && find.logout) throw new Error("Must be login, canceling...");
+    if(find.tweetdeck && find.logout) throw new Error('Must be login, canceling...');
     iconData.fn().then((icons) => {
       iconCache = icons;
       resolve(setupConfig());

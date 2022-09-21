@@ -7,8 +7,7 @@
 
 | Version | Link | Alternative | Note |
 |:----------:|:----------:|:----------:|:----------:|
-Stable | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js) | [Greasy Fork](https://greasyfork.org/scripts/421643) | Recommended version.
-Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/raw/master/dist/twittertranslatorlegacy.user.js) | - | For incompatibility issues.
+Stable | [Greasy Fork](https://greasyfork.org/scripts/421643) | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/releases/latest/download/twittertranslator.user.js) | [Bug] Duplicate "Translate with ..." in Direct Messages (sometimes)
 
 ***
 
@@ -35,6 +34,7 @@ Legacy | [(GitHub) Install](https://github.com/magicoflolis/twitter-translator/r
 * Supports every [Nitter](https://github.com/zedeus/nitter/wiki/Instances#official-instances)
 * Support for multiple Bios / Tweets on websites!
 * Support for Twitter hover cards.
+* Support for Twitter & TweetDeck direct messages.
 * Works while logged out!
 * "Restore to Defaults" button.
 * document.location.search commands:
@@ -100,12 +100,9 @@ Where does the UserScript store my API key?
 
 ## Bugs / Issues
 
-* Internal Translations for User Bios may not load on TweetDeck.
+* Duplicate "Translate with ..." in Direct Messages (sometimes)
 * Auto Theme + Auto Color may not work on Chromium based browsers.
-* [Logged out] Duplicate "Translate with..." injections may occur while on a users profile page.
 * [Translators] Azure Cognitive Services is not implemented.
-* [Translators] Translation API is UNTESTED.
-* [Translators] Yandex API is UNTESTED.
 
 **Footnotes:**
 
@@ -127,5 +124,4 @@ Where does the UserScript store my API key?
 
 * Fix any bugs along the way.
 * Show multiple translators at once.
-* Support for direct messages.
 * Support more translators.
