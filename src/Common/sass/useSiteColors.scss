@@ -1,12 +1,14 @@
-#tetNT {
+// var(--accent)
+
+[id="tetNT"] {
   .tetBackground {
     border-color: var(--border_grey);
   };
   .tetNitter {
-    &#tetSelector:hover {
+    &[id="tetSelector"]:hover {
       border-color: var(--accent_border) !important;
       box-shadow: var(--accent_border) !important;
-      #tetName span {
+      [id="tetName"] span {
         color: var(--fg_dark);
       }
     };
@@ -16,7 +18,7 @@
   };
   .nitter:not(.tetswitch,.tetBtn) {
     background-color: var(--bg_color);
-    div#tetName {
+    div[id="tetName"] {
       color: var(--fg_dark);
     };
   };
@@ -44,24 +46,24 @@
   background-color: var(--fg_dark);
 };
 
-#tetBTD {
+[id="tetBTD"] {
   .tweetdeck:not(.tetswitch) {
     background-color: var(--btd-accent-color);
   };
 
   .r-tetTD {
     background-color: var(--btd-theme-background) !important;
-    &#tetSelector.Button--primary:hover {
+    &[id="tetSelector"].Button--primary:hover {
       border-color: #1da1f2;
       box-shadow: #1da1f2 0px 0px 0px 1px;
-      #tetName span {
+      [id="tetName"] span {
         color: #1da1f2;
       }
     }
   };
   .r-tetBTD {
     background-color: var(--btd-theme-background) !important;
-    #tetName span {
+    [id="tetName"] span {
       color: var(--btd-accent-color);
     }
   };

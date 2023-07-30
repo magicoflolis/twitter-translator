@@ -34,7 +34,7 @@
 .r-demo,
 .tet-av,
 .r-hover,
-#apifield {
+[id="apifield"] {
   outline-style: none !important;
 }
 
@@ -216,15 +216,15 @@ div.tetAlertTxt {
 
 .tet-main {
   padding: 0px 32px 32px 32px !important;
-  display: grid;
-  grid-template-rows: minmax(auto, 50%);
+  display: flex;
+  flex-direction: column;
 }
 
 .tet-header {
   min-width: 0px;
   white-space: normal;
   display: grid;
-  padding: 0px 32px 0px 32px;
+  padding: 0px 32px;
   margin: 32px 0px 12px 0px;
 
   .tet-info-name {
@@ -305,11 +305,11 @@ div.tetAlertTxt {
   }
 }
 
-.btNav:not(.mobile) #tetForm {
+.btNav:not(.mobile) [id="tetForm"] {
   min-width: 600px !important;
 }
 
-#tetForm {
+[id="tetForm"] {
   border-radius: 16px;
   flex-shrink: 1;
   position: relative;
@@ -478,7 +478,7 @@ div.mini > span {
 }
 
 .tetBtn,
-#tet,
+[id="tet"],
 .tet {
   cursor: pointer !important;
 }
@@ -491,21 +491,22 @@ div.mini > span {
   padding-bottom: 4px !important;
 }
 
-#tet {
+[id="tet"] {
   justify-items: center;
 }
 
-#apifield {
-  width: initial;
+[id="apifield"] {
+  width: auto !important;
+  margin: 2% 6% 0px 6% !important;
 }
 
-#apifield,
+[id="apifield"],
 #tetName,
 #tetSelector > select {
   padding-left: 2% !important;
 }
 
-#apifield,
+[id="apifield"],
 #tetSelector {
   align-items: stretch;
   display: grid;
@@ -514,7 +515,6 @@ div.mini > span {
   border-width: 1px;
 }
 
-#apifield,
 .tet-main #tetSelector,
 section.tetcheckbox {
   margin: 2% 6% 0px 6%;
@@ -533,7 +533,7 @@ section.tetcheckbox {
   appearance: none;
 }
 
-#tetReset {
+[id="tetReset"] {
   margin: 2% 25% 0px 25%;
 }
 
@@ -551,6 +551,9 @@ section.tetcheckbox {
     overflow: hidden;
     display: block;
     z-index: 0;
+    svg {
+      fill: currentColor;
+    }
   }
 
   .tet-txt {
@@ -701,7 +704,7 @@ section.tetcheckbox {
   text-decoration-line: underline !important;
 }
 
-#tweet-text {
+[id="tweet-text"] {
   font-size: 23px !important;
   line-height: 28px !important;
 }
