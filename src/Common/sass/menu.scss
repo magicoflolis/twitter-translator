@@ -1,7 +1,9 @@
+@import 'colors';
+
 .tet-flex,
 .btNav,
 #tetadvanced,
-#tetadvanced>.tetBackground,
+#tetadvanced > .tetBackground,
 .tet-txt,
 .r-demo,
 .tet-main {
@@ -15,7 +17,7 @@
 .btNav,
 .txt-header,
 .tet-av,
-.tetAlertBtns>div {
+.tetAlertBtns > div {
   align-items: center !important;
 }
 
@@ -41,14 +43,14 @@
 div.tetAlertTxt,
 .tet-info,
 .btNav label,
-.tetAlertBtns>div,
-#tetSelector>select {
+.tetAlertBtns > div,
+#tetSelector > select {
   font-size: 15px !important;
 }
 
-.tet-at>span:first-child,
+.tet-at > span:first-child,
 h1.tetAlertTxt,
-.tetAlertBtns>div {
+.tetAlertBtns > div {
   font-weight: 700 !important;
 }
 
@@ -61,19 +63,19 @@ div.tetAlertTxt,
 .tet-info,
 .tet-icon-info,
 #tweet-text,
-#tetSelector>#tetName {
+#tetSelector > #tetName {
   font-weight: 400;
 }
 
 .tet,
 #tetDemo,
-.tetswitch>label,
-#tetSelector>#tetName {
+.tetswitch > label,
+#tetSelector > #tetName {
   line-height: 16px;
 }
 
-.tetAlertBtns>div>span,
-#tetMenuButton>svg,
+.tetAlertBtns > div > span,
+#tetMenuButton > svg,
 .txt-header,
 .tetadvanced-icon,
 .tet-at {
@@ -89,16 +91,24 @@ div.tetAlertTxt,
 .tet-dc,
 .tet-at,
 .tet-header,
-#tetSelector>#tetName,
-#tetSelector>select {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+#tetSelector > #tetName,
+#tetSelector > select {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .tet,
 #tweet-text,
-.tetAlertBtns>div,
+.tetAlertBtns > div,
 .tet-main {
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    'TwitterChirp',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
 
 div.tetAlertTxt,
@@ -106,8 +116,8 @@ div.tetAlertTxt,
 .tet-dc,
 .tet-at,
 .tethelper-info,
-.tetAlertBtns>div,
-#tetSelector>select {
+.tetAlertBtns > div,
+#tetSelector > select {
   line-height: 20px;
 }
 
@@ -158,7 +168,7 @@ div.tetAlertTxt {
 .tet-header,
 .tet-icon-container,
 .tetadvanced-icon-container,
-.tetAlertBtns>div,
+.tetAlertBtns > div,
 .tetAlertTxt {
   text-align: center;
 }
@@ -167,6 +177,8 @@ div.tetAlertTxt {
 .tet-icon-container,
 #tetDemo,
 .tet {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
 }
 
@@ -174,8 +186,13 @@ div.tetAlertTxt {
   flex-wrap: wrap;
   font-size: 13px;
   overflow-wrap: break-word;
+  height: -webkit-min-content;
+  height: -moz-min-content;
   height: min-content;
   display: flex;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
   user-select: none !important;
 }
 
@@ -247,6 +264,9 @@ div.tetAlertTxt {
     white-space: nowrap;
     transition-property: background-color, box-shadow;
     transition-duration: 0.2s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     border-color: rgba(0, 0, 0, 0);
     overflow: hidden;
@@ -264,7 +284,7 @@ div.tetAlertTxt {
       margin: 0px;
       padding: 0px;
 
-      >span {
+      > span {
         border: 0px solid black;
         box-sizing: border-box;
         display: inline;
@@ -278,7 +298,7 @@ div.tetAlertTxt {
 #tetadvanced {
   border-radius: 16px;
 
-  >div {
+  > div {
     border-radius: 16px;
     flex-grow: 1;
     flex-shrink: 1;
@@ -319,15 +339,14 @@ div.tetAlertTxt {
 
 .tetadvanced-container {
   section {
-
-    &.tetcheckbox>label,
+    &.tetcheckbox > label,
     &.tetselect {
       display: flex;
       justify-content: space-between;
-      padding: .5em;
+      padding: 0.5em;
     }
 
-    &.tetcheckbox>label {
+    &.tetcheckbox > label {
       cursor: pointer;
     }
   }
@@ -336,14 +355,17 @@ div.tetAlertTxt {
     position: relative;
     width: 38px;
     border-radius: 20px;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
     user-select: none !important;
     margin: 5px;
 
-    >input {
+    > input {
       display: none;
     }
 
-    >label {
+    > label {
       display: block;
       overflow: hidden;
       cursor: pointer;
@@ -354,12 +376,12 @@ div.tetAlertTxt {
       background-color: #464646;
 
       &:before {
-        content: "";
+        content: '';
         display: block;
         width: 20px;
         height: 20px;
         margin: -2px;
-        background: #DADCE0;
+        background: #dadce0;
         position: absolute;
         top: 0;
         right: 20px;
@@ -367,7 +389,7 @@ div.tetAlertTxt {
       }
     }
 
-    >input:checked+label {
+    > input:checked + label {
       margin-left: 0;
 
       &:before {
@@ -382,21 +404,30 @@ div.tetAlertTxt {
 #tetMenuButton span {
   color: inherit;
   font: inherit;
-  font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-family:
+    'TwitterChirp',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif !important;
   white-space: inherit;
   overflow-wrap: break-word;
 }
 
 .rm,
 #tetMenuButton.mobile,
-option[disabled=""],
-div:not(.mini)>#tetSVG,
-div.mini>span {
+option[disabled=''],
+div:not(.mini) > #tetSVG,
+div.mini > span {
   display: none !important;
   visibility: hidden !important;
 }
 .tetFreeze {
   overflow: hidden !important;
+  -ms-scroll-chaining: none !important;
   overscroll-behavior: none !important;
 }
 
@@ -413,11 +444,14 @@ div.mini>span {
     top: 0% !important;
   }
 
-  >svg {
+  > svg {
     position: relative;
     height: 1.25em;
     fill: currentcolor;
     margin-right: 12px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     right: 35% !important;
   }
@@ -467,8 +501,8 @@ div.mini>span {
 
 #apifield,
 #tetName,
-#tetSelector>select {
-  padding-left: 2% !important
+#tetSelector > select {
+  padding-left: 2% !important;
 }
 
 #apifield,
@@ -486,7 +520,7 @@ section.tetcheckbox {
   margin: 2% 6% 0px 6%;
 }
 
-#tetSelector>select {
+#tetSelector > select {
   text-align: left;
   padding-top: 12px;
   padding-right: 0px;
@@ -494,6 +528,8 @@ section.tetcheckbox {
   cursor: pointer;
   border-radius: 0px;
   margin: 0px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
 }
 
@@ -536,7 +572,7 @@ section.tetcheckbox {
         max-width: inherit !important;
         white-space: normal !important;
 
-        >span:last-child {
+        > span:last-child {
           margin-left: 4px;
         }
       }
@@ -553,6 +589,9 @@ section.tetcheckbox {
 }
 
 .btNav {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
   user-select: none !important;
   a,
   :link {
@@ -571,7 +610,7 @@ section.tetcheckbox {
 .navbackground {
   position: fixed !important;
   width: 100vw;
-  height: 100vh
+  height: 100vh;
 }
 
 .navbackground {
@@ -604,14 +643,12 @@ section.tetcheckbox {
     height: 35px;
     line-height: 35px;
     border-radius: inherit;
-    font-family: "fontello";
+    font-family: 'fontello';
     font-size: 23px;
 
     &:hover {
       color: unset !important;
     }
-
-    ;
   }
 
   .tet-help-container {
@@ -641,6 +678,9 @@ section.tetcheckbox {
   .tetadvanced-icon {
     height: 1.75rem;
     cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     position: relative;
     fill: currentcolor;
@@ -657,6 +697,7 @@ section.tetcheckbox {
 }
 
 .r-hover {
+  -webkit-text-decoration-line: underline !important;
   text-decoration-line: underline !important;
 }
 
@@ -674,10 +715,12 @@ section.tetcheckbox {
 }
 
 div.css-18t94o4.r-6koalj.r-1w6e6rj.r-37j5jr.r-n6v787.r-16dba41.r-1cwl3u0.r-14gqq1x.r-bcqeeo.r-qvutc0 {
+  width: -webkit-fit-content !important;
+  width: -moz-fit-content !important;
   width: fit-content !important;
 }
 
-.prf-header>div>.tet {
+.prf-header > div > .tet {
   display: inline-block !important;
   width: 100% !important;
 }
@@ -686,23 +729,24 @@ select.tetTextColor {
   height: auto !important;
 }
 .tet-favicon {
-  width: 16px;
+  width: 1em;
+  height: 1em;
   padding-left: 0.2rem;
 }
 
-#tet-ltg,
-#tet-ltgl,
-#tet-ltglg {
+[id="tet-ltg"],
+[id="tet-ltgl"],
+[id="tet-ltglg"] {
   font-style: normal;
   font-family: inherit;
 }
 
-#tet-ltg,
-#tet-ltglg {
+[id="tet-ltg"],
+[id="tet-ltglg"] {
   font-weight: normal;
 }
 
-#tet-ltg {
+[id="tet-ltg"] {
   font-size: 10.5833px;
   line-height: 1.25;
   letter-spacing: 0px;
@@ -712,13 +756,13 @@ select.tetTextColor {
   stroke: none;
 }
 
-#tet-ltgl {
+[id="tet-ltgl"] {
   font-variant: normal;
   font-weight: bold;
   font-stretch: normal;
 }
 
-#tet-ltglg {
+[id="tet-ltglg"] {
   font-size: 43.3964px;
   line-height: 1.25;
   letter-spacing: 0px;
@@ -727,6 +771,6 @@ select.tetTextColor {
   stroke: none;
   stroke-width: 1.08492;
 }
-#tet-ltglgp {
-  stroke-width:1.08492;
+[id="tet-ltglgp"] {
+  stroke-width: 1.08492;
 }

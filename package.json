@@ -5,6 +5,7 @@
   "version": "2.5.1",
   "license": "GPL-3.0",
   "userJS": {
+    "version": "2.6.0",
     "name": "Twitter External Translator",
     "bugs": "https://github.com/magicoflolis/twitter-translator/issues/new",
     "homepage": "https://github.com/magicoflolis/twitter-translator#twitter-external-translator",
@@ -14,20 +15,25 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:UserJS\" \"npm run dev:Server\" \"npm run dev:Sass\"",
-    "dev:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./src/.env",
-    "dev:Sass": "sass -w --no-source-map ./src/sass/twittertranslator.scss:./dist/css/twittertranslator.css ./src/sass/useSiteColors.scss:./dist/css/useSiteColors.css ./src/sass/foreign.scss:./dist/css/foreign.css -s compressed",
-    "dev:Server": "http-server ./dist -s --no-dotfiles -c-1",
-    "pub:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/.env"
+    "dev:UserJS": "node ./tools/userscript.mjs",
+    "dev:Sass": "sass -w --no-source-map ./src/Common/sass:./dist/css -s compressed",
+    "dev:Server": "http-server ./build/UserJS -s --no-dotfiles -c-1",
+    "pub": "concurrently \"pnpm run pub:Sass\" \"pnpm run pub:UserJS\"",
+    "pub:Sass": "sass --no-source-map ./src/Common/sass:./dist/css -s compressed",
+    "pub:UserJS": "pnpm run pub:Sass && node -r dotenv/config ./tools/userscript.mjs dotenv_config_path=./dist/UserJS/.env"
   },
   "devDependencies": {
-    "@types/sass": "^1.43.1",
-    "concurrently": "^7.3.0",
-    "eslint": "^8.23.0",
-    "eslint-config-prettier": "^8.5.0",
+    "@types/eslint-config-prettier": "^6.11.0",
+    "@types/eslint__js": "^8.42.0",
+    "concurrently": "^8.2.0",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^8.9.0",
+    "globals": "^13.20.0",
     "http-server": "^14.1.1",
     "node-watch": "^0.7.3",
-    "dotenv": "^16.0.2",
-    "sass": "^1.54.8"
+    "prettier": "^3.0.0",
+    "sass": "^1.64.1"
   },
   "repository": {
     "type": "git",
@@ -41,5 +47,9 @@
     "javascript",
     "browser"
   ],
+  "webExt": {
+    "sourceDir": "./dist/WebExtension/",
+    "artifactsDir": "./build/tmp/"
+  },
   "private": true
 }
